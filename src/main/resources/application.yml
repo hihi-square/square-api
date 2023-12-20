@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/square?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: ssafy
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+      hibernate:
+        format_sql: true    # 로그, 콘솔의 SQL 예쁘게 출력
+
+logging:
+  level:
+    org.springframework: INFO # Spring 프레임워크의 로그 레벨을 INFO로 설정
+    org.hibernate.SQL: DEBUG # Hibernate SQL 쿼리의 로그 레벨을 DEBUG로 설정
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE # Hibernate SQL 바인딩 정보의 로그 레벨을 TRACE로 설정
+
+server:
+  port: 8080
+#  ec2-url: https://www.square
