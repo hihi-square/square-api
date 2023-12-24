@@ -14,6 +14,13 @@ spring:
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
       hibernate:
         format_sql: true    # 로그, 콘솔의 SQL 예쁘게 출력
+        show-sql: true
+
+  # redis 설정
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 logging:
   level:
@@ -24,3 +31,9 @@ logging:
 server:
   port: 8080
 #  ec2-url: https://www.square
+
+jwt:
+#  header: Authorization
+  # 'spring-boot-jpa-spring-security-hihi-team-square-project-jwt-secret'
+  secret: c3ByaW5nLWJvb3QtanBhLXNwcmluZy1zZWN1cml0eS1oaWhpLXRlYW0tc3F1YXJlLXByb2plY3Qtand0LXNlY3JldA== #HS512 : 64Byte 이상
+#  token-validity-in-seconds: 86400
