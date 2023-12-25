@@ -10,17 +10,19 @@ import com.hihi.square.domain.user.repository.UserRepository;
 import com.hihi.square.global.error.type.DuplicatedUserException;
 import com.hihi.square.global.error.type.PasswordNotMatchException;
 import com.hihi.square.global.error.type.UserNotFoundException;
+import com.hihi.square.global.jwt.exception.ReLoginException;
 import com.hihi.square.global.jwt.token.TokenInfo;
 import com.hihi.square.global.jwt.token.TokenProvider;
-import com.hihi.square.global.util.radis.RedisService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.WebUtils;
 
 @Service
 @Slf4j
@@ -30,6 +32,8 @@ public class StoreServiceImpl implements StoreService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+//    private final RedisService redisService;
+//    private final CustomUserDetailsService userDetailsService;
 
     @Override
     public void save(Store store){
@@ -72,6 +76,25 @@ public class StoreServiceImpl implements StoreService{
         TokenInfo tokenInfo = tokenProvider.createTokens(loginReq.getUid(), loginReq.getPassword(), findUser.getDecriminatorValue(), response);
 
         return new LoginRes(findUser.getUid(), findUser.getDecriminatorValue(), tokenInfo);
+    }
+
+    @Override
+    public void recreateToken(HttpServletRequest request, HttpServletResponse response) {
+        Cookie refreshTokenCookie = WebUtils.getCookie(request, "RefreshToken");
+        log.info("cookie");
+        if (refreshTokenCookie != null) {
+            String refreshToken = refreshTokenCookie.getValue();
+            log.info("refreshToken : {}", refreshToken);
+            if (StringUtils.hasText(refreshToken)) {
+                tokenProvider.handleExpiredToken(response, refreshToken);
+            } else {
+                // Secure Refresh Token 쿠키가 존재하지 않는 경우
+                throw new ReLoginException("Does not Exist Cookie");
+            }
+        }
+        else {
+            throw new ReLoginException("Does not Exist Cookie");
+        }
     }
 
     @Override
