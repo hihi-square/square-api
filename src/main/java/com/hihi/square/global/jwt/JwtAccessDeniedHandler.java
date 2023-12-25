@@ -2,6 +2,7 @@ package com.hihi.square.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hihi.square.global.error.ErrorRes;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import java.io.IOException;
 @Slf4j
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
    @Override
-   public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
+   public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
       //필요한 권한이 없이 접근하려 할때 403
       log.info("Responding with forbidden error. Message := {}", accessDeniedException.getMessage());
       ErrorRes errorResponse = ErrorRes.of(accessDeniedException);

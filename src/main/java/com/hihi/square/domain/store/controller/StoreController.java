@@ -42,9 +42,20 @@ public class StoreController {
         return new ResponseEntity<>(SuccessRes.success(loginResponseDto), HttpStatus.ACCEPTED);
     }
 
+    @PostMapping("/reissue")
+    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response){
+        storeService.recreateToken(request, response);
+        return new ResponseEntity<>(SuccessRes.success(null), HttpStatus.ACCEPTED);
+    }
+
     @GetMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response){
         storeService.logout(request, response);
         return new ResponseEntity<>(SuccessRes.success(null), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test(HttpServletRequest request, HttpServletResponse response){
+        return new ResponseEntity<>(SuccessRes.success("test"), HttpStatus.ACCEPTED);
     }
 }

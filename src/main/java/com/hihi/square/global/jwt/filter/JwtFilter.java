@@ -1,21 +1,16 @@
 package com.hihi.square.global.jwt.filter;
 
-import com.hihi.square.global.error.ErrorCode;
-import com.hihi.square.global.jwt.response.JwtErrorResponseSender;
 import com.hihi.square.global.jwt.service.CustomUserDetailsService;
 import com.hihi.square.global.jwt.token.TokenProvider;
 import com.hihi.square.global.util.radis.RedisService;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
 
@@ -41,23 +36,25 @@ public class JwtFilter extends OncePerRequestFilter {
         String accessToken = resolveToken(request);
         String requestURI = request.getRequestURI();
         JwtTokenValidator jwtTokenValidator = new JwtTokenValidator(userDetailsService);
-
-        try {
+//        try {
+        if(!requestURI.equals("/store/reissue")){
             jwtTokenValidator.validateAccessToken(tokenProvider, accessToken, requestURI);
-        } catch (ExpiredJwtException e) {
-            Cookie refreshTokenCookie = WebUtils.getCookie(request, "RefreshToken");
-
-            if (refreshTokenCookie != null) {
-                String refreshToken = refreshTokenCookie.getValue();
-                if (StringUtils.hasText(refreshToken)) {
-                    jwtTokenValidator.handleExpiredToken(response, refreshToken, tokenProvider, redisService);
-                } else {
-                    // Secure Refresh Token 쿠키가 존재하지 않는 경우
-                    JwtErrorResponseSender.sendErrorResponse(response, "Does not Exist Cookie", ErrorCode.RE_LOGIN);
-                    return;
-                }
-            }
         }
+//        }
+//        catch (ExpiredJwtException e) {
+//            Cookie refreshTokenCookie = WebUtils.getCookie(request, "RefreshToken");
+//
+//            if (refreshTokenCookie != null) {
+//                String refreshToken = refreshTokenCookie.getValue();
+//                if (StringUtils.hasText(refreshToken)) {
+//                    jwtTokenValidator.handleExpiredToken(response, refreshToken, tokenProvider, redisService);
+//                } else {
+//                    // Secure Refresh Token 쿠키가 존재하지 않는 경우
+//                    JwtErrorResponseSender.sendErrorResponse(response, "Does not Exist Cookie", ErrorCode.RE_LOGIN);
+//                    return;
+//                }
+//            }
+//        }
 
         filterChain.doFilter(request, response);
     }

@@ -4,6 +4,7 @@ import com.hihi.square.domain.user.repository.UserRepository;
 import com.hihi.square.global.error.ErrorCode;
 import com.hihi.square.global.error.type.UserNotFoundException;
 import com.hihi.square.global.jwt.exception.CustomJwtException;
+import com.hihi.square.global.jwt.exception.ReLoginException;
 import com.hihi.square.global.jwt.service.CustomUserDetailsService;
 import com.hihi.square.global.util.radis.RedisService;
 import io.jsonwebtoken.*;
@@ -37,10 +38,10 @@ public class TokenProvider {
     private static final String AUTHORITIES_KEY = "Auth";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_TYPE = "Bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 24 * 60 * 60 * 1000L;
-//     private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 1000L; // 1분
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
-//    private static final long REFRESH_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L; // 10분
+//    private static final long ACCESS_TOKEN_EXPIRE_TIME = 24 * 60 * 60 * 1000L;
+     private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 1000L; // 1분
+//    private static final long REFRESH_TOKEN_EXPIRE_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L; // 10분
     private final String secret;
     private Key key;
     private final UserRepository userRepository;
@@ -200,6 +201,29 @@ public class TokenProvider {
         }
     }
 
+    //headle Expired Token
+    public void handleExpiredToken(HttpServletResponse response, String refreshToken){
+        try {
+            validateToken(refreshToken);
+            String uid = parseClaims(refreshToken).getSubject();
+            String redisRTK = redisService.getValues(uid);
+            validateToken(redisRTK);
+
+            if (redisRTK.equals(refreshToken)) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(uid);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                String accessToken = createAccessToken(authentication);
+                addRefreshTokenCookie(response, refreshToken);
+                // 새로운 AccessToken을 헤더에 추가
+                response.setHeader("Authorization", "Bearer " + accessToken);
+            } else {
+                throw new ReLoginException("Does not match refreshToken");
+            }
+        } catch (ExpiredJwtException ex) {
+            throw new ReLoginException("RefreshToken is Expired");
+        }
+    }
+
     //토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
@@ -209,12 +233,11 @@ public class TokenProvider {
         } catch (MalformedJwtException e) {
             log.info("MalformedJwtException");
             throw new CustomJwtException(ErrorCode.INVALID_TOKEN);
-        }
-//        catch (ExpiredJwtException e) {
-//            log.info("ExpiredJwtException");
-////            throw new CustomJwtException(ErrorCode.EXPIRED_TOKEN);
+        } catch (ExpiredJwtException e) {
+            log.info("ExpiredJwtException");
+            throw new CustomJwtException(ErrorCode.EXPIRED_TOKEN);
 //            throw new CustomJwtException(ErrorCode.RE_LOGIN);
-//        }
+        }
         catch (UnsupportedJwtException e) {
             log.info("UnsupportedJwtException");
             throw new CustomJwtException(ErrorCode.INVALID_TOKEN);

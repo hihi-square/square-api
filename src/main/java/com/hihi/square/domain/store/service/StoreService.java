@@ -13,5 +13,7 @@ public interface StoreService {
     void join(SignUpReq signUpReq);
     LoginRes login(LoginReq loginReq, HttpServletResponse response);
 
+    void recreateToken(HttpServletRequest request, HttpServletResponse response);
+
     void logout(HttpServletRequest request, HttpServletResponse response);
 }

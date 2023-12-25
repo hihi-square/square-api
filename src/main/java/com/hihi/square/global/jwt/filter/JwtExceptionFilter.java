@@ -1,8 +1,8 @@
 package com.hihi.square.global.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hihi.square.global.error.ErrorRes;
 import com.hihi.square.global.jwt.exception.CustomJwtException;
-import com.hihi.square.global.jwt.response.JwtExceptionResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,10 +27,11 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 			log.info("ex.getMessage()={}", e.getMessage());
 			log.info("ex.getErrorCode()={}", e.getErrorCode());
 
-			JwtExceptionResponse jwtExceptionResponse = JwtExceptionResponse.error(e.getErrorCode(), "");
+//			JwtExceptionResponse jwtExceptionResponse = JwtExceptionResponse.error(e.getErrorCode(), "");
+			ErrorRes errorResponse = ErrorRes.of(e.getErrorCode());
 			response.setStatus(e.getErrorCode().getStatus());
 			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-			new ObjectMapper().writeValue(response.getOutputStream(), jwtExceptionResponse);
+			new ObjectMapper().writeValue(response.getOutputStream(), errorResponse);
 		}
 	}
 }
