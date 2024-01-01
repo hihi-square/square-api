@@ -1,8 +1,12 @@
 package com.hihi.square.global.jwt.filter;
 
+import com.hihi.square.global.error.ErrorCode;
+import com.hihi.square.global.jwt.response.JwtErrorResponseSender;
 import com.hihi.square.global.jwt.service.CustomUserDetailsService;
 import com.hihi.square.global.jwt.token.TokenProvider;
+import com.hihi.square.global.util.radis.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,11 +23,17 @@ public class JwtTokenValidator {
         this.userDetailsService = userDetailsService;
     }
 
-    public void validateAccessToken(TokenProvider tokenProvider, String accessToken, String requestURI) throws ExpiredJwtException {
+    public void validateAccessToken(HttpServletResponse response, TokenProvider tokenProvider, RedisService redisService, String accessToken, String requestURI) throws ExpiredJwtException {
         if (StringUtils.hasText(accessToken) && tokenProvider.validateToken(accessToken)) {
-            Authentication authentication = tokenProvider.getAuthentication(accessToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
+            if(redisService.getBlackList(accessToken) == null){ //로그아웃한 유저가 아닌 경우
+                Authentication authentication = tokenProvider.getAuthentication(accessToken);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
+            }
+            else{
+                log.info("유효한 JWT가 없습니다.");
+                JwtErrorResponseSender.sendErrorResponse(response, "ACCESS DENIED", ErrorCode.ACCESS_DENIED);
+            }
         }
     }
 //

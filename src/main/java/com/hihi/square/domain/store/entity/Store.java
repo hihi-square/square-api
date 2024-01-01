@@ -1,6 +1,6 @@
 package com.hihi.square.domain.store.entity;
 
-import com.hihi.square.domain.user.dto.request.SignUpReq;
+import com.hihi.square.domain.store.dto.request.SignUpReq;
 import com.hihi.square.domain.user.entity.User;
 import com.hihi.square.domain.user.entity.UserStatus;
 import jakarta.persistence.*;
