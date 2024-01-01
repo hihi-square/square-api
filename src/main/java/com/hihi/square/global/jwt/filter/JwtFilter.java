@@ -38,7 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
         JwtTokenValidator jwtTokenValidator = new JwtTokenValidator(userDetailsService);
 //        try {
         if(!requestURI.equals("/store/reissue")){
-            jwtTokenValidator.validateAccessToken(tokenProvider, accessToken, requestURI);
+            jwtTokenValidator.validateAccessToken(response, tokenProvider, redisService, accessToken, requestURI);
         }
 //        }
 //        catch (ExpiredJwtException e) {

@@ -2,9 +2,9 @@ package com.hihi.square.domain.store.controller;
 
 import com.hihi.square.common.SuccessRes;
 import com.hihi.square.domain.store.service.StoreService;
-import com.hihi.square.domain.user.dto.request.LoginReq;
-import com.hihi.square.domain.user.dto.request.SignUpReq;
-import com.hihi.square.domain.user.dto.response.LoginRes;
+import com.hihi.square.domain.store.dto.request.LoginReq;
+import com.hihi.square.domain.store.dto.request.SignUpReq;
+import com.hihi.square.domain.store.dto.response.LoginRes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +51,13 @@ public class StoreController {
     @GetMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response){
         storeService.logout(request, response);
+        return new ResponseEntity<>(SuccessRes.success(null), HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response){
+        storeService.deleteStore(request, response);
+
         return new ResponseEntity<>(SuccessRes.success(null), HttpStatus.ACCEPTED);
     }
 

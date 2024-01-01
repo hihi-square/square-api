@@ -38,10 +38,10 @@ public class TokenProvider {
     private static final String AUTHORITIES_KEY = "Auth";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_TYPE = "Bearer";
-//    private static final long ACCESS_TOKEN_EXPIRE_TIME = 24 * 60 * 60 * 1000L;
-     private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 1000L; // 1분
-//    private static final long REFRESH_TOKEN_EXPIRE_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L; // 10분
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 24 * 60 * 60 * 1000L;
+//     private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 1000L; // 1분
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
+//    private static final long REFRESH_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L; // 10분
     private final String secret;
     private Key key;
     private final UserRepository userRepository;
@@ -199,6 +199,14 @@ public class TokenProvider {
             // Refresh Token을 삭제
             redisService.deleteValues(uid);
         }
+    }
+
+    public Long getExpiration(String accessToken) {
+        // accessToken 남은 유효시간
+        Date expiration = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody().getExpiration();
+        // 현재 시간
+        Long now = new Date().getTime();
+        return (expiration.getTime() - now);
     }
 
     //headle Expired Token
