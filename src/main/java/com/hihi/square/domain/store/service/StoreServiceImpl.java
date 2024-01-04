@@ -49,6 +49,7 @@ public class StoreServiceImpl implements StoreService{
         if (storeRepository.findByUID(uid).orElse(null) != null) {
             throw new DuplicatedUserException("User is Duplicated");
         }
+
     }
 
     @Override
@@ -68,7 +69,7 @@ public class StoreServiceImpl implements StoreService{
     @Override
     public LoginRes login(LoginReq loginReq, HttpServletResponse response) {
         //사용자 존재 여부 체크
-        User findUser = storeRepository.findByUID(loginReq.getUid())
+        Store findUser = storeRepository.findByUID(loginReq.getUid())
                 .orElseThrow(() -> new UserNotFoundException("User Not Found"));
 
         // 비밀번호 일치 여부 체크
@@ -84,7 +85,7 @@ public class StoreServiceImpl implements StoreService{
     @Override
     public void recreateToken(HttpServletRequest request, HttpServletResponse response) {
         Cookie refreshTokenCookie = WebUtils.getCookie(request, "RefreshToken");
-        log.info("cookie");
+
         if (refreshTokenCookie != null) {
             String refreshToken = refreshTokenCookie.getValue();
             log.info("refreshToken : {}", refreshToken);

@@ -12,8 +12,13 @@ import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Integer> {
 
+    @Override
+    @Query("select s from Store s where s.usrId=:userId and s.status='ACTIVE'")
+    Optional<Store> findById(@Param("userId") Integer userId);
+
     @Query("select s from Store s where s.uid=:uid and s.status='ACTIVE'")
     Optional<Store> findByUID(@Param("uid") String uid);
+
     @Transactional
     @Modifying
     @Query("update Store s set s.status=:status where s.uid=:uid")

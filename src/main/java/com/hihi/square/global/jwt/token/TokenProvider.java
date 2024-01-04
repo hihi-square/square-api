@@ -104,7 +104,8 @@ public class TokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
-                .claim("userId", user.getUid())
+                .claim("uid", user.getUid())
+                .claim("userId", user.getUsrId())
                 .setExpiration(new Date(now + ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -160,7 +161,7 @@ public class TokenProvider {
                 .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
-        String userId = claims.get("userId", String.class);
+        Integer userId = claims.get("userId", Integer.class);
         UserDetails principal = new org.springframework.security.core.userdetails.User(userId.toString(), "",
                 authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
