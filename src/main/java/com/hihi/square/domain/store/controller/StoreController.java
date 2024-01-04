@@ -1,6 +1,6 @@
 package com.hihi.square.domain.store.controller;
 
-import com.hihi.square.common.SuccessRes;
+import com.hihi.square.common.CommonRes;
 import com.hihi.square.domain.store.service.StoreService;
 import com.hihi.square.domain.store.dto.request.LoginReq;
 import com.hihi.square.domain.store.dto.request.SignUpReq;
@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,14 +25,14 @@ public class StoreController {
     @GetMapping("/join/check-id/{user_id}")
     public ResponseEntity<?> checkDuplicateUID(@PathVariable @Validated String uid){
         storeService.checkDuplicateUID(uid);
-        return new ResponseEntity<>(SuccessRes.success("Available User ID"), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(CommonRes.success("Available User ID"), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/join")
     public ResponseEntity<?> join(
             @RequestBody @Validated SignUpReq signUpReq) {
         storeService.join(signUpReq);
-        return new ResponseEntity<>(SuccessRes.success(null), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(CommonRes.success(null), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/login")
@@ -39,30 +40,30 @@ public class StoreController {
             @RequestBody @Validated LoginReq loginReq, HttpServletResponse response) {
         LoginRes loginResponseDto = storeService.login(loginReq, response);
 
-        return new ResponseEntity<>(SuccessRes.success(loginResponseDto), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(CommonRes.success(loginResponseDto), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response){
         storeService.recreateToken(request, response);
-        return new ResponseEntity<>(SuccessRes.success(null), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(CommonRes.success(null), HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response){
         storeService.logout(request, response);
-        return new ResponseEntity<>(SuccessRes.success(null), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(CommonRes.success(null), HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping
     public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response){
         storeService.deleteStore(request, response);
 
-        return new ResponseEntity<>(SuccessRes.success(null), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(CommonRes.success(null), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<?> test(HttpServletRequest request, HttpServletResponse response){
-        return new ResponseEntity<>(SuccessRes.success("test"), HttpStatus.ACCEPTED);
-    }
+//    @GetMapping("/test")
+//    public ResponseEntity<?> test(Authentication authentication){
+//        return new ResponseEntity<>(CommonRes.success("test"), HttpStatus.ACCEPTED);
+//    }
 }
