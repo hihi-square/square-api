@@ -1,4 +1,4 @@
-package com.hihi.square.domain.menu.entity;
+package com.hihi.square.common;
 
 import java.util.Arrays;
 import java.util.List;

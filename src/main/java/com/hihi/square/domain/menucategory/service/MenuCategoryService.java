@@ -1,7 +1,6 @@
 package com.hihi.square.domain.menucategory.service;
 
-import com.hihi.square.domain.menucategory.dto.request.MenuCategoryDto;
-import com.hihi.square.domain.menucategory.entity.MenuCategory;
+import com.hihi.square.domain.menucategory.dto.MenuCategoryDto;
 
 import java.util.List;
 
@@ -12,5 +11,5 @@ public interface MenuCategoryService {
 
     void updateCategory(Integer stoId, Integer categoryId, MenuCategoryDto menuCategoryReq);
 
-    List<MenuCategoryDto> selectCategory(Integer stoId);
+    List<MenuCategoryDto> selectAllCategory(Integer stoId);
 }

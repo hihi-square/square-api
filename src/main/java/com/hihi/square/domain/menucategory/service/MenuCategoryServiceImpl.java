@@ -1,10 +1,10 @@
 package com.hihi.square.domain.menucategory.service;
 
-import com.hihi.square.domain.menucategory.dto.request.MenuCategoryDto;
-import com.hihi.square.domain.menu.entity.CommonStatus;
+import com.hihi.square.common.CommonStatus;
+import com.hihi.square.domain.menu.repository.MenuRepository;
+import com.hihi.square.domain.menucategory.dto.MenuCategoryDto;
 import com.hihi.square.domain.menucategory.entity.MenuCategory;
 import com.hihi.square.domain.menucategory.repository.MenuCategoryRepository;
-import com.hihi.square.domain.menu.repository.MenuRepository;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
 import com.hihi.square.global.error.type.DeletionNotAllowedException;
@@ -37,7 +37,8 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
     @Transactional
     @Override
     public void addCategory(Integer stoId, MenuCategoryDto menuCategoryReq) {
-        //1. 로그인한 store와 등록 store 일치 여부
+        //1. 사전 체크
+        //1-1. 로그인한 store와 등록 store 일치 여부
         Store store = checkUserMatching(stoId, menuCategoryReq.getStoId());
 
         //2. 카테고리 등록
@@ -62,8 +63,8 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
         MenuCategory menuCategory = menuCategoryRepository.findById(categoryId, CommonStatus.activeAndPrivate).orElseThrow(() -> new EntityNotFoundException("MenuCategory Not Found"));
         Store store = checkUserMatching(stoId, menuCategory.getStore().getUsrId());
 
-        //1-2. 해당 카테고리에 상품이 없는지 확인
-        if(menuRepository.findByCategory(categoryId) != null) throw new DeletionNotAllowedException("Category Doesn't Empty");
+        //1-2. 해당 카테고리에 상품이 없는지 확인 ---> 없으면 empty(null x)
+        if(!menuRepository.findByCategory(categoryId).isEmpty()) throw new DeletionNotAllowedException("Category Doesn't Empty");
 
         //2. 카테고리 삭제
         menuCategoryRepository.deleteCategory(categoryId);
@@ -80,32 +81,29 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
         int originSeq = menuCategory.getSequence();
 
         //2. 카테고리 변경
-        //2-1. 상태 지정
+        //2-1. 아이디, 상태 지정
         menuCategoryReq.setId(menuCategory.getId());
         menuCategoryReq.setStatus(menuCategory.getStatus());
-        log.info("req : {}", menuCategoryReq);
         MenuCategory menuCategoryToSave = MenuCategory.toEntity(menuCategoryReq, store);
+        int newSeq = menuCategoryToSave.getSequence();
         menuCategoryRepository.save(menuCategoryToSave);
 
-        //3. 나머지 애들 순서 변경
+        if(originSeq == newSeq) return;
+
+        //3. 순서 바뀐 경우 : 나머지 애들 순서 변경
         //3-1. 현재 store에 해당하는 category List 가져옴(ACTIVE, PRIVATE)
         List<MenuCategory> categoryList = menuCategoryRepository.findAllByStoreOrderBySequence(
                 stoId,
                 CommonStatus.activeAndPrivate
         );
 
-        log.info("list : {}", categoryList);
-
         //3-2. 변경한 카테고리 기준으로 나머지 애들 순서 변경
-        //3-2-1. 변경한 sequence < 원래 sequence
-        int newSeq = menuCategoryToSave.getSequence();
-        log.info("origin : {}, new : {}", originSeq, newSeq);
         changeSequence(categoryList, originSeq, newSeq);
 
     }
 
     @Transactional
-    private void changeSequence(List<MenuCategory> categoryList, Integer originSeq, Integer newSeq) {
+    public void changeSequence(List<MenuCategory> categoryList, Integer originSeq, Integer newSeq) {
         int start = 0;
         int finish = categoryList.size();
         if(originSeq < newSeq){
@@ -134,7 +132,7 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
     }
 
     @Override
-    public List<MenuCategoryDto> selectCategory(Integer stoId) {
+    public List<MenuCategoryDto> selectAllCategory(Integer stoId) {
         List<MenuCategory> menuCategoryList = menuCategoryRepository.findAllByStoreOrderBySequence(stoId, CommonStatus.activeAndPrivate);
         List<MenuCategoryDto> menuCategoryDtoList = new ArrayList<>();
 

@@ -1,6 +1,6 @@
 package com.hihi.square.domain.menucategory.repository;
 
-import com.hihi.square.domain.menu.entity.CommonStatus;
+import com.hihi.square.common.CommonStatus;
 import com.hihi.square.domain.menucategory.entity.MenuCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,14 +19,14 @@ public interface MenuCategoryRepository extends JpaRepository<MenuCategory, Inte
     Integer findSequence(@Param("statuses") List<CommonStatus> statuses);
 
     @Modifying
-    @Query("update MenuCategory mc set mc.status='DELETE' where mc.id=:mcId")
+    @Query("update MenuCategory mc set mc.status='DELETE', mc.modifiedAt = current_timestamp where mc.id=:mcId")
     void deleteCategory(@Param("mcId") Integer mcId);
 
 //    @Query("select mc from MenuCategory mc where mc.store.usrId=:stoId and mc.status in (:statuses)")
-    @Query("select mc from MenuCategory mc where mc.store.usrId = :stoId and mc.status in :statuses order by mc.sequence asc, mc.modifiedDate desc")
+    @Query("select mc from MenuCategory mc where mc.store.usrId = :stoId and mc.status in :statuses order by mc.sequence asc, mc.modifiedAt desc")
     List<MenuCategory> findAllByStoreOrderBySequence(@Param("stoId") Integer stoId, @Param("statuses") List<CommonStatus> statuses);
 
     @Modifying
-    @Query("update MenuCategory mc set mc.sequence=:sequence where mc.id=:mcId")
+    @Query("update MenuCategory mc set mc.sequence=:sequence, mc.modifiedAt = current_timestamp where mc.id=:mcId")
     void updateSequence(@Param("mcId") Integer mcId, @Param("sequence") Integer sequence);
 }

@@ -1,7 +1,7 @@
 package com.hihi.square.domain.menucategory.controller;
 
 import com.hihi.square.common.CommonRes;
-import com.hihi.square.domain.menucategory.dto.request.MenuCategoryDto;
+import com.hihi.square.domain.menucategory.dto.MenuCategoryDto;
 import com.hihi.square.domain.menucategory.service.MenuCategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,7 +44,7 @@ public class MenuCategoryController {
     @GetMapping
     public ResponseEntity<?> selectMenuCategory(Authentication authentication){
         Integer stoId = Integer.parseInt(authentication.getName());
-        List<MenuCategoryDto> menuCategoryList = menuCategoryService.selectCategory(stoId);
+        List<MenuCategoryDto> menuCategoryList = menuCategoryService.selectAllCategory(stoId);
         return new ResponseEntity<>(CommonRes.success(menuCategoryList), HttpStatus.ACCEPTED);
     }
 }
