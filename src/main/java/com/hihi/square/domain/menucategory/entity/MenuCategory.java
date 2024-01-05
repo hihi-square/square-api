@@ -1,8 +1,8 @@
 package com.hihi.square.domain.menucategory.entity;
 
 import com.hihi.square.common.BaseEntity;
-import com.hihi.square.domain.menucategory.dto.request.MenuCategoryDto;
-import com.hihi.square.domain.menu.entity.CommonStatus;
+import com.hihi.square.common.CommonStatus;
+import com.hihi.square.domain.menucategory.dto.MenuCategoryDto;
 import com.hihi.square.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.*;

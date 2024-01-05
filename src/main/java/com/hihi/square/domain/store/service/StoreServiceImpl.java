@@ -1,11 +1,10 @@
 package com.hihi.square.domain.store.service;
 
-import com.hihi.square.domain.store.entity.Store;
-import com.hihi.square.domain.store.repository.StoreRepository;
 import com.hihi.square.domain.store.dto.request.LoginReq;
 import com.hihi.square.domain.store.dto.request.SignUpReq;
 import com.hihi.square.domain.store.dto.response.LoginRes;
-import com.hihi.square.domain.user.entity.User;
+import com.hihi.square.domain.store.entity.Store;
+import com.hihi.square.domain.store.repository.StoreRepository;
 import com.hihi.square.domain.user.entity.UserStatus;
 import com.hihi.square.domain.user.repository.UserRepository;
 import com.hihi.square.global.error.type.DuplicatedUserException;

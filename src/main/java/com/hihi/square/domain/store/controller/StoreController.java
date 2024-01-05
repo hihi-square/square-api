@@ -1,17 +1,16 @@
 package com.hihi.square.domain.store.controller;
 
 import com.hihi.square.common.CommonRes;
-import com.hihi.square.domain.store.service.StoreService;
 import com.hihi.square.domain.store.dto.request.LoginReq;
 import com.hihi.square.domain.store.dto.request.SignUpReq;
 import com.hihi.square.domain.store.dto.response.LoginRes;
+import com.hihi.square.domain.store.service.StoreService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
