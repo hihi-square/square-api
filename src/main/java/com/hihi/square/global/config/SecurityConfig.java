@@ -56,7 +56,7 @@ public class SecurityConfig {
 
                 //로그인, 회원가입 API
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/store/join/**", "/store/login", "/store/reissue", "/buyer/join/**", "/buyer/login").permitAll()
+                        .requestMatchers("/store/join/**", "/store/login", "/store/reissue", "/buyer/join/**", "/buyer/login/**").permitAll()
                         .requestMatchers("/store/**").hasAuthority("STORE")
                         .requestMatchers("/buyer/**").hasAuthority("BUYER")
                         .anyRequest().authenticated()
@@ -73,7 +73,18 @@ public class SecurityConfig {
                 //예외 핸들링 -> 만든 클래스
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(jwtAccessDeniedHandler)
-                );
+                )
+
+                // 로그아웃. 추후 주석 제거
+                .logout((logout) -> logout.logoutSuccessUrl("/"))
+
+                // 스프링 oauth2 로그인.
+//                .oauth2Login((oauth2) -> oauth2
+//                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
+//                                .userService(customOAuth2UserService))
+//                        .defaultSuccessUrl("/", true));
+
+        ;
 
         return http.build();
     }
