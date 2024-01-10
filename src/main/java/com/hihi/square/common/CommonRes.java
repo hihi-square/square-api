@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SuccessRes<T> {
+public class CommonRes<T> {
 	private int statusCode;
 	private String message;
 	private T data;
 
-	public static <T> SuccessRes<T> success(T data) {
-		return SuccessRes.<T>builder()
+	public static <T> CommonRes<T> success(T data) {
+		return CommonRes.<T>builder()
 			.statusCode(200)
 			.message("Success")
 			.data(data)
