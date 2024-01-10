@@ -22,9 +22,7 @@ public class User {
     private Integer usrId;
     private String uid;
     private String password;
-    private String name;
     private String nickname;
-    private String phone;
     private String email;
     @Enumerated(EnumType.STRING)
     private UserStatus status;
