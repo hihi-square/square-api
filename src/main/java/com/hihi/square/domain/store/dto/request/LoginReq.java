@@ -1,4 +1,4 @@
-package com.hihi.square.domain.user.dto.request;
+package com.hihi.square.domain.store.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

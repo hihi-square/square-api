@@ -4,6 +4,7 @@ import com.hihi.square.global.error.type.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -36,6 +37,19 @@ public class GlobalExceptionHandler {
 		final ErrorRes response = ErrorRes.of(ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
+
+	/**
+	 * Http Message 입력 에러
+	 * 주로 Http Request 요청 시, Json 형식을 맞추지 못한 경우 발생
+	 */
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	protected ResponseEntity<ErrorRes> handleHttpMessageNotReadableExceptionException(
+			HttpMessageNotReadableException e) {
+		log.error("handleHttpMessageNotReadableExceptionException", e);
+		final ErrorRes response = ErrorRes.of(ErrorCode.INVALID_INPUT_VALUE);
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	}
+
 
 	/**
 	 * enum type 일치하지 않아 binding 못할 경우 발생

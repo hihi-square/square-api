@@ -10,4 +10,12 @@ public interface RedisService {
 
 	boolean checkExistsValue(String value);
 
+	void setBlackList(String key, Object o, Long milliSeconds);
+
+	Object getBlackList(String key);
+
+	boolean deleteBlackList(String key);
+
+	boolean hasKeyBlackList(String key);
+
 }

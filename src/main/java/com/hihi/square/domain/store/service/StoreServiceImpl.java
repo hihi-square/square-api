@@ -1,18 +1,20 @@
 package com.hihi.square.domain.store.service;
 
+import com.hihi.square.domain.store.dto.request.LoginReq;
+import com.hihi.square.domain.store.dto.request.SignUpReq;
+import com.hihi.square.domain.store.dto.response.LoginRes;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
-import com.hihi.square.domain.user.dto.request.LoginReq;
-import com.hihi.square.domain.user.dto.request.SignUpReq;
-import com.hihi.square.domain.user.dto.response.LoginRes;
-import com.hihi.square.domain.user.entity.User;
+import com.hihi.square.domain.user.entity.UserStatus;
 import com.hihi.square.domain.user.repository.UserRepository;
 import com.hihi.square.global.error.type.DuplicatedUserException;
 import com.hihi.square.global.error.type.PasswordNotMatchException;
 import com.hihi.square.global.error.type.UserNotFoundException;
+import com.hihi.square.global.jwt.exception.ExpiredTokenException;
 import com.hihi.square.global.jwt.exception.ReLoginException;
 import com.hihi.square.global.jwt.token.TokenInfo;
 import com.hihi.square.global.jwt.token.TokenProvider;
+import com.hihi.square.global.util.radis.RedisService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,7 +34,7 @@ public class StoreServiceImpl implements StoreService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
-//    private final RedisService redisService;
+    private final RedisService redisService;
 //    private final CustomUserDetailsService userDetailsService;
 
     @Override
@@ -43,16 +45,17 @@ public class StoreServiceImpl implements StoreService{
     @Override
     public void checkDuplicateUID(String uid){
         //이미 존재하는 아이디의 경우
-        if (userRepository.findByUID(uid).orElse(null) != null) {
+        if (storeRepository.findByUID(uid).orElse(null) != null) {
             throw new DuplicatedUserException("User is Duplicated");
         }
+
     }
 
     @Override
     @Transactional
     public void join(SignUpReq signUpReq) {
         //이미 존재하는 아이디의 경우
-        if (userRepository.findByUID(signUpReq.getUid()).orElse(null) != null) {
+        if (storeRepository.findByUID(signUpReq.getUid()).orElse(null) != null) {
             throw new DuplicatedUserException("User is Duplicated");
         }
 
@@ -65,7 +68,7 @@ public class StoreServiceImpl implements StoreService{
     @Override
     public LoginRes login(LoginReq loginReq, HttpServletResponse response) {
         //사용자 존재 여부 체크
-        User findUser = userRepository.findByUID(loginReq.getUid())
+        Store findUser = storeRepository.findByUID(loginReq.getUid())
                 .orElseThrow(() -> new UserNotFoundException("User Not Found"));
 
         // 비밀번호 일치 여부 체크
@@ -81,7 +84,7 @@ public class StoreServiceImpl implements StoreService{
     @Override
     public void recreateToken(HttpServletRequest request, HttpServletResponse response) {
         Cookie refreshTokenCookie = WebUtils.getCookie(request, "RefreshToken");
-        log.info("cookie");
+
         if (refreshTokenCookie != null) {
             String refreshToken = refreshTokenCookie.getValue();
             log.info("refreshToken : {}", refreshToken);
@@ -97,19 +100,38 @@ public class StoreServiceImpl implements StoreService{
         }
     }
 
+    public void deleteToken(HttpServletRequest request, HttpServletResponse response) {
+        String accessToken = tokenProvider.resolveToken(request);
+
+        // 1. Access Token 검증
+        if(!tokenProvider.validateToken(accessToken)){
+            throw new ExpiredTokenException();
+        }
+
+        //2. 쿠키에 있는 refresh Token 삭제
+        tokenProvider.removeRefreshTokenCookie(response);
+
+        //3. redis에 저장된 refresh token 제거
+        String uid = tokenProvider.parseClaims(accessToken).getSubject();
+        tokenProvider.removeRefreshTokenByRedis(uid);
+
+        // 4. Access Token blacklist에 등록하여 만료시키기
+        // 해당 엑세스 토큰의 남은 유효시간을 얻음
+        Long expiration = tokenProvider.getExpiration(accessToken);
+        redisService.setBlackList(accessToken, "access_token", expiration);
+    }
+
     @Override
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
-//        String accessToken = tokenProvider.resolveToken(request);
-//
-//        // Delete Cookie
-//        tokenProvider.removeRefreshTokenCookie(response);
-//
-//        // Extract uid from AccessToken and delete RefreshToken from Redis
-//        String uid = tokenProvider.parseClaims(accessToken).getSubject();
-//        tokenProvider.removeRefreshTokenByRedis(uid);
-//
-//        // 해당 Access Token 유효시간을 가지고 와서 BlackList에 저장하기
-//        Long expiration = tokenProvider.getExpiration(accessToken);
-//        redisTemplate.opsForValue().set(tokenRequestDto.getAccessToken(),"logout",expiration,TimeUnit.MILLISECONDS);
+    public void logout(HttpServletRequest request, HttpServletResponse response){
+        deleteToken(request, response);
+    }
+
+    @Override
+    public void deleteStore(HttpServletRequest request, HttpServletResponse response) {
+        String accessToken = tokenProvider.resolveToken(request);
+        String uid = tokenProvider.parseClaims(accessToken).getSubject();
+        storeRepository.deleteByUid(uid, UserStatus.WITHDRAWAL);
+
+        deleteToken(request, response);
     }
 }
