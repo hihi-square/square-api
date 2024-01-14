@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -33,22 +34,25 @@ public class OAuthAttributes {
     }
 
     public static OAuthAttributes of(String registrationId, String nameAttributeKey, Map<String, Object> attributes) {
+        // 카카오 로그인이라면
+//        if (registrationId.equals("KAKAO"))
+//            return ofKakao(nameAttributeKey, attributes);
         return ofKakao(nameAttributeKey, attributes);
     }
 
     private static OAuthAttributes ofKakao(String nameAttributeKey, Map<String, Object> attributes) {
+        Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
+        Map<String, Object> kakao_account = (Map<String, Object>) attributes.get("kakao_account");
         return OAuthAttributes.builder()
                 .attributes(attributes)
                 .nameAttributeKey(nameAttributeKey)
-                .uid((String) attributes.get("id"))
-                .email((String) attributes.get("account_email"))
-                .profileImage((String) attributes.get("profile_image"))
-                .nickname((String) attributes.get("profile_nickname"))
+                .uid("KAKAO".concat(String.valueOf(attributes.get("id"))))
+                .email((String) kakao_account.get("email"))
+                .profileImage((String) properties.get("profile_image"))
+                .nickname((String) properties.get("nickname"))
                 .method(LoginMethod.KAKAO)
                 .build();
     }
-
-
 
     public Buyer toEntity() {
         return Buyer.builder()
@@ -57,9 +61,20 @@ public class OAuthAttributes {
                 .email(email)
                 .profileImage(profileImage)
                 .status(UserStatus.ACTIVE)
-                .mainAddress("대전 유성구 덕명동")
                 .method(LoginMethod.KAKAO)
                 .build();
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("attributes", this.getAttributes());
+        map.put("nameAttributeKey", this.getNameAttributeKey());
+        map.put("uid", this.getUid());
+        map.put("email", this.getEmail());
+        map.put("profileImage", this.getProfileImage());
+        map.put("nickname", this.getNickname());
+        map.put("method", this.getMethod());
+        return map;
     }
 
 }

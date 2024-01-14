@@ -1,5 +1,6 @@
 package com.hihi.square.global.jwt.service;
 
+import com.hihi.square.domain.user.entity.Role;
 import com.hihi.square.domain.user.entity.User;
 import com.hihi.square.domain.user.entity.UserStatus;
 import com.hihi.square.domain.user.repository.UserRepository;
@@ -39,7 +40,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 //              .collect(Collectors.toList());
       //단일 권한
       GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(user.getDecriminatorValue().toString());
-      
       return new org.springframework.security.core.userdetails.User(
               user.getUid(),
               user.getPassword(),

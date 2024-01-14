@@ -2,7 +2,7 @@ package com.hihi.square.global.jwt.filter;
 
 import com.hihi.square.global.jwt.service.CustomUserDetailsService;
 import com.hihi.square.global.jwt.token.TokenProvider;
-import com.hihi.square.global.util.radis.RedisService;
+import com.hihi.square.global.util.redis.RedisService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

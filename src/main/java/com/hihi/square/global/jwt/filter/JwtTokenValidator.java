@@ -4,7 +4,7 @@ import com.hihi.square.global.error.ErrorCode;
 import com.hihi.square.global.jwt.response.JwtErrorResponseSender;
 import com.hihi.square.global.jwt.service.CustomUserDetailsService;
 import com.hihi.square.global.jwt.token.TokenProvider;
-import com.hihi.square.global.util.radis.RedisService;
+import com.hihi.square.global.util.redis.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

@@ -6,7 +6,7 @@ spring:
           kakao:
             client-id: 409915cf48a47370a92cea926084d5a1
             client-secret: Izuv0Yi82kndHrc0zc4j3Y2FQ16UGdb0
-            redirect-uri: "{baseUrl}/buyer/{action}/oauth2/kakao/{registrationId}"
+            redirect-uri: http://121.184.131.115:8080/login/oauth2/code/kakao # spring security에서는 기본적으로 /login/oauth2/code/{registrationId} 로 구성
             client-name: Kakao
             client-authentication-method: client_secret_post # 다른 서비스와 달리 카카오는 필수 파라미터 값들을 담아 POST로만 요청 가능
             authorization-grant-type: authorization_code

@@ -29,16 +29,22 @@ spring:
       port: 6379
 
   profiles:
-    include: oauth
+    include: oauth # application-oauth.yml도 설정
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher # org.springframework.web.util.pattern.PatternParseException 에러 수정
 
 logging:
   level:
     org.springframework: INFO # Spring 프레임워크의 로그 레벨을 INFO로 설정
     org.hibernate.SQL: DEBUG # Hibernate SQL 쿼리의 로그 레벨을 DEBUG로 설정
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE # Hibernate SQL 바인딩 정보의 로그 레벨을 TRACE로 설정
+    org.springframework.security: DEBUG
 
 server:
   port: 8080
+  address: 0.0.0.0
 #  ec2-url: https://www.square
 
 jwt:
