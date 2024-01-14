@@ -8,6 +8,9 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Entity
 @Table(name = "buyer")
 @AllArgsConstructor
@@ -19,5 +22,8 @@ public class Buyer extends User {
     @Enumerated(EnumType.STRING)
     private LoginMethod method;
     private String profileImage;
-
+    @Override
+    public String toString() {
+        return "Buyer(id="+this.getUid()+", method="+this.method+")";
+    }
 }

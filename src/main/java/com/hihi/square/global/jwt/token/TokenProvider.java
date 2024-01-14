@@ -1,12 +1,13 @@
 package com.hihi.square.global.jwt.token;
 
+import com.hihi.square.domain.user.entity.Role;
 import com.hihi.square.domain.user.repository.UserRepository;
 import com.hihi.square.global.error.ErrorCode;
 import com.hihi.square.global.error.type.UserNotFoundException;
 import com.hihi.square.global.jwt.exception.CustomJwtException;
 import com.hihi.square.global.jwt.exception.ReLoginException;
 import com.hihi.square.global.jwt.service.CustomUserDetailsService;
-import com.hihi.square.global.util.radis.RedisService;
+import com.hihi.square.global.util.redis.RedisService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -39,6 +41,8 @@ public class TokenProvider {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_TYPE = "Bearer";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 24 * 60 * 60 * 1000L;
+    // oauth를 이용한 토큰 시간은 30초로 지정.
+    private static final long OAUTH_ACCESS_TOKEN_EXPIRE_TIME = 30 * 1000L;
 //     private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 1000L; // 1분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
 //    private static final long REFRESH_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L; // 10분
@@ -66,10 +70,16 @@ public class TokenProvider {
     public TokenInfo createTokens(String uid, String password, String authority, HttpServletResponse response) {
         //단일 권한
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority.toString());
-
         // Authenticate the user
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(uid, password, Collections.singletonList(grantedAuthority));
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Authentication authentication;
+        if (Role.BUYER.toString().equals(authority)) {
+            // 구매자의 경우에는 비밀번호가 없기 때문에 익명 토큰 사용
+            // 그렇지 않으면 password가 null이라는 에러 발생
+            authentication = new AnonymousAuthenticationToken("key", uid, Collections.singletonList(grantedAuthority));
+        } else {
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(uid, password, Collections.singletonList(grantedAuthority));
+            authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         log.debug("authentication : {}", authentication);
 
@@ -87,7 +97,6 @@ public class TokenProvider {
         addRefreshTokenCookie(response, refreshToken);
         return tokenInfo;
     }
-
 
     //Authentication 권한 정보 담음 토큰 생성
     public String createAccessToken(Authentication authentication) {
@@ -107,6 +116,30 @@ public class TokenProvider {
                 .claim("uid", user.getUid())
                 .claim("userId", user.getUsrId())
                 .setExpiration(new Date(now + ACCESS_TOKEN_EXPIRE_TIME))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        // 생성된 토큰을 토큰 dto에 담아 반환
+        return accessToken;
+    }
+    //Authentication 권한 정보 담음 토큰 생성
+    public String createOAuthAccessToken(Authentication authentication) {
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        long now = (new Date()).getTime();
+        com.hihi.square.domain.user.entity.User user = userRepository.findByUID(authentication.getName())
+                .orElseThrow(() -> new UserNotFoundException(
+                        "User Not Found"));
+
+        // AccessToken 생성
+        String accessToken = Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim(AUTHORITIES_KEY, authorities)
+                .claim("uid", user.getUid())
+                .claim("userId", user.getUsrId())
+                .setExpiration(new Date(now + OAUTH_ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
@@ -161,6 +194,7 @@ public class TokenProvider {
                 .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
+
         Integer userId = claims.get("userId", Integer.class);
         UserDetails principal = new org.springframework.security.core.userdetails.User(userId.toString(), "",
                 authorities);
