@@ -14,7 +14,7 @@ import com.hihi.square.global.jwt.exception.ExpiredTokenException;
 import com.hihi.square.global.jwt.exception.ReLoginException;
 import com.hihi.square.global.jwt.token.TokenInfo;
 import com.hihi.square.global.jwt.token.TokenProvider;
-import com.hihi.square.global.util.radis.RedisService;
+import com.hihi.square.global.util.redis.RedisService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

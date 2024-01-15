@@ -18,6 +18,9 @@ import lombok.experimental.SuperBuilder;
 @ToString
 public class Store extends User {
     @Column(name = "name")
+
+    String name;
+    String phone;
     String storeName;
     String storeContact;
     String storeContact2;

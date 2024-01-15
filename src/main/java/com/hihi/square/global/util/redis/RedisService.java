@@ -1,4 +1,4 @@
-package com.hihi.square.global.util.radis;
+package com.hihi.square.global.util.redis;
 
 public interface RedisService {
 
