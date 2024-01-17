@@ -1,6 +1,7 @@
 package com.hihi.square.domain.activity.entity;
 
 import com.hihi.square.common.BaseEntity;
+import com.hihi.square.domain.activity.dto.request.UpdateActivityDto;
 import com.hihi.square.domain.buyer.entity.Buyer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -8,6 +9,7 @@ import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.stereotype.Component;
 
 @Entity
 @Table(name="activity")
@@ -36,5 +38,17 @@ public class Activity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "usr_id")
     private Buyer buyer;
+
+    @Column(name = "is_main")
+    private boolean isMain;
+
+    public void update(UpdateActivityDto dto) {
+        this.depth = dto.getDepth();
+        this.isMain = dto.getIsMain();
+    }
+
+    public void updateIsMain(boolean isMain) {
+        this.isMain = isMain;
+    }
 
 }

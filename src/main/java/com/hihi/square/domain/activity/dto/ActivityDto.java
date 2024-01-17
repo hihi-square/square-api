@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @Data
 @Builder
@@ -28,9 +29,9 @@ public class ActivityDto {
     @Min(0) @Max(2)
     private Integer depth; // 해당 지역 기준으로 확장되는 칸 수
 
-    @ManyToOne
-    @JoinColumn(name = "usr_id")
-    private Buyer buyer;
+    private Integer buyerId;
+
+    private Boolean isMain;
 
     public static ActivityDto toRes(Activity activity) {
         return ActivityDto.builder()
@@ -39,6 +40,8 @@ public class ActivityDto {
                 .latitude(activity.getLatitude())
                 .longitude(activity.getLongitude())
                 .depth(activity.getDepth())
+                .buyerId(activity.getBuyer().getUsrId())
+                .isMain(activity.isMain())
                 .build();
     }
 }

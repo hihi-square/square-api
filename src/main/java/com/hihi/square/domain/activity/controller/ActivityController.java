@@ -4,6 +4,7 @@ import com.hihi.square.common.CommonRes;
 import com.hihi.square.domain.activity.dto.ActivityDto;
 import com.hihi.square.domain.activity.dto.EmdAddressDto;
 import com.hihi.square.domain.activity.dto.request.AddActivityReqDto;
+import com.hihi.square.domain.activity.dto.request.UpdateActivityReqDto;
 import com.hihi.square.domain.activity.entity.EmdAddress;
 import com.hihi.square.domain.activity.service.ActivityService;
 import com.hihi.square.domain.buyer.entity.Buyer;
@@ -41,5 +42,13 @@ public class ActivityController {
         Integer buyerId = Integer.parseInt(authentication.getName());
         activityService.addActivity(buyerId, req);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.CREATED);
+    }
+
+    @PatchMapping
+    public ResponseEntity patchActivity(Authentication authentication, @RequestBody UpdateActivityReqDto req) {
+        Integer buyerId = Integer.parseInt(authentication.getName());
+        System.out.println(req);
+        activityService.updateActivity(buyerId, req);
+        return new ResponseEntity(CommonRes.success(null), HttpStatus.ACCEPTED);
     }
 }

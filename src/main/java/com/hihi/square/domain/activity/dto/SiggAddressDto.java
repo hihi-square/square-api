@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SiggAddressDto {
-    private long id;
+    private Long id;
     private String name;
 
     public static SiggAddressDto toRes(SiggAddress siggAddress) {

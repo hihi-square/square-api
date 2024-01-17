@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmdAddressDto {
-    private long id;
+    private Long id;
     private String name;
     private SiggAddressDto sigg;
 
