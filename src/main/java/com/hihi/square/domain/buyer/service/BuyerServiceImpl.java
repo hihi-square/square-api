@@ -1,12 +1,6 @@
 package com.hihi.square.domain.buyer.service;
 
-import com.hihi.square.domain.buyer.entity.Buyer;
-import com.hihi.square.domain.buyer.entity.LoginMethod;
-import com.hihi.square.domain.buyer.oauth2.dto.OAuthAttributes;
-import com.hihi.square.domain.buyer.repository.BuyerRepository;
-import com.hihi.square.domain.buyer.dto.response.LoginRes;
-import com.hihi.square.domain.store.dto.request.LoginReq;
-import com.hihi.square.domain.user.entity.Role;
+import com.hihi.square.domain.buyer.dto.LoginRes;
 import com.hihi.square.domain.user.entity.User;
 import com.hihi.square.domain.user.repository.UserRepository;
 import com.hihi.square.global.error.type.UserNotFoundException;
@@ -16,10 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 @Slf4j
