@@ -102,4 +102,22 @@ public class ActivityServiceImpl implements ActivityService{
             activityRepository.delete(activity);
         }
     }
+
+    @Override
+    @Transactional
+    public void updateMainActivity(Integer buyerId, Integer activityId) {
+        // 구매자, 활동구역 객체 가져오기
+        Buyer buyer = buyerRepository.findById(buyerId).orElseThrow(()->new UserNotFoundException("User Not Found"));
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new EntityNotFoundException("Activity Not Found"));
+
+        // 만약 구매자와 활동구역의 유저가 같지 않으면 예외 처리
+        if (!activity.getBuyer().equals(buyer)) throw new UserMismachException("User Mismatch");
+
+        // 기존 main activity false 처리
+        Activity pastMainActivity = activityRepository.findByBuyerAndIsMainTrue(buyer);
+        pastMainActivity.updateIsMain(false);
+
+        // 새로운 main activity 설정
+        activity.updateIsMain(true);
+    }
 }

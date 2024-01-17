@@ -45,10 +45,16 @@ public class ActivityController {
     }
 
     @PatchMapping
-    public ResponseEntity patchActivity(Authentication authentication, @RequestBody UpdateActivityReqDto req) {
+    public ResponseEntity updateActivity(Authentication authentication, @RequestBody UpdateActivityReqDto req) {
         Integer buyerId = Integer.parseInt(authentication.getName());
-        System.out.println(req);
         activityService.updateActivity(buyerId, req);
+        return new ResponseEntity(CommonRes.success(null), HttpStatus.ACCEPTED);
+    }
+
+    @PatchMapping("/main")
+    public ResponseEntity updateMainActivity(Authentication authentication, @RequestParam @NotNull Integer id) {
+        Integer buyerId = Integer.parseInt(authentication.getName());
+        activityService.updateMainActivity(buyerId, id);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.ACCEPTED);
     }
 }

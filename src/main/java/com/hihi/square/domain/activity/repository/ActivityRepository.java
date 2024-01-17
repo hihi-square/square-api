@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface ActivityRepository extends JpaRepository<Activity, Integer> {
     List<Activity> findAllByBuyer(Buyer buyer);
+    Activity findByBuyerAndIsMainTrue(Buyer buyer);
 }

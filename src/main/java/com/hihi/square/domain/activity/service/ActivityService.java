@@ -14,4 +14,6 @@ public interface ActivityService {
     void addActivity(Integer buyerId, AddActivityReqDto req);
 
     void updateActivity(Integer buyerId, UpdateActivityReqDto req);
+
+    void updateMainActivity(Integer buyerId, Integer activityId);
 }
