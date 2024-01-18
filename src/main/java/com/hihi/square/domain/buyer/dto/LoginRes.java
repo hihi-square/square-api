@@ -1,4 +1,4 @@
-package com.hihi.square.domain.buyer.dto.response;
+package com.hihi.square.domain.buyer.dto;
 
 import com.hihi.square.global.jwt.token.TokenInfo;
 import lombok.AllArgsConstructor;

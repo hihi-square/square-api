@@ -1,18 +1,18 @@
-package com.hihi.square.domain.address.entity;
+package com.hihi.square.domain.activity.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 @Entity
-@Table(name = "emd_address")
-@Getter
+@Table(name="emd_address")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+@Getter
+@ToString
+@EntityListeners(AuditingEntityListener.class)
 public class EmdAddress {
     @Id
     private Long id; // bcode
