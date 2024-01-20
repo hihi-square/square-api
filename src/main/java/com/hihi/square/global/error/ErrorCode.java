@@ -29,7 +29,8 @@ public enum ErrorCode {
 	HANDLE_ACCESS_DENIED(403, "C006", "Access is Denied"),
 	REQUIRED_PARAMETER_MISSING(411, "C007", "Required Parameter is missing"),
 	DELETE_NOT_ALLOWED(400, "C008", "Delete Not Allowed"),
-	ADD_NOT_ALLOWED(400, "C009", "Add Not Allowed")
+	ADD_NOT_ALLOWED(400, "C009", "Add Not Allowed"),
+	UPDATE_NOT_ALLOWED(400, "C010", "UPDATE Not Allowed")
 	;
 
 

@@ -12,13 +12,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Builder
 @Getter
 @ToString
-@EntityListeners(AuditingEntityListener.class)
 public class EmdAddress {
     @Id
     private Long id; // bcode
     private String name;
     @ManyToOne
-    @JoinColumn(name = "sigg_id")
+    @JoinColumn(name = "asi_id")
     private SiggAddress siggAddress;
 
 }

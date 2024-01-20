@@ -40,7 +40,7 @@ public class TokenProvider {
     private static final String AUTHORITIES_KEY = "Auth";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_TYPE = "Bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 24 * 60 * 60 * 1000L;
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 120 * 24 * 60 * 60 * 1000L;
     // oauth를 이용한 토큰 시간은 30초로 지정.
     private static final long OAUTH_ACCESS_TOKEN_EXPIRE_TIME = 30 * 1000L;
 //     private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 1000L; // 1분

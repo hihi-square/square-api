@@ -67,6 +67,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers("/store/join/**", "/store/login", "/store/reissue",  "/**/oauth2/**").permitAll()
                         .requestMatchers("/store/**").hasAuthority("STORE")
+                        .requestMatchers("/partnerships/**").hasAuthority("STORE")
                         .requestMatchers("/buyer/**").hasAuthority("BUYER")
                         .anyRequest().authenticated()
                 )

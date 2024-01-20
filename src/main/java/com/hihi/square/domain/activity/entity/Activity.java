@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 @Builder
 @Getter
 @ToString
-@EntityListeners(AuditingEntityListener.class)
 public class Activity extends BaseEntity {
 
     @Id
@@ -26,7 +25,7 @@ public class Activity extends BaseEntity {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "emd_id")
+    @JoinColumn(name = "aem_id")
     private EmdAddress emdAddress;
 
     private Double latitude;
@@ -36,7 +35,7 @@ public class Activity extends BaseEntity {
     private Integer depth; // 해당 지역 기준으로 확장되는 칸 수
 
     @ManyToOne
-    @JoinColumn(name = "usr_id")
+    @JoinColumn(name = "buy_id")
     private Buyer buyer;
 
     @Column(name = "is_main")
