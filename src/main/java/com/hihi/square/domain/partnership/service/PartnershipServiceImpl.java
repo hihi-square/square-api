@@ -186,9 +186,24 @@ public class PartnershipServiceImpl implements PartnershipService{
         }
     }
 
+    @Override
     public List<PartnershipRes> getPartnerships(Integer stoId) {
         Store store = storeRepository.findById(stoId).orElseThrow(()-> new UserNotFoundException("User not found"));
         List<Partnership> partnershipList = partnershipRepository.findAllByStore(store);
+
+        return partnershipListToResList(partnershipList);
+    }
+
+    @Override
+    public List<PartnershipRes> getPartnerships(Integer stoId1, Integer stoId2) {
+        Store store1 = storeRepository.findById(stoId1).orElseThrow(()-> new UserNotFoundException("User not found"));
+        Store store2 = storeRepository.findById(stoId2).orElseThrow(()-> new UserNotFoundException("User not found"));
+        List<Partnership> partnershipList = partnershipRepository.findAllByStores(store1, store2);
+
+        return partnershipListToResList(partnershipList);
+    }
+
+    public List<PartnershipRes> partnershipListToResList(List<Partnership> partnershipList) {
         List<PartnershipRes> resList = new ArrayList<>();
         for(Partnership partnership : partnershipList) {
             StoreInfoRes issStore = StoreInfoRes.toRes(partnership.getIssStore());

@@ -6,6 +6,7 @@ import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipAcceptSta
 import com.hihi.square.domain.partnership.dto.response.PartnershipRes;
 import com.hihi.square.domain.partnership.service.PartnershipService;
 import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -49,9 +50,17 @@ public class PartnershipController {
 
     // 내 제휴 리스트 가져오기
     @GetMapping
-    public ResponseEntity<List<PartnershipReq>> getUserPartnerships(Authentication authentication) {
+    public ResponseEntity<List<PartnershipRes>> getUserPartnerships(Authentication authentication) {
         Integer stoId = Integer.parseInt(authentication.getName());
         List<PartnershipRes> list = partnershipService.getPartnerships(stoId);
+        return new ResponseEntity(CommonRes.success(list), HttpStatus.OK);
+    }
+
+    // 특정 가게와 진행했던 제휴 리스트 가져오기
+    @GetMapping("/{id}")
+    public ResponseEntity<List<PartnershipRes>> getUserPartnershipsWithOtherStore(Authentication authentication, @PathVariable @NonNull Integer id) {
+        Integer stoId = Integer.parseInt(authentication.getName());
+        List<PartnershipRes> list = partnershipService.getPartnerships(stoId, id);
         return new ResponseEntity(CommonRes.success(list), HttpStatus.OK);
     }
 

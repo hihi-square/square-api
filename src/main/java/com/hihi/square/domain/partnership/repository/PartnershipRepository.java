@@ -14,4 +14,7 @@ public interface PartnershipRepository extends JpaRepository<Partnership, Intege
 
     @Query("select p from Partnership p where p.issStore = :store or p.useStore = :store")
     List<Partnership> findAllByStore(Store store);
+
+    @Query("select p from Partnership p where (p.issStore = :store1 and p.useStore = :store2) or (p.issStore = :store2 and p.useStore = :store1)")
+    List<Partnership> findAllByStores(Store store1, Store store2);
 }

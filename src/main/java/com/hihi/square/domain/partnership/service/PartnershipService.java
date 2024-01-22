@@ -14,4 +14,6 @@ public interface PartnershipService {
     void updatePartnershipAcceptState(Integer stoId, UpdatePartnershipAcceptStateReq req);
 
     List<PartnershipRes> getPartnerships(Integer stoId);
+
+    List<PartnershipRes> getPartnerships(Integer stoId1, Integer stoId2);
 }
