@@ -1,25 +1,32 @@
 package com.hihi.square.domain.partnership.service;
 
 
+import com.hihi.square.domain.menu.dto.MenuInfoRes;
+import com.hihi.square.domain.menu.dto.MenuReq;
 import com.hihi.square.domain.menu.entity.Menu;
 import com.hihi.square.domain.menu.repository.MenuRepository;
-import com.hihi.square.domain.partnership.dto.request.PartnershipDto;
-import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipAcceptStateReqDto;
+import com.hihi.square.domain.partnership.dto.request.PartnershipReq;
+import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipAcceptStateReq;
+import com.hihi.square.domain.partnership.dto.response.PartnershipRes;
 import com.hihi.square.domain.partnership.entity.Partnership;
 import com.hihi.square.domain.partnership.entity.PartnershipAcceptState;
 import com.hihi.square.domain.partnership.entity.PartnershipStop;
 import com.hihi.square.domain.partnership.repository.PartnershipRepository;
 import com.hihi.square.domain.partnership.repository.PartnershipStopRepository;
+import com.hihi.square.domain.store.dto.response.StoreInfoRes;
+import com.hihi.square.domain.store.dto.response.StoreRes;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
+import com.hihi.square.domain.user.dto.UserRes;
 import com.hihi.square.global.error.ErrorCode;
 import com.hihi.square.global.error.type.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +39,7 @@ public class PartnershipServiceImpl implements PartnershipService{
 
     @Override
     @Transactional
-    public void addPartnership(Integer stoId, PartnershipDto req) {
+    public void addPartnership(Integer stoId, PartnershipReq req) {
         // 로그인 유저
         Store store = storeRepository.findById(stoId).orElseThrow(()->new UserNotFoundException("Store not found"));
         
@@ -59,7 +66,7 @@ public class PartnershipServiceImpl implements PartnershipService{
 
     @Override
     @Transactional
-    public void updatePartnership(Integer stoId, PartnershipDto req) {
+    public void updatePartnership(Integer stoId, PartnershipReq req) {
         // 로그인 유저
         Store store = storeRepository.findById(stoId).orElseThrow(()->new UserNotFoundException("Store not found"));
         Partnership partnership = partnershipRepository.findById(req.getId()).orElseThrow(() -> new EntityNotFoundException("Partnership not found"));
@@ -96,7 +103,7 @@ public class PartnershipServiceImpl implements PartnershipService{
 
     @Override
     @Transactional
-    public void updatePartnershipAcceptState(Integer stoId, UpdatePartnershipAcceptStateReqDto req) {
+    public void updatePartnershipAcceptState(Integer stoId, UpdatePartnershipAcceptStateReq req) {
         // 로그인한 유저
         Store store = storeRepository.findById(stoId).orElseThrow(() -> new UserNotFoundException("Store not found"));
 
@@ -177,5 +184,18 @@ public class PartnershipServiceImpl implements PartnershipService{
 //                partnershipRepository.save(partnership);
             } else throw new UpdateNotAllowedException("Can't update STOP state to "+req.getState()); // 나머지 처리는 불가
         }
+    }
+
+    public List<PartnershipRes> getPartnerships(Integer stoId) {
+        Store store = storeRepository.findById(stoId).orElseThrow(()-> new UserNotFoundException("User not found"));
+        List<Partnership> partnershipList = partnershipRepository.findAllByStore(store);
+        List<PartnershipRes> resList = new ArrayList<>();
+        for(Partnership partnership : partnershipList) {
+            StoreInfoRes issStore = StoreInfoRes.toRes(partnership.getIssStore());
+            StoreInfoRes useStore = StoreInfoRes.toRes(partnership.getUseStore());
+            MenuInfoRes menu = MenuInfoRes.toRes(partnership.getMenu());
+            resList.add(PartnershipRes.toRes(partnership, issStore, useStore, menu));
+        }
+        return resList;
     }
 }

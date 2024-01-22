@@ -3,14 +3,13 @@ package com.hihi.square.domain.partnership.entity;
 
 import com.hihi.square.common.BaseEntity;
 import com.hihi.square.domain.menu.entity.Menu;
-import com.hihi.square.domain.partnership.dto.request.PartnershipDto;
+import com.hihi.square.domain.partnership.dto.request.PartnershipReq;
 import com.hihi.square.domain.store.entity.Store;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.awt.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -60,7 +59,7 @@ public class Partnership extends BaseEntity {
     @Min(0)
     private Integer useChargeAmount; // 쿠폰 사용 가게가 부담하는 가격
 
-    public static Partnership toEntity(PartnershipDto req, Store issStore, Store useStore, Store proStore, Menu menu, PartnershipAcceptState state) {
+    public static Partnership toEntity(PartnershipReq req, Store issStore, Store useStore, Store proStore, Menu menu, PartnershipAcceptState state) {
         return Partnership.builder()
                 .id(req.getId())
                 .issStore(issStore)
@@ -82,7 +81,7 @@ public class Partnership extends BaseEntity {
         this.acceptState = acceptState;
     }
 
-    public void update(PartnershipDto dto, Store issStore, Store useStore, Menu menu) {
+    public void update(PartnershipReq dto, Store issStore, Store useStore, Menu menu) {
         this.issStore = issStore;
         this.useStore = useStore;
         this.menu = menu;

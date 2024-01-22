@@ -21,7 +21,6 @@ import java.util.Map;
 public class Buyer extends User {
     @Enumerated(EnumType.STRING)
     private LoginMethod method;
-    private String profileImage;
 
     @Override
     public String toString() {

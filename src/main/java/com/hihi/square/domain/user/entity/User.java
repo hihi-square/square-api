@@ -28,6 +28,7 @@ public class User {
     private UserStatus status;
     @Column(name = "main_address")
     private String mainAddress;
+    private String profileImage;
 
 //    @ManyToOne
 //    @JoinTable(name = "user_authority",

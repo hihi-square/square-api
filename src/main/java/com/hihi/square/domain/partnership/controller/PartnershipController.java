@@ -1,12 +1,10 @@
 package com.hihi.square.domain.partnership.controller;
 
 import com.hihi.square.common.CommonRes;
-import com.hihi.square.domain.partnership.dto.request.PartnershipDto;
-import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipAcceptStateReqDto;
-import com.hihi.square.domain.partnership.entity.Partnership;
-import com.hihi.square.domain.partnership.entity.PartnershipAcceptState;
+import com.hihi.square.domain.partnership.dto.request.PartnershipReq;
+import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipAcceptStateReq;
+import com.hihi.square.domain.partnership.dto.response.PartnershipRes;
 import com.hihi.square.domain.partnership.service.PartnershipService;
-import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/partnerships")
@@ -23,24 +23,36 @@ public class PartnershipController {
 
     private final PartnershipService partnershipService;
 
+    // 제휴 추가
     @PostMapping
-    public ResponseEntity addPartnership(Authentication authentication, @RequestBody @Valid PartnershipDto req) {
+    public ResponseEntity addPartnership(Authentication authentication, @RequestBody @Valid PartnershipReq req) {
         Integer stoId = Integer.parseInt(authentication.getName());
         partnershipService.addPartnership(stoId, req);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.CREATED);
     }
 
+    // 제휴 수정
     @PatchMapping
-    public ResponseEntity updatePartnership(Authentication authentication, @RequestBody @Valid PartnershipDto req) {
+    public ResponseEntity updatePartnership(Authentication authentication, @RequestBody @Valid PartnershipReq req) {
         Integer stoId = Integer.parseInt(authentication.getName());
         partnershipService.updatePartnership(stoId, req);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);
     }
 
+    // 제휴 상태 변경
     @PostMapping("/accept-state")
-    public ResponseEntity updatePartnershipAcceptState(Authentication authentication, @RequestBody @Valid UpdatePartnershipAcceptStateReqDto req) {
+    public ResponseEntity updatePartnershipAcceptState(Authentication authentication, @RequestBody @Valid UpdatePartnershipAcceptStateReq req) {
         Integer stoId = Integer.parseInt(authentication.getName());
         partnershipService.updatePartnershipAcceptState(stoId, req);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);
     }
+
+    // 내 제휴 리스트 가져오기
+    @GetMapping
+    public ResponseEntity<List<PartnershipReq>> getUserPartnerships(Authentication authentication) {
+        Integer stoId = Integer.parseInt(authentication.getName());
+        List<PartnershipRes> list = partnershipService.getPartnerships(stoId);
+        return new ResponseEntity(CommonRes.success(list), HttpStatus.OK);
+    }
+
 }

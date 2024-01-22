@@ -1,12 +1,10 @@
 package com.hihi.square.domain.partnership.dto.request;
 
-import com.hihi.square.domain.partnership.entity.PartnershipAcceptState;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PartnershipDto {
+public class PartnershipReq {
     private Integer id;
 
     private Integer issStoreId; // 쿠폰 발급(issue) 가게

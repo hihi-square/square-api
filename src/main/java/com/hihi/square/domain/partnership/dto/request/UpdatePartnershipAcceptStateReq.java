@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdatePartnershipAcceptStateReqDto {
+public class UpdatePartnershipAcceptStateReq {
     private Integer id;
     private PartnershipAcceptState state;
 }
