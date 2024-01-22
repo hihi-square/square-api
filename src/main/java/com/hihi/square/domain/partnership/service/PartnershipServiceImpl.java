@@ -203,6 +203,13 @@ public class PartnershipServiceImpl implements PartnershipService{
         return partnershipListToResList(partnershipList);
     }
 
+    @Override
+    public List<PartnershipRes> getProgressPartnerships(Integer stoId) {
+        Store store = storeRepository.findById(stoId).orElseThrow(()-> new UserNotFoundException("User not found"));
+        List<Partnership> partnershipList = partnershipRepository.findAllByStoreAndProgress(store, LocalDateTime.now());
+        return partnershipListToResList(partnershipList);
+    }
+
     public List<PartnershipRes> partnershipListToResList(List<Partnership> partnershipList) {
         List<PartnershipRes> resList = new ArrayList<>();
         for(Partnership partnership : partnershipList) {
