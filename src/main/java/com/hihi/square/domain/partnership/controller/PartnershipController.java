@@ -2,7 +2,9 @@ package com.hihi.square.domain.partnership.controller;
 
 import com.hihi.square.common.CommonRes;
 import com.hihi.square.domain.partnership.dto.request.PartnershipDto;
+import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipAcceptStateReqDto;
 import com.hihi.square.domain.partnership.entity.Partnership;
+import com.hihi.square.domain.partnership.entity.PartnershipAcceptState;
 import com.hihi.square.domain.partnership.service.PartnershipService;
 import jakarta.servlet.http.Part;
 import jakarta.validation.Valid;
@@ -32,6 +34,13 @@ public class PartnershipController {
     public ResponseEntity updatePartnership(Authentication authentication, @RequestBody @Valid PartnershipDto req) {
         Integer stoId = Integer.parseInt(authentication.getName());
         partnershipService.updatePartnership(stoId, req);
+        return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);
+    }
+
+    @PostMapping("/accept-state")
+    public ResponseEntity updatePartnershipAcceptState(Authentication authentication, @RequestBody @Valid UpdatePartnershipAcceptStateReqDto req) {
+        Integer stoId = Integer.parseInt(authentication.getName());
+        partnershipService.updatePartnershipAcceptState(stoId, req);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);
     }
 }

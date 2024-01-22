@@ -1,12 +1,14 @@
 package com.hihi.square.domain.partnership.entity;
 
 
+import com.hihi.square.common.BaseEntity;
 import com.hihi.square.domain.menu.entity.Menu;
 import com.hihi.square.domain.partnership.dto.request.PartnershipDto;
 import com.hihi.square.domain.store.entity.Store;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -18,7 +20,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @ToString
-public class Partnership {
+@EntityListeners(AuditingEntityListener.class)
+public class Partnership extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

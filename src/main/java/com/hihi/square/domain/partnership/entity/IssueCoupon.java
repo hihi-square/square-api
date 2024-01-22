@@ -1,10 +1,13 @@
 package com.hihi.square.domain.partnership.entity;
 
+import com.hihi.square.common.BaseEntity;
 import com.hihi.square.domain.buyer.entity.Buyer;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "issue_coupon")
 @Builder
@@ -12,7 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @ToString
-public class IssueCoupon {
+@EntityListeners(AuditingEntityListener.class)
+public class IssueCoupon extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uic_id")

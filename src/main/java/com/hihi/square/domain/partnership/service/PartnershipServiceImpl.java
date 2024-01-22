@@ -4,16 +4,16 @@ package com.hihi.square.domain.partnership.service;
 import com.hihi.square.domain.menu.entity.Menu;
 import com.hihi.square.domain.menu.repository.MenuRepository;
 import com.hihi.square.domain.partnership.dto.request.PartnershipDto;
+import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipAcceptStateReqDto;
 import com.hihi.square.domain.partnership.entity.Partnership;
 import com.hihi.square.domain.partnership.entity.PartnershipAcceptState;
+import com.hihi.square.domain.partnership.entity.PartnershipStop;
 import com.hihi.square.domain.partnership.repository.PartnershipRepository;
+import com.hihi.square.domain.partnership.repository.PartnershipStopRepository;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
 import com.hihi.square.global.error.ErrorCode;
-import com.hihi.square.global.error.type.BusinessException;
-import com.hihi.square.global.error.type.EntityNotFoundException;
-import com.hihi.square.global.error.type.UserMismachException;
-import com.hihi.square.global.error.type.UserNotFoundException;
+import com.hihi.square.global.error.type.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 public class PartnershipServiceImpl implements PartnershipService{
 
     private final PartnershipRepository partnershipRepository;
+    private final PartnershipStopRepository partnershipStopRepository;
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
 
@@ -50,7 +51,7 @@ public class PartnershipServiceImpl implements PartnershipService{
         // 메뉴가 발급가게의 메뉴가 아니라면 에러발생
         if (issStore.getUsrId() != menu.getStore().getUsrId()) throw new UserMismachException("Menu and Coupon issue User Mismatch");
         // 다른 가게에게 연계할인 제안할 때에는 대기상태
-        PartnershipAcceptState state = issStore.equals(useStore) ? PartnershipAcceptState.ACCEPTED : PartnershipAcceptState.WAIT;
+        PartnershipAcceptState state = issStore.equals(useStore) ? PartnershipAcceptState.NORMAL : PartnershipAcceptState.WAIT;
         Partnership partnership = Partnership.toEntity(req,  issStore,  useStore, store, menu, state);
 
         partnershipRepository.save(partnership);
@@ -91,5 +92,90 @@ public class PartnershipServiceImpl implements PartnershipService{
         partnership.update(req, issStore, useStore, menu);
         partnershipRepository.save(partnership);
 
+    }
+
+    @Override
+    @Transactional
+    public void updatePartnershipAcceptState(Integer stoId, UpdatePartnershipAcceptStateReqDto req) {
+        // 로그인한 유저
+        Store store = storeRepository.findById(stoId).orElseThrow(() -> new UserNotFoundException("Store not found"));
+
+        // 제휴
+        Partnership partnership = partnershipRepository.findById(req.getId()).orElseThrow(() -> new EntityNotFoundException("Partnership Entity not found"));
+
+        // 만약 해당 제휴가 로그인 유저와 관계 없는 제휴라면 변경 불가
+        if (!partnership.getUseStore().equals(store) && !partnership.getIssStore().equals(store)) throw new UpdateNotAllowedException("Store has nothing to do with partnership");
+
+        // 거절 -> 아무것도 못함
+        // 취소 -> 아무것도 못함
+        if (partnership.getAcceptState().equals(PartnershipAcceptState.REFUSAL) ||
+            partnership.getAcceptState().equals(PartnershipAcceptState.CANCELED)
+        ) throw new UpdateNotAllowedException("Can't update REFUSAL OR CANCELED State");
+
+        else if (partnership.getAcceptState().equals(PartnershipAcceptState.WAIT)) {
+            // 대기 -> 수락/거절 (제안안한 가게만 가능)
+            if (req.getState().equals(PartnershipAcceptState.NORMAL) || req.getState().equals(PartnershipAcceptState.REFUSAL)) {
+                if (partnership.getProStore().equals(store)) throw new UpdateNotAllowedException("Only offer received store can update state.");
+            }
+            // 대기 -> 취소 (아직 수락/거절 안했으면) -> 제안한 가게만 가능
+            else if (req.getState().equals(PartnershipAcceptState.CANCELED)) {
+                if (!partnership.getProStore().equals(store)) throw new UpdateNotAllowedException("Only offer proposed store can update state.");
+            }
+            // 대기 -> 발급정지 불가능
+            else if (req.getState().equals(PartnershipAcceptState.STOP)) {
+                throw new UpdateNotAllowedException("Can't update WAIT State to STOP");
+            }
+            partnership.updatePartnershipAcceptState(req.getState());
+//            partnershipRepository.save(partnership);
+        }
+
+        // 수락 -> 정지는 둘다 가능
+        else if (partnership.getAcceptState().equals(PartnershipAcceptState.NORMAL)) {
+            // 수락 -> 거절/대기/취소(이미 수락한 건에 대하여 취소 불가) 못함
+            if (req.getState().equals(PartnershipAcceptState.WAIT) || req.getState().equals(PartnershipAcceptState.CANCELED) || req.getState().equals(PartnershipAcceptState.REFUSAL)) throw new UpdateNotAllowedException("Can't update NORMAL state to "+req.getState());
+            // 발급 정지 처리
+            else if (req.getState().equals(PartnershipAcceptState.STOP)) {
+                partnership.updatePartnershipAcceptState(req.getState());
+                PartnershipStop partnershipStop = PartnershipStop.builder()
+                        .partnership(partnership)
+                        .store(store)
+                        .isFinished(false)
+                        .build();
+                partnershipStopRepository.save(partnershipStop);
+//                partnershipRepository.save(partnership);
+            }
+        }
+
+        // 발급정지 -> 정상처리 => 발급 정지한 유저만 가능
+        else {
+            if (req.getState().equals(PartnershipAcceptState.NORMAL)) {
+                // 1. 정지 -> 정상처리 하고 싶으면
+                // 1-1. 먼저 본인이 정지한 기록을 가져와서
+                PartnershipStop stop = partnershipStopRepository.findByPartnershipAndStoreAndIsFinished(partnership, store, false).orElseThrow(() -> new EntityNotFoundException("Didn't stop Partnership"));
+
+                // 1-2. 정지기록을 처리한 후,
+                stop.updateToFinish();
+                partnershipStopRepository.save(stop);
+
+                // 1-3. 다른 가게도 정지한 상태가 아니면 정상처리 한다.
+                if (partnershipStopRepository.findAllByPartnershipAndIsFinished(partnership, false).isEmpty()) {
+                    partnership.updatePartnershipAcceptState(req.getState());
+//                    partnershipRepository.save(partnership);
+                }
+            } else if (req.getState().equals(PartnershipAcceptState.STOP)) {
+                // 2. 정지 -> 정지하고 싶으면
+                // 2-1. 현재 내가 정지하고 있지 않아야 한다.
+                if (partnershipStopRepository.findByPartnershipAndStoreAndIsFinished(partnership, store, false).isPresent()) throw new UpdateNotAllowedException("Only partnership not stopped store can update the state.");
+
+                // 2-2. 새로운 정지 기록 생성
+                PartnershipStop partnershipStop = PartnershipStop.builder()
+                        .partnership(partnership)
+                        .store(store)
+                        .isFinished(false)
+                        .build();
+                partnershipStopRepository.save(partnershipStop);
+//                partnershipRepository.save(partnership);
+            } else throw new UpdateNotAllowedException("Can't update STOP state to "+req.getState()); // 나머지 처리는 불가
+        }
     }
 }

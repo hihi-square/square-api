@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 @Builder
 @Getter
 @ToString
+@EntityListeners(AuditingEntityListener.class)
 public class Activity extends BaseEntity {
 
     @Id

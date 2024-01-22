@@ -1,8 +1,10 @@
 package com.hihi.square.domain.partnership.entity;
 
+import com.hihi.square.common.BaseEntity;
 import com.hihi.square.domain.buyer.entity.Buyer;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 @Entity
@@ -12,7 +14,8 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @ToString
-public class UsedCoupon {
+@EntityListeners(AuditingEntityListener.class)
+public class UsedCoupon extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
