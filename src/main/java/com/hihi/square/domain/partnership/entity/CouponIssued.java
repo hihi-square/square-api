@@ -2,21 +2,23 @@ package com.hihi.square.domain.partnership.entity;
 
 import com.hihi.square.common.BaseEntity;
 import com.hihi.square.domain.buyer.entity.Buyer;
+import com.hihi.square.domain.store.entity.Store;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "issue_coupon")
+@Table(name = "coupon_issued")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @ToString
 @EntityListeners(AuditingEntityListener.class)
-public class IssueCoupon extends BaseEntity {
+public class CouponIssued extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uic_id")
@@ -34,4 +36,14 @@ public class IssueCoupon extends BaseEntity {
     private boolean isUsed; // 사용 완료 했는지
 
     private LocalDateTime expiredTime; // 사용 종료일
+
+    @ManyToOne
+    @JoinColumn(name="sto_id")
+    private Store store; // 어떤 가게에서 사용할 수 있는지
+
+    @Min(0)
+    private Integer couponAvailable; // 쿠폰 사용기준 금액 x원 이상 구매시 사용 가능한
+
+    @Min(0)
+    private Integer couponSale; // 쿠폰 금액 y원 할인 쿠폰
 }

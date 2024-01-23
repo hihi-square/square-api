@@ -8,21 +8,21 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 @Entity
-@Table(name = "used_coupon")
+@Table(name = "coupon_used")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @ToString
 @EntityListeners(AuditingEntityListener.class)
-public class UsedCoupon extends BaseEntity {
+public class CouponUsed extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @OneToOne
     @JoinColumn(name = "uic_id")
-    private IssueCoupon issueCoupon; // 어떤 쿠폰이 발급되어 사용된건지.
+    private CouponIssued couponIssued; // 어떤 쿠폰이 발급되어 사용된건지.
     private Integer ordId; // 어떤 주문에서 사용되었는지
 
     @ManyToOne
