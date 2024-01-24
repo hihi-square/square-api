@@ -190,8 +190,12 @@ public class PartnershipServiceImpl implements PartnershipService{
     public List<PartnershipRes> getPartnerships(Integer stoId) {
         Store store = storeRepository.findById(stoId).orElseThrow(()-> new UserNotFoundException("User not found"));
         List<Partnership> partnershipList = partnershipRepository.findAllByStore(store);
-
         return partnershipListToResList(partnershipList);
+    }
+
+    @Override
+    public List<PartnershipRes> getAvailablePartnerships(Integer stoId) {
+        return null;
     }
 
     @Override
