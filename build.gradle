@@ -41,8 +41,11 @@ dependencies {
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
-	//radis
+	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis' //redis
+
+	// stomp
+	implementation 'org.webjars:stomp-websocket:2.3.4'
 }
 
 tasks.named('test') {
