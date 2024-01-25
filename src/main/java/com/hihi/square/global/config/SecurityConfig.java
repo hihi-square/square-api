@@ -70,6 +70,7 @@ public class SecurityConfig {
                 //로그인, 회원가입 API
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers("/store/join/**", "/store/login", "/store/reissue",  "/**/oauth2/**").permitAll()
+                        .requestMatchers("/ws-stomp/**").permitAll()
                         .requestMatchers("/store/**").hasAuthority("STORE")
                         .requestMatchers("/partnerships/**").hasAuthority("STORE")
                         .requestMatchers("/buyer/**").hasAuthority("BUYER")

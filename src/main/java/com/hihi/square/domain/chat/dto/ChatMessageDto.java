@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ChatMessageDto {
     @Enumerated(EnumType.STRING)
-    private ChatMessageType type;
+    private ChatMessageType type; // TALK, FILE, IMAGE, LINK
     private Integer senderId;
     private Integer receiverId;
     private String message;

@@ -12,7 +12,6 @@ public enum ChatMessageType {
     LINK("링크");
 
     private final String status;
-    public static final List<CommonStatus> activeAndPrivate = Arrays.asList(CommonStatus.ACTIVE, CommonStatus.PRIVATE);
 
     ChatMessageType(String status) { this.status = status; }
 }
