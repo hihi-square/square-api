@@ -1,11 +1,10 @@
 package com.hihi.square.domain.order.service;
 
 import com.hihi.square.common.CommonStatus;
-import com.hihi.square.domain.coupon.entity.Coupon;
-import com.hihi.square.domain.coupon.entity.UserCoupon;
-import com.hihi.square.domain.coupon.repository.CouponRepository;
-import com.hihi.square.domain.coupon.repository.UserCouponRepository;
-import com.hihi.square.domain.menu.dto.MenuDto;
+import com.hihi.square.domain.coupon2.entity.Coupon;
+import com.hihi.square.domain.coupon2.entity.UserCoupon;
+import com.hihi.square.domain.coupon2.repository.CouponRepository;
+import com.hihi.square.domain.coupon2.repository.UserCouponRepository;
 import com.hihi.square.domain.menu.entity.Menu;
 import com.hihi.square.domain.menu.entity.MenuOption;
 import com.hihi.square.domain.menu.repository.MenuOptionRepository;

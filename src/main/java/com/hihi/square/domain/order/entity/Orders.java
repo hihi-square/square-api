@@ -1,7 +1,7 @@
 package com.hihi.square.domain.order.entity;
 
 import com.hihi.square.common.BaseEntity;
-import com.hihi.square.domain.coupon.entity.UserCoupon;
+import com.hihi.square.domain.coupon2.entity.UserCoupon;
 import com.hihi.square.domain.order.dto.OrderDto;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.user.entity.User;

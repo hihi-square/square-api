@@ -1,7 +1,7 @@
-package com.hihi.square.domain.coupon.repository;
+package com.hihi.square.domain.coupon2.repository;
 
 import com.hihi.square.common.CommonStatus;
-import com.hihi.square.domain.coupon.entity.UserCoupon;
+import com.hihi.square.domain.coupon2.entity.UserCoupon;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

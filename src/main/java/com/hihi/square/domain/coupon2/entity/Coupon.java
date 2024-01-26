@@ -1,4 +1,4 @@
-package com.hihi.square.domain.coupon.entity;
+package com.hihi.square.domain.coupon2.entity;
 
 import com.hihi.square.common.BaseEntity;
 import com.hihi.square.common.CommonStatus;
