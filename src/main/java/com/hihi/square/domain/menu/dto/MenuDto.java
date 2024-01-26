@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MenuReq {
+public class MenuDto {
     Integer id;
     @NotNull(message = "메뉴 이름은 필수 입력값입니다.")
     String name;
@@ -32,8 +32,8 @@ public class MenuReq {
     Integer mcId;
     List<MenuOptionDto> options;
 
-    public static MenuReq toRes(Menu menu, Integer mcId, List<MenuOptionDto> optionList){
-        return MenuReq.builder()
+    public static MenuDto toRes(Menu menu, Integer mcId, List<MenuOptionDto> optionList){
+        return MenuDto.builder()
                 .id(menu.getId())
                 .name(menu.getName())
                 .price(menu.getPrice())

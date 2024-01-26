@@ -2,6 +2,7 @@ package com.hihi.square.domain.buyer.service;
 
 import com.hihi.square.domain.buyer.dto.LoginRes;
 import com.hihi.square.domain.user.entity.User;
+import com.hihi.square.domain.user.entity.UserStatus;
 import com.hihi.square.domain.user.repository.UserRepository;
 import com.hihi.square.global.error.type.UserNotFoundException;
 import com.hihi.square.global.jwt.token.TokenInfo;
@@ -22,7 +23,7 @@ public class BuyerServiceImpl implements BuyerService {
 
     @Override
     public LoginRes login(Authentication authentication, HttpServletResponse response) {
-        User findUser = userRepository.findByUserId(authentication.getName())
+        User findUser = userRepository.findByUserId(Integer.parseInt(authentication.getName()), UserStatus.ACTIVE)
                 .orElseThrow(() -> new UserNotFoundException("User Not Found"));
         TokenInfo tokenInfo = tokenProvider.createTokens(findUser.getUid(), "defaultPassword", findUser.getDecriminatorValue(), response);
         return LoginRes.builder()

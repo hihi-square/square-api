@@ -2,7 +2,6 @@ package com.hihi.square.domain.partnership.service;
 
 
 import com.hihi.square.domain.menu.dto.MenuInfoRes;
-import com.hihi.square.domain.menu.dto.MenuReq;
 import com.hihi.square.domain.menu.entity.Menu;
 import com.hihi.square.domain.menu.repository.MenuRepository;
 import com.hihi.square.domain.partnership.dto.request.PartnershipReq;

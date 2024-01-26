@@ -1,6 +1,8 @@
 package com.hihi.square.domain.store.entity;
 
-import com.hihi.square.domain.store.dto.request.SignUpReq;
+import com.hihi.square.domain.category.entity.Category;
+import com.hihi.square.domain.store.dto.StoreDto;
+import com.hihi.square.domain.store.dto.request.SignUpStoreReq;
 import com.hihi.square.domain.user.entity.User;
 import com.hihi.square.domain.user.entity.UserStatus;
 import jakarta.persistence.*;
@@ -36,25 +38,54 @@ public class Store extends User {
     String address;
     @Column(name = "detail_address")
     String detailAddress;
+    @Column(name = "min_pickup_time")
+    Integer minPickUpTime;
+    @Column(name = "max_pickup_time")
+    Integer maxPickUpTime;
+    String image;
+    @OneToOne
+    @JoinColumn(name = "category")
+    Category category;
 
-    public static Store toEntity(SignUpReq signUpReq){
+    public static Store toEntity(SignUpStoreReq signUpStoreReq, Category category){
         return Store.builder()
-                .uid(signUpReq.getUid())
-                .password(signUpReq.getPassword())
-                .name(signUpReq.getName())
-                .email(signUpReq.getEmail())
-                .phone(signUpReq.getPhone())
-                .nickname(signUpReq.getStoreName())
+                .uid(signUpStoreReq.getUid())
+                .password(signUpStoreReq.getPassword())
+                .name(signUpStoreReq.getName())
+                .email(signUpStoreReq.getEmail())
+                .phone(signUpStoreReq.getPhone())
+                .nickname(signUpStoreReq.getStoreName())
                 .status(UserStatus.ACTIVE)
-                .storeName(signUpReq.getStoreName())
-                .content(signUpReq.getContent())
-                .storeContact(signUpReq.getStoreContact())
-                .storeContact2(signUpReq.getStoreContact2())
-                .address(signUpReq.getAddress())
-                .detailAddress(signUpReq.getDetailAddress())
+                .storeName(signUpStoreReq.getStoreName())
+                .content(signUpStoreReq.getContent())
+                .storeContact(signUpStoreReq.getStoreContact())
+                .storeContact2(signUpStoreReq.getStoreContact2())
+                .address(signUpStoreReq.getAddress())
+                .detailAddress(signUpStoreReq.getDetailAddress())
                 .dibs_count(0)
                 .review_count(0)
                 .rating(0.0)
+                .minPickUpTime(0)
+                .maxPickUpTime(0)
+                .category(category)
+                .build();
+    }
+
+    public static Store toEntityByDto(StoreDto storeDto){
+        return Store.builder()
+                .usrId(storeDto.getId())
+                .name(storeDto.getName())
+                .email(storeDto.getEmail())
+                .phone(storeDto.getPhone())
+                .storeName(storeDto.getStoreName())
+                .content(storeDto.getContent())
+                .storeContact(storeDto.getStoreContact())
+                .storeContact2(storeDto.getStoreContact2())
+                .address(storeDto.getAddress())
+                .detailAddress(storeDto.getDetailAddress())
+                .minPickUpTime(0)
+                .maxPickUpTime(0)
+                .image(storeDto.getImage())
                 .build();
     }
 }

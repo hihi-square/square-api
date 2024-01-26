@@ -15,6 +15,9 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
     @Query("select m from Menu m where m.id=:menuId and m.status in (:statuses)")
     Optional<Menu> findById(@Param("menuId") Integer menuId, @Param("statuses") List<CommonStatus> statuses);
 
+    @Query("select m from Menu m where m.id=:menuId and m.status=:status")
+    Optional<Menu> findById(@Param("menuId") Integer menuId, @Param("status") CommonStatus status);
+
     @Query("select m from Menu m where m.store.usrId = :stoId and m.status in :statuses order by m.sequence asc, m.modifiedAt desc")
     List<Menu> findAllByStoreOrderBySequence(@Param("stoId") Integer stoId, @Param("statuses") List<CommonStatus> statuses);
 
