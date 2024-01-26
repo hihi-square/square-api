@@ -28,8 +28,8 @@ public enum ErrorCode {
 	INVALID_TYPE_VALUE(400, "C005", "Invalid Type Value"),
 	HANDLE_ACCESS_DENIED(403, "C006", "Access is Denied"),
 	REQUIRED_PARAMETER_MISSING(411, "C007", "Required Parameter is missing"),
-	DELETE_NOT_ALLOWED(400, "C008", "Delete Not Allowed");
-
+	DELETE_NOT_ALLOWED(400, "C008", "Delete Not Allowed"),
+	SSE_NOT_CONNECT(403, "C009", "SSE Not Connect");
 
 	private final String code;
 	private final String message;
