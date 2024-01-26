@@ -23,6 +23,7 @@ public class MenuOption extends BaseEntity {
     Integer id;
     String name;
     Integer price;
+    Integer quantity;
     Integer sequence;
     @Enumerated(EnumType.STRING)
     CommonStatus status;
@@ -38,6 +39,7 @@ public class MenuOption extends BaseEntity {
                 .id(menuOptionDto.getId())
                 .name(menuOptionDto.getName())
                 .price(menuOptionDto.getPrice())
+                .quantity(menuOptionDto.getQuantity())
                 .sequence(menuOptionDto.getSequence())
                 .menu(menu)
                 .build();

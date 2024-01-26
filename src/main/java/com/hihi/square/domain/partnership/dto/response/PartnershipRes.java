@@ -1,7 +1,6 @@
 package com.hihi.square.domain.partnership.dto.response;
 
 import com.hihi.square.domain.menu.dto.MenuInfoRes;
-import com.hihi.square.domain.menu.dto.MenuReq;
 import com.hihi.square.domain.partnership.entity.Partnership;
 import com.hihi.square.domain.store.dto.response.StoreInfoRes;
 import com.hihi.square.domain.store.dto.response.StoreRes;

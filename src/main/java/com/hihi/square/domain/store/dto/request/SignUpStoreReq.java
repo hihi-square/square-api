@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignUpReq {
+public class SignUpStoreReq {
 
 	@NotEmpty(message = "아이디는 필수 입력값입니다.")
 	@Pattern(regexp = "^[a-zA-Z0-9_-]{3,20}$", message = "아이디 형식에 맞지 않습니다.")

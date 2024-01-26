@@ -10,7 +10,7 @@ import java.util.List;
 public class MenuSequenceReq {
     List<MenuCategoryDto> category;
 //    List<List<Integer>> menu;
-    List<MenuReq> menu;
+    List<MenuDto> menu;
 //    Integer menuId;
 //    Integer sequence;
 //    Integer mcId;   //카테고리 ID

@@ -14,6 +14,7 @@ public class MenuOptionDto {
     Integer id;
     String name;
     Integer price;
+    Integer quantity;
     Integer sequence;
 
     public static MenuOptionDto toRes(MenuOption menuOption){
@@ -21,6 +22,7 @@ public class MenuOptionDto {
                 .id(menuOption.getId())
                 .name(menuOption.getName())
                 .price(menuOption.getPrice())
+                .quantity(menuOption.getQuantity())
                 .sequence(menuOption.getSequence())
                 .build();
     }
