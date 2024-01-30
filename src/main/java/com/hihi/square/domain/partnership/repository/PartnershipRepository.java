@@ -19,6 +19,6 @@ public interface PartnershipRepository extends JpaRepository<Partnership, Intege
     @Query("select p from Partnership p where (p.issStore = :store1 and p.useStore = :store2) or (p.issStore = :store2 and p.useStore = :store1)")
     List<Partnership> findAllByStores(Store store1, Store store2);
 
-    @Query("select p from Partnership p where (p.issStore = :store or p.useStore = :store) and p.startTime <= :now and p.finishTime >= :now and p.acceptState = 'NORMAL'")
+    @Query("select p from Partnership p where (p.issStore = :store or p.useStore = :store) and :now between p.startTime and p.finishTime and p.acceptState = 'NORMAL'")
     List<Partnership> findAllByStoreAndProgress(Store store, LocalDateTime now);
 }

@@ -16,7 +16,8 @@ public class EmdAddress {
     @Id
     private Long id; // bcode
     private String name;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asi_id")
     private SiggAddress siggAddress;
 

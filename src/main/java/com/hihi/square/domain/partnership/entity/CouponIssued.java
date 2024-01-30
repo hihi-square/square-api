@@ -24,12 +24,12 @@ public class CouponIssued extends BaseEntity {
     @Column(name = "uic_id")
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "spa_id")
     private Partnership partnership; // 쿠폰 발급한 제휴 ID
     private Integer ordId; // 어떤 주문을 통해 쿠폰이 발급되었는지
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="buy_id")
     private Buyer buyer; // 쿠폰 사용 가능 유저
 
@@ -37,7 +37,7 @@ public class CouponIssued extends BaseEntity {
 
     private LocalDateTime expiredTime; // 사용 종료일
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="sto_id")
     private Store store; // 어떤 가게에서 사용할 수 있는지
 

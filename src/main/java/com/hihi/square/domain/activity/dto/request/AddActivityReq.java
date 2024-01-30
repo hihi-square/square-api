@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateActivityDto {
-    Integer id;
-    Boolean isMain;
-    Integer depth;
+public class AddActivityReq {
+    private Long emdId;
+    private Double latitude;
+    private Double longitude;
 }

@@ -1,10 +1,8 @@
 package com.hihi.square.domain.activity.service;
 
-import com.hihi.square.domain.activity.dto.ActivityDto;
-import com.hihi.square.domain.activity.dto.EmdAddressDto;
-import com.hihi.square.domain.activity.dto.request.AddActivityReqDto;
-import com.hihi.square.domain.activity.dto.request.UpdateActivityDto;
-import com.hihi.square.domain.activity.dto.request.UpdateActivityReqDto;
+import com.hihi.square.domain.activity.dto.request.UpdateActivityReq;
+import com.hihi.square.domain.activity.dto.response.ActivityRes;
+import com.hihi.square.domain.activity.dto.request.AddActivityReq;
 import com.hihi.square.domain.activity.entity.Activity;
 import com.hihi.square.domain.activity.entity.EmdAddress;
 import com.hihi.square.domain.activity.repository.ActivityRepository;
@@ -31,19 +29,19 @@ public class ActivityServiceImpl implements ActivityService{
     private final EmdAddressRepository emdAddressRepository;
 
     @Override
-    public List<ActivityDto> getAcitivityList(Integer buyerId) {
+    public List<ActivityRes> getAcitivityList(Integer buyerId) {
         Buyer buyer = buyerRepository.findById(buyerId).orElseThrow(()->new UserNotFoundException("User Not Found"));
         List<Activity> activityList = activityRepository.findAllByBuyer(buyer);
-        List<ActivityDto> activityDtoList = new ArrayList<>();
+        List<ActivityRes> activityResList = new ArrayList<>();
         for(Activity activity:activityList) {
-            activityDtoList.add(ActivityDto.toRes(activity));
+            activityResList.add(ActivityRes.toRes(activity));
         }
-        return activityDtoList;
+        return activityResList;
     }
 
     @Override
     @Transactional
-    public void addActivity(Integer buyerId, AddActivityReqDto req) {
+    public void addActivity(Integer buyerId, AddActivityReq req) {
         Buyer buyer = buyerRepository.findById(buyerId).orElseThrow(()->new UserNotFoundException("User Not Found"));
         EmdAddress emdAddress = emdAddressRepository.findById(req.getEmdId()).orElseThrow(()-> new EntityNotFoundException("EmdAddress Not Found"));
         // 활동지역은 최대 3개까지만 가능
@@ -67,7 +65,7 @@ public class ActivityServiceImpl implements ActivityService{
 
     @Override
     @Transactional
-    public void updateActivity(Integer buyerId, UpdateActivityReqDto req) {
+    public void updateActivity(Integer buyerId, UpdateActivityReq req) {
         // 활동 반경은 적어도 하나 있어야 한다.
         if (req.getList().isEmpty()) throw new InvalidValueException("There Must Be At Least One Object");
 
@@ -79,7 +77,7 @@ public class ActivityServiceImpl implements ActivityService{
         boolean checked = false;
 
         // 각 req 리스트를 돌며
-        for(UpdateActivityDto activityDto : req.getList()) {
+        for(UpdateActivityReq.UpdateActivityDto activityDto : req.getList()) {
             Activity activity = activityRepository.findById(activityDto.getId()).orElseThrow(() -> new EntityNotFoundException("Activity Not Found"));
             if (!activity.getBuyer().getUsrId().equals(buyer.getUsrId())) throw new UserMismachException("User mismatch");
             activity.update(activityDto);

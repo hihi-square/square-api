@@ -1,6 +1,5 @@
 package com.hihi.square.domain.activity.dto.request;
 
-import com.hihi.square.domain.activity.dto.ActivityDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateActivityReqDto {
+public class UpdateActivityReq {
     List<UpdateActivityDto> list;
-}
 
+    @Data
+    public class UpdateActivityDto {
+        Integer id;
+        Boolean isMain;
+        Integer depth;
+    }
+}

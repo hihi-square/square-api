@@ -1,27 +1,21 @@
-package com.hihi.square.domain.activity.dto;
+package com.hihi.square.domain.activity.dto.response;
 
 import com.hihi.square.domain.activity.entity.Activity;
-import com.hihi.square.domain.buyer.entity.Buyer;
-import com.hihi.square.domain.activity.entity.EmdAddress;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivityDto {
+public class ActivityRes {
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "emd_id")
-    private EmdAddressDto emdAddress;
+    private EmdAddressRes emdAddress;
 
     private Double latitude;
     private Double longitude;
@@ -33,10 +27,10 @@ public class ActivityDto {
 
     private Boolean isMain;
 
-    public static ActivityDto toRes(Activity activity) {
-        return ActivityDto.builder()
+    public static ActivityRes toRes(Activity activity) {
+        return ActivityRes.builder()
                 .id(activity.getId())
-                .emdAddress(EmdAddressDto.toRes(activity.getEmdAddress()))
+                .emdAddress(EmdAddressRes.toRes(activity.getEmdAddress()))
                 .latitude(activity.getLatitude())
                 .longitude(activity.getLongitude())
                 .depth(activity.getDepth())

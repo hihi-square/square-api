@@ -1,7 +1,7 @@
 package com.hihi.square.domain.buyer.controller;
 
 import com.hihi.square.common.CommonRes;
-import com.hihi.square.domain.buyer.dto.LoginRes;
+import com.hihi.square.domain.buyer.dto.response.LoginRes;
 import com.hihi.square.domain.buyer.service.BuyerService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

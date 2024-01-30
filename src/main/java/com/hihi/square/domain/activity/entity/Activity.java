@@ -1,15 +1,13 @@
 package com.hihi.square.domain.activity.entity;
 
 import com.hihi.square.common.BaseEntity;
-import com.hihi.square.domain.activity.dto.request.UpdateActivityDto;
+import com.hihi.square.domain.activity.dto.request.UpdateActivityReq;
 import com.hihi.square.domain.buyer.entity.Buyer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.stereotype.Component;
 
 @Entity
 @Table(name="activity")
@@ -25,7 +23,7 @@ public class Activity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aem_id")
     private EmdAddress emdAddress;
 
@@ -35,14 +33,14 @@ public class Activity extends BaseEntity {
     @Min(0) @Max(2)
     private Integer depth; // 해당 지역 기준으로 확장되는 칸 수
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buy_id")
     private Buyer buyer;
 
     @Column(name = "is_main")
     private boolean isMain;
 
-    public void update(UpdateActivityDto dto) {
+    public void update(UpdateActivityReq.UpdateActivityDto dto) {
         this.depth = dto.getDepth();
         this.isMain = dto.getIsMain();
     }

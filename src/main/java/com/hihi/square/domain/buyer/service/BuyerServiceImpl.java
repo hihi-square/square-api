@@ -1,6 +1,6 @@
 package com.hihi.square.domain.buyer.service;
 
-import com.hihi.square.domain.buyer.dto.LoginRes;
+import com.hihi.square.domain.buyer.dto.response.LoginRes;
 import com.hihi.square.domain.user.entity.User;
 import com.hihi.square.domain.user.entity.UserStatus;
 import com.hihi.square.domain.user.repository.UserRepository;

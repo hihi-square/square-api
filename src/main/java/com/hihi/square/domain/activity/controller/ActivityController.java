@@ -1,16 +1,10 @@
 package com.hihi.square.domain.activity.controller;
 
 import com.hihi.square.common.CommonRes;
-import com.hihi.square.domain.activity.dto.ActivityDto;
-import com.hihi.square.domain.activity.dto.EmdAddressDto;
-import com.hihi.square.domain.activity.dto.request.AddActivityReqDto;
-import com.hihi.square.domain.activity.dto.request.UpdateActivityReqDto;
-import com.hihi.square.domain.activity.entity.EmdAddress;
+import com.hihi.square.domain.activity.dto.request.AddActivityReq;
+import com.hihi.square.domain.activity.dto.request.UpdateActivityReq;
+import com.hihi.square.domain.activity.dto.response.ActivityRes;
 import com.hihi.square.domain.activity.service.ActivityService;
-import com.hihi.square.domain.buyer.entity.Buyer;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,30 +25,30 @@ public class ActivityController {
     private final ActivityService activityService;
 
     @GetMapping
-    public ResponseEntity getActivityList(Authentication authentication) {
+    public ResponseEntity<List<ActivityRes>> getActivityList(Authentication authentication) {
         Integer buyerId = Integer.parseInt(authentication.getName());
-        List<ActivityDto> res = activityService.getAcitivityList(buyerId);
-        return new ResponseEntity(CommonRes.success(res), HttpStatus.ACCEPTED);
+        List<ActivityRes> res = activityService.getAcitivityList(buyerId);
+        return new ResponseEntity(CommonRes.success(res), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity addActivity(Authentication authentication, @RequestBody @NotNull AddActivityReqDto req) {
+    public ResponseEntity addActivity(Authentication authentication, @RequestBody @NotNull AddActivityReq req) {
         Integer buyerId = Integer.parseInt(authentication.getName());
         activityService.addActivity(buyerId, req);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.CREATED);
     }
 
     @PatchMapping
-    public ResponseEntity updateActivity(Authentication authentication, @RequestBody UpdateActivityReqDto req) {
+    public ResponseEntity updateActivity(Authentication authentication, @RequestBody UpdateActivityReq req) {
         Integer buyerId = Integer.parseInt(authentication.getName());
         activityService.updateActivity(buyerId, req);
-        return new ResponseEntity(CommonRes.success(null), HttpStatus.ACCEPTED);
+        return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);
     }
 
     @PatchMapping("/main")
     public ResponseEntity updateMainActivity(Authentication authentication, @RequestParam @NotNull Integer id) {
         Integer buyerId = Integer.parseInt(authentication.getName());
         activityService.updateMainActivity(buyerId, id);
-        return new ResponseEntity(CommonRes.success(null), HttpStatus.ACCEPTED);
+        return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);
     }
 }

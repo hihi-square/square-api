@@ -1,7 +1,7 @@
 package com.hihi.square.domain.buyer.service;
 
 
-import com.hihi.square.domain.buyer.dto.LoginRes;
+import com.hihi.square.domain.buyer.dto.response.LoginRes;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 

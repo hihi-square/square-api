@@ -1,6 +1,5 @@
-package com.hihi.square.domain.activity.dto;
+package com.hihi.square.domain.activity.dto.response;
 
-import com.hihi.square.domain.activity.entity.EmdAddress;
 import com.hihi.square.domain.activity.entity.SiggAddress;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,12 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SiggAddressDto {
+public class SiggAddressRes {
     private Long id;
     private String name;
 
-    public static SiggAddressDto toRes(SiggAddress siggAddress) {
-        return SiggAddressDto.builder()
+    public static SiggAddressRes toRes(SiggAddress siggAddress) {
+        return SiggAddressRes.builder()
                 .id(siggAddress.getId())
                 .name(siggAddress.getName())
                 .build();

@@ -25,22 +25,22 @@ public class Partnership extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "iss_sto_id")
     private Store issStore; // 쿠폰 발급(issue) 가게
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "use_sto_id")
     private Store useStore; // 쿠폰 사용(use) 가게
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pro_sto_id")
     private Store proStore; // 쿠폰 제안(propose) 가게
 
     @Enumerated(EnumType.STRING)
     private PartnershipAcceptState acceptState; // 수락 현황
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "men_id")
     private Menu menu; // 어떤 상품을 사면 쿠폰을 발급해주는지
 
