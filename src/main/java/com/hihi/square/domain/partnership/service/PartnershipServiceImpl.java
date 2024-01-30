@@ -4,8 +4,9 @@ package com.hihi.square.domain.partnership.service;
 import com.hihi.square.domain.menu.dto.MenuInfoRes;
 import com.hihi.square.domain.menu.entity.Menu;
 import com.hihi.square.domain.menu.repository.MenuRepository;
-import com.hihi.square.domain.partnership.dto.request.PartnershipReq;
+import com.hihi.square.domain.partnership.dto.request.AddPartnershipReq;
 import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipAcceptStateReq;
+import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipReq;
 import com.hihi.square.domain.partnership.dto.response.PartnershipRes;
 import com.hihi.square.domain.partnership.entity.Partnership;
 import com.hihi.square.domain.partnership.entity.PartnershipAcceptState;
@@ -13,10 +14,8 @@ import com.hihi.square.domain.partnership.entity.PartnershipStop;
 import com.hihi.square.domain.partnership.repository.PartnershipRepository;
 import com.hihi.square.domain.partnership.repository.PartnershipStopRepository;
 import com.hihi.square.domain.store.dto.response.StoreInfoRes;
-import com.hihi.square.domain.store.dto.response.StoreRes;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
-import com.hihi.square.domain.user.dto.UserRes;
 import com.hihi.square.global.error.ErrorCode;
 import com.hihi.square.global.error.type.*;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +37,7 @@ public class PartnershipServiceImpl implements PartnershipService{
 
     @Override
     @Transactional
-    public void addPartnership(Integer stoId, PartnershipReq req) {
+    public void addPartnership(Integer stoId, AddPartnershipReq req) {
         // 로그인 유저
         Store store = storeRepository.findById(stoId).orElseThrow(()->new UserNotFoundException("Store not found"));
         
@@ -58,14 +57,14 @@ public class PartnershipServiceImpl implements PartnershipService{
         if (issStore.getUsrId() != menu.getStore().getUsrId()) throw new UserMismachException("Menu and Coupon issue User Mismatch");
         // 다른 가게에게 연계할인 제안할 때에는 대기상태
         PartnershipAcceptState state = issStore.equals(useStore) ? PartnershipAcceptState.NORMAL : PartnershipAcceptState.WAIT;
-        Partnership partnership = Partnership.toEntity(req,  issStore,  useStore, store, menu, state);
+        Partnership partnership = AddPartnershipReq.toEntity(req,  issStore,  useStore, store, menu, state);
 
         partnershipRepository.save(partnership);
     }
 
     @Override
     @Transactional
-    public void updatePartnership(Integer stoId, PartnershipReq req) {
+    public void updatePartnership(Integer stoId, UpdatePartnershipReq req) {
         // 로그인 유저
         Store store = storeRepository.findById(stoId).orElseThrow(()->new UserNotFoundException("Store not found"));
         Partnership partnership = partnershipRepository.findById(req.getId()).orElseThrow(() -> new EntityNotFoundException("Partnership not found"));

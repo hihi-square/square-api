@@ -25,10 +25,10 @@ public class BuyerController {
     // SuccessHandler를 활용하여 프론트 페이지로 redirect 시킴
     @ResponseBody
     @GetMapping("/login")
-    public ResponseEntity login(Authentication authentication, HttpServletResponse response) throws IOException { //Authentication 을 DI (의존성 주입)
+    public ResponseEntity<LoginRes> login(Authentication authentication, HttpServletResponse response) throws IOException { //Authentication 을 DI (의존성 주입)
         log.info("구매자 로그인 성공");
         LoginRes loginResponseDto = buyerService.login(authentication, response);
         log.info("구매자 로그인 access token 생성 완료");
-        return new ResponseEntity(CommonRes.success(loginResponseDto), HttpStatus.ACCEPTED);
+        return new ResponseEntity(CommonRes.success(loginResponseDto), HttpStatus.OK);
     }
 }

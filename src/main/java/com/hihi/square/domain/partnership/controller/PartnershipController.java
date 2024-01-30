@@ -1,8 +1,9 @@
 package com.hihi.square.domain.partnership.controller;
 
 import com.hihi.square.common.CommonRes;
-import com.hihi.square.domain.partnership.dto.request.PartnershipReq;
+import com.hihi.square.domain.partnership.dto.request.AddPartnershipReq;
 import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipAcceptStateReq;
+import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipReq;
 import com.hihi.square.domain.partnership.dto.response.PartnershipRes;
 import com.hihi.square.domain.partnership.service.PartnershipService;
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ public class PartnershipController {
 
     // 제휴 추가
     @PostMapping
-    public ResponseEntity addPartnership(Authentication authentication, @RequestBody @Valid PartnershipReq req) {
+    public ResponseEntity<?> addPartnership(Authentication authentication, @RequestBody @Valid AddPartnershipReq req) {
         Integer stoId = Integer.parseInt(authentication.getName());
         partnershipService.addPartnership(stoId, req);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.CREATED);
@@ -34,7 +35,7 @@ public class PartnershipController {
 
     // 제휴 수정
     @PatchMapping
-    public ResponseEntity updatePartnership(Authentication authentication, @RequestBody @Valid PartnershipReq req) {
+    public ResponseEntity<?> updatePartnership(Authentication authentication, @RequestBody @Valid UpdatePartnershipReq req) {
         Integer stoId = Integer.parseInt(authentication.getName());
         partnershipService.updatePartnership(stoId, req);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);
@@ -42,7 +43,7 @@ public class PartnershipController {
 
     // 제휴 상태 변경
     @PostMapping("/accept-state")
-    public ResponseEntity updatePartnershipAcceptState(Authentication authentication, @RequestBody @Valid UpdatePartnershipAcceptStateReq req) {
+    public ResponseEntity<?> updatePartnershipAcceptState(Authentication authentication, @RequestBody @Valid UpdatePartnershipAcceptStateReq req) {
         Integer stoId = Integer.parseInt(authentication.getName());
         partnershipService.updatePartnershipAcceptState(stoId, req);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);

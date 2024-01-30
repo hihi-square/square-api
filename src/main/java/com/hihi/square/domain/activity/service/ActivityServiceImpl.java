@@ -44,8 +44,8 @@ public class ActivityServiceImpl implements ActivityService{
     public void addActivity(Integer buyerId, AddActivityReq req) {
         Buyer buyer = buyerRepository.findById(buyerId).orElseThrow(()->new UserNotFoundException("User Not Found"));
         EmdAddress emdAddress = emdAddressRepository.findById(req.getEmdId()).orElseThrow(()-> new EntityNotFoundException("EmdAddress Not Found"));
-        // 활동지역은 최대 3개까지만 가능
-        if (getAcitivityList(buyerId).size() == 3) throw new BusinessException("", ErrorCode.ADD_NOT_ALLOWED);
+        // 활동지역은 최대 4개까지만 가능
+        if (getAcitivityList(buyerId).size() == 4) throw new BusinessException("", ErrorCode.ADD_NOT_ALLOWED);
 
         // 새로 추가하는 활동지역이 기본적으로 메인이 됨
         List<Activity> activityList = activityRepository.findAllByBuyer(buyer);

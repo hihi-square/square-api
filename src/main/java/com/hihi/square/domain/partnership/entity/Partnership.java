@@ -3,7 +3,8 @@ package com.hihi.square.domain.partnership.entity;
 
 import com.hihi.square.common.BaseEntity;
 import com.hihi.square.domain.menu.entity.Menu;
-import com.hihi.square.domain.partnership.dto.request.PartnershipReq;
+import com.hihi.square.domain.partnership.dto.request.AddPartnershipReq;
+import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipReq;
 import com.hihi.square.domain.store.entity.Store;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -59,29 +60,13 @@ public class Partnership extends BaseEntity {
     @Min(0)
     private Integer useChargeAmount; // 쿠폰 사용 가게가 부담하는 가격
 
-    public static Partnership toEntity(PartnershipReq req, Store issStore, Store useStore, Store proStore, Menu menu, PartnershipAcceptState state) {
-        return Partnership.builder()
-                .id(req.getId())
-                .issStore(issStore)
-                .useStore(useStore)
-                .proStore(proStore)
-                .acceptState(state)
-                .menu(menu)
-                .couponAvailable(req.getCouponAvailable())
-                .couponSale(req.getCouponSale())
-                .startTime(req.getStartTime())
-                .finishTime(req.getFinishTime())
-                .availableTime(req.getAvailableTime())
-                .issChargeAmount(req.getIssChargeAmount())
-                .useChargeAmount(req.getUseChargeAmount())
-                .build();
-    }
+
 
     public void updatePartnershipAcceptState(PartnershipAcceptState acceptState) {
         this.acceptState = acceptState;
     }
 
-    public void update(PartnershipReq dto, Store issStore, Store useStore, Menu menu) {
+    public void update(UpdatePartnershipReq dto, Store issStore, Store useStore, Menu menu) {
         this.issStore = issStore;
         this.useStore = useStore;
         this.menu = menu;

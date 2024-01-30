@@ -1,17 +1,18 @@
 package com.hihi.square.domain.partnership.service;
 
-import com.hihi.square.domain.partnership.dto.request.PartnershipReq;
+import com.hihi.square.domain.partnership.dto.request.AddPartnershipReq;
 import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipAcceptStateReq;
+import com.hihi.square.domain.partnership.dto.request.UpdatePartnershipReq;
 import com.hihi.square.domain.partnership.dto.response.PartnershipRes;
 
 import java.util.List;
 
 public interface PartnershipService {
     // 제휴 추가
-    void addPartnership(Integer stoId, PartnershipReq req);
+    void addPartnership(Integer stoId, AddPartnershipReq req);
 
     // 제휴 수정
-    void updatePartnership(Integer stoId, PartnershipReq req);
+    void updatePartnership(Integer stoId, UpdatePartnershipReq req);
 
     // 제휴 상태 변경
     void updatePartnershipAcceptState(Integer stoId, UpdatePartnershipAcceptStateReq req);

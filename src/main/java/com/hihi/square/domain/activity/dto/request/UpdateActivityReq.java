@@ -15,7 +15,7 @@ public class UpdateActivityReq {
     List<UpdateActivityDto> list;
 
     @Data
-    public class UpdateActivityDto {
+    public static class UpdateActivityDto {
         Integer id;
         Boolean isMain;
         Integer depth;

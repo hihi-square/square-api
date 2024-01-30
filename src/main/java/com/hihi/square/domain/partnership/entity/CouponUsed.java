@@ -20,12 +20,12 @@ public class CouponUsed extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uic_id")
     private CouponIssued couponIssued; // 어떤 쿠폰이 발급되어 사용된건지.
     private Integer ordId; // 어떤 주문에서 사용되었는지
 
-    @ManyToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buy_id")
     private Buyer buyer; // 어떤 유저가 사용하였는지
 }

@@ -5,6 +5,7 @@ import com.hihi.square.domain.activity.dto.request.AddActivityReq;
 import com.hihi.square.domain.activity.dto.request.UpdateActivityReq;
 import com.hihi.square.domain.activity.dto.response.ActivityRes;
 import com.hihi.square.domain.activity.service.ActivityService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,21 +33,21 @@ public class ActivityController {
     }
 
     @PostMapping
-    public ResponseEntity addActivity(Authentication authentication, @RequestBody @NotNull AddActivityReq req) {
+    public ResponseEntity<?> addActivity(Authentication authentication, @RequestBody @NotNull @Valid AddActivityReq req) {
         Integer buyerId = Integer.parseInt(authentication.getName());
         activityService.addActivity(buyerId, req);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.CREATED);
     }
 
     @PatchMapping
-    public ResponseEntity updateActivity(Authentication authentication, @RequestBody UpdateActivityReq req) {
+    public ResponseEntity<?> updateActivity(Authentication authentication, @RequestBody @Valid UpdateActivityReq req) {
         Integer buyerId = Integer.parseInt(authentication.getName());
         activityService.updateActivity(buyerId, req);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);
     }
 
     @PatchMapping("/main")
-    public ResponseEntity updateMainActivity(Authentication authentication, @RequestParam @NotNull Integer id) {
+    public ResponseEntity<?> updateMainActivity(Authentication authentication, @RequestParam @NotNull @Valid Integer id) {
         Integer buyerId = Integer.parseInt(authentication.getName());
         activityService.updateMainActivity(buyerId, id);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);
