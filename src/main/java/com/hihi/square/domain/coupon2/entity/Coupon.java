@@ -33,8 +33,6 @@ public class Coupon extends BaseEntity {
     Integer maxPrice;
     @Enumerated(EnumType.STRING)
     CommonStatus status;
-    @Column(name = "used_time")
-    LocalDateTime usedTime;
 
     @ManyToOne
     @JoinColumn(name = "sto_id")

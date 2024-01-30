@@ -1,6 +1,8 @@
 package com.hihi.square.domain.order.service;
 
 import com.hihi.square.common.CommonStatus;
+import com.hihi.square.domain.coupon2.dto.CouponDto;
+import com.hihi.square.domain.coupon2.dto.UserCouponDto;
 import com.hihi.square.domain.coupon2.entity.Coupon;
 import com.hihi.square.domain.coupon2.entity.UserCoupon;
 import com.hihi.square.domain.coupon2.repository.CouponRepository;
@@ -20,6 +22,7 @@ import com.hihi.square.domain.order.event.OrderEvent;
 import com.hihi.square.domain.order.repository.OrderMenuOptionRepository;
 import com.hihi.square.domain.order.repository.OrderMenuRepository;
 import com.hihi.square.domain.order.repository.OrderRepository;
+import com.hihi.square.domain.store.dto.StoreDto;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
 import com.hihi.square.domain.user.entity.User;
@@ -63,14 +66,15 @@ public class OrderServiceImpl implements OrderService {
         //2. 유저 쿠폰 존재 여부 확인
         //2-1. 사용일이 null + 쿠폰 상태 확인
         UserCoupon userCoupon = null;
-        if(orderDto.getCouponId() != null){
-            userCoupon = uCouponRepository.findById(orderDto.getCouponId(), usrId, CommonStatus.ACTIVE).orElseThrow(
+        if(orderDto.getCoupon() != null){
+            userCoupon = uCouponRepository.findById(orderDto.getCoupon().getId(), usrId, CommonStatus.ACTIVE).orElseThrow(
                     () -> new EntityNotFoundException("User Coupon Not Found"));
             Coupon coupon = couponRepository.findById(userCoupon.getCoupon().getId(), CommonStatus.ACTIVE).orElseThrow(
                     () -> new EntityNotFoundException("Coupon Not Found"));
+
+            //2-2. 쿠폰 사용 상태 변경
+            uCouponRepository.updateStatus(userCoupon.getId(), CommonStatus.USED, LocalDateTime.now());
         }
-        //2-2. 쿠폰 사용 상태 변경
-        uCouponRepository.updateStatus(userCoupon.getId(), CommonStatus.USED, LocalDateTime.now());
 
         //3. 주문 등록
         Orders order = Orders.toEntity(orderDto, user, store, userCoupon);
@@ -135,9 +139,19 @@ public class OrderServiceImpl implements OrderService {
                 orderMenuDtos.add(omd);
             }
         }
+        
+        //3. 주문 쿠폰 존재 확인
+        UserCouponDto userCouponDto = null;
+        if(order.getUserCoupon() != null){
+            UserCoupon userCoupon = order.getUserCoupon();
+            Coupon coupon = couponRepository.findById(userCoupon.getCoupon().getId()).orElseThrow(
+                    () -> new EntityNotFoundException("Coupon Not Found")
+            );
+            userCouponDto = UserCouponDto.toRes(userCoupon, CouponDto.toRes(coupon, null));
+        }
 
-        //3. 주문 dto 생성
-        OrderDto orderDto = OrderDto.toRes(order, orderMenuDtos);
+        //4. 주문 dto 생성
+        OrderDto orderDto = OrderDto.toRes(order, userCouponDto, orderMenuDtos);
 
         return orderDto;
     }
@@ -177,8 +191,18 @@ public class OrderServiceImpl implements OrderService {
                     orderMenuDtos.add(omd);
                 }
             }
+
+            //3. 주문 쿠폰 존재 확인
+            UserCouponDto userCouponDto = null;
+            if(order.getUserCoupon() != null){
+                UserCoupon userCoupon = order.getUserCoupon();
+                Coupon coupon = couponRepository.findById(userCoupon.getCoupon().getId()).orElseThrow(
+                        () -> new EntityNotFoundException("Coupon Not Found")
+                );
+                userCouponDto = UserCouponDto.toRes(userCoupon, CouponDto.toRes(coupon, null));
+            }
             
-            OrderDto orderDto = OrderDto.toRes(order, orderMenuDtos);
+            OrderDto orderDto = OrderDto.toRes(order, userCouponDto, orderMenuDtos);
             orderDtos.add(orderDto);
         }
         
@@ -222,7 +246,17 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-            OrderDto orderDto = OrderDto.toRes(order, orderMenuDtos);
+            //3. 주문 쿠폰 존재 확인
+            UserCouponDto userCouponDto = null;
+            if(order.getUserCoupon() != null){
+                UserCoupon userCoupon = order.getUserCoupon();
+                Coupon coupon = couponRepository.findById(userCoupon.getCoupon().getId()).orElseThrow(
+                        () -> new EntityNotFoundException("Coupon Not Found")
+                );
+                userCouponDto = UserCouponDto.toRes(userCoupon, CouponDto.toRes(coupon, null));
+            }
+
+            OrderDto orderDto = OrderDto.toRes(order, userCouponDto, orderMenuDtos);
             orderDtos.add(orderDto);
         }
 

@@ -41,7 +41,7 @@ public class OrdersController {
     }
 
     @GetMapping("/reject/{order_id}")
-    public ResponseEntity<?> acceptOrder(Authentication authentication,  @PathVariable(name = "order_id") @Validated Integer orderId,
+    public ResponseEntity<?> rejectOrder(Authentication authentication,  @PathVariable(name = "order_id") @Validated Integer orderId,
                                          @RequestBody @Validated OrderDto orderDto){
         Integer userId = Integer.parseInt(authentication.getName());
         orderService.rejectOrder(userId, orderId, orderDto);
