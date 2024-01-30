@@ -7,7 +7,8 @@ public enum CommonStatus {
     ACTIVE("정상"),
     DELETE("삭제"),
     PRIVATE("비공개"),
-    REPORT("신고처리");
+    REPORT("신고처리"),
+    USED("사용");
 
     private final String status;
     public static final List<CommonStatus> activeAndPrivate = Arrays.asList(CommonStatus.ACTIVE, CommonStatus.PRIVATE);

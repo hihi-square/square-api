@@ -33,6 +33,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +69,8 @@ public class OrderServiceImpl implements OrderService {
             Coupon coupon = couponRepository.findById(userCoupon.getCoupon().getId(), CommonStatus.ACTIVE).orElseThrow(
                     () -> new EntityNotFoundException("Coupon Not Found"));
         }
+        //2-2. 쿠폰 사용 상태 변경
+        uCouponRepository.updateStatus(userCoupon.getId(), CommonStatus.USED, LocalDateTime.now());
 
         //3. 주문 등록
         Orders order = Orders.toEntity(orderDto, user, store, userCoupon);
