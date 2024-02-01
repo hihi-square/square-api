@@ -97,7 +97,7 @@ pipeline {
                         }
             
                         // 새 컨테이너 시작
-                        sh "docker run --name ${BE_CONTAINER_NAME} -d -p 80:80 ${BE_IMAGE_NAME}"
+                        sh "docker run --name ${BE_CONTAINER_NAME} -d -p 9999:9999 ${BE_IMAGE_NAME}"
                         // 추가적인 작업을 수행할 수 있습니다.
                     }    
                 }
