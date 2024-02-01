@@ -26,7 +26,7 @@ pipeline {
 
                 stage('jdk 17') {
             steps {
-                withEnv(["JAVA_HOME=${tool 'jdk-17.0.2+8'}", "PATH=${tool 'jdk-17.0.2+8'}/bin:${env.PATH}"]) {
+                withEnv(["JAVA_HOME=${tool 'jdk17'}", "PATH=${tool 'jdk17'}/bin:${env.PATH}"]) {
                     echo "JDK17 ============================="
                     sh 'java -version'
                     sh 'javac -version'
