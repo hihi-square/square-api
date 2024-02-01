@@ -1,8 +1,14 @@
 pipeline {
     agent any // 사용 가능한 에이전트에서 이 파이프라인 또는 해당 단계를 실행
     
+
+    tools{
+        jdk 'jdk17'
+    }
+
     //환경 변수
     environment{
+        JAVA_HOME = "tool jdk17"
         BE_IMAGE_NAME = "square_api" //도커 이미지 이름은 소문자를 권장한다.
         BE_CONTAINER_NAME = "square_api"
         // DOCKER_NETWORK = "special_network"
