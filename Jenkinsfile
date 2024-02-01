@@ -36,12 +36,13 @@ pipeline {
 
         stage('BackEnd build'){
             steps{
-                // 기존 빌드 결과물 삭제
-                sh 'rm -rf build'
+                withEnv(["JAVA_HOME=${tool 'jdk17'}", "PATH=${tool 'jdk17'}/bin:${env.PATH}"]) {
+                    // 기존 빌드 결과물 삭제
+                    sh 'rm -rf build'
 
-                sh'''
-                echo 깃허브 BackEnd 빌드 Start
-                '''
+                    sh'''
+                    echo 깃허브 BackEnd 빌드 Start
+                    '''
             
                 //application.yml을 복사한다.
                 // dir('/var/jenkins_home/special_config/spring'){
@@ -59,6 +60,8 @@ pipeline {
                         ls -al
                         '''
                 }
+                }
+                
             }
             post {
                 // build 성공시
