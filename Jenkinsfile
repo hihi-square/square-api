@@ -24,7 +24,7 @@ pipeline {
         //     }
         // }
 
-                stage('jdk 17') {
+        stage('jdk 17') {
             steps {
                 withEnv(["JAVA_HOME=${tool 'jdk17'}", "PATH=${tool 'jdk17'}/bin:${env.PATH}"]) {
                     echo "JDK17 ============================="
@@ -32,6 +32,7 @@ pipeline {
                     sh 'javac -version'
                 }
             }
+        }
 
         stage('BackEnd build'){
             steps{
