@@ -24,6 +24,15 @@ pipeline {
         //     }
         // }
 
+                stage('jdk 17') {
+            steps {
+                withEnv(["JAVA_HOME=${tool 'jdk-17.0.2+8'}", "PATH=${tool 'jdk-17.0.2+8'}/bin:${env.PATH}"]) {
+                    echo "JDK17 ============================="
+                    sh 'java -version'
+                    sh 'javac -version'
+                }
+            }
+
         stage('BackEnd build'){
             steps{
                 // 기존 빌드 결과물 삭제
