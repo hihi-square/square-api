@@ -89,4 +89,5 @@ public class StoreController {
         StoreDto store = storeService.selectStore(stoId, pathStoreId);
         return new ResponseEntity<>(CommonRes.success(store), HttpStatus.ACCEPTED);
     }
+
 }

@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Integer> {
 
-    @Query("select s from Store s where s.usrId=:userId and s.status=:status")
+    @Query("select s from Store s join fetch s.address join fetch s.address.siggAddress where s.usrId=:userId and s.status=:status")
     Optional<Store> findById(@Param("userId") Integer userId, @Param("status") UserStatus status);
 
     @Query("select s from Store s where s.uid=:uid and s.status=:status")

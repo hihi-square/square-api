@@ -1,5 +1,6 @@
 package com.hihi.square.domain.store.entity;
 
+import com.hihi.square.domain.activity.entity.EmdAddress;
 import com.hihi.square.domain.category.entity.Category;
 import com.hihi.square.domain.store.dto.StoreDto;
 import com.hihi.square.domain.store.dto.request.SignUpStoreReq;
@@ -35,7 +36,11 @@ public class Store extends User {
     Integer dibs_count;
     Integer review_count;
     Double rating;
-    String address;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "emd_id")
+    EmdAddress address;
+
     @Column(name = "detail_address")
     String detailAddress;
     @Column(name = "min_pickup_time")
@@ -46,8 +51,10 @@ public class Store extends User {
     @OneToOne
     @JoinColumn(name = "category")
     Category category;
+    Double latitude;
+    Double longitude;
 
-    public static Store toEntity(SignUpStoreReq signUpStoreReq, Category category){
+    public static Store toEntity(SignUpStoreReq signUpStoreReq, Category category, EmdAddress emdAddress){
         return Store.builder()
                 .uid(signUpStoreReq.getUid())
                 .password(signUpStoreReq.getPassword())
@@ -60,7 +67,7 @@ public class Store extends User {
                 .content(signUpStoreReq.getContent())
                 .storeContact(signUpStoreReq.getStoreContact())
                 .storeContact2(signUpStoreReq.getStoreContact2())
-                .address(signUpStoreReq.getAddress())
+                .address(emdAddress)
                 .detailAddress(signUpStoreReq.getDetailAddress())
                 .dibs_count(0)
                 .review_count(0)
@@ -68,6 +75,8 @@ public class Store extends User {
                 .minPickUpTime(0)
                 .maxPickUpTime(0)
                 .category(category)
+                .latitude(signUpStoreReq.getLatitude())
+                .longitude(signUpStoreReq.getLongitude())
                 .build();
     }
 
@@ -81,7 +90,6 @@ public class Store extends User {
                 .content(storeDto.getContent())
                 .storeContact(storeDto.getStoreContact())
                 .storeContact2(storeDto.getStoreContact2())
-                .address(storeDto.getAddress())
                 .detailAddress(storeDto.getDetailAddress())
                 .minPickUpTime(0)
                 .maxPickUpTime(0)

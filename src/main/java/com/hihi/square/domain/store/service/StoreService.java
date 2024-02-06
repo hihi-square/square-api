@@ -5,6 +5,7 @@ import com.hihi.square.domain.store.dto.request.LoginReq;
 import com.hihi.square.domain.store.dto.request.SignUpStoreReq;
 import com.hihi.square.domain.store.dto.request.StoreFindReq;
 import com.hihi.square.domain.store.dto.response.LoginRes;
+import com.hihi.square.domain.store.dto.response.StoreInfoRes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -32,4 +33,6 @@ public interface StoreService {
     void updateStore(Integer stoId, StoreDto storeDto);
 
     StoreDto selectStore(Integer stoId, Integer pathStoreId);
+
+    StoreInfoRes findInfoForBuyer(Integer buyerId, Integer storeId);
 }

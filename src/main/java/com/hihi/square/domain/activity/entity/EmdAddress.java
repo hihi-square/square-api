@@ -20,5 +20,4 @@ public class EmdAddress {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asi_id")
     private SiggAddress siggAddress;
-
 }

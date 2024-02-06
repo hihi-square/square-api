@@ -40,8 +40,11 @@ public class SignUpStoreReq {
 	private String storeContact2;
 
 	@NotEmpty(message = "주소는 필수 입력값입니다.")
-	private String address;
+	private Long bCode;
 
 	@NotEmpty(message = "상세 주소는 필수 입력값입니다.")
 	private String detailAddress;
+
+	private Double latitude;
+	private Double longitude;
 }

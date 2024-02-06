@@ -1,13 +1,20 @@
 package com.hihi.square.domain.store.service;
 
+import com.hihi.square.domain.activity.dto.response.EmdAddressRes;
+import com.hihi.square.domain.activity.entity.EmdAddress;
+import com.hihi.square.domain.activity.repository.EmdAddressRepository;
+import com.hihi.square.domain.buyer.entity.Buyer;
 import com.hihi.square.domain.category.dto.CategoryDto;
 import com.hihi.square.domain.category.entity.Category;
 import com.hihi.square.domain.category.repository.CategoryRepository;
+import com.hihi.square.domain.partnership.entity.Partnership;
+import com.hihi.square.domain.partnership.repository.PartnershipRepository;
 import com.hihi.square.domain.store.dto.StoreDto;
 import com.hihi.square.domain.store.dto.request.LoginReq;
 import com.hihi.square.domain.store.dto.request.SignUpStoreReq;
 import com.hihi.square.domain.store.dto.request.StoreFindReq;
 import com.hihi.square.domain.store.dto.response.LoginRes;
+import com.hihi.square.domain.store.dto.response.StoreInfoRes;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
 import com.hihi.square.domain.user.entity.User;
@@ -30,7 +37,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -43,6 +52,8 @@ public class StoreServiceImpl implements StoreService{
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RedisService redisService;
+    private final EmdAddressRepository emdAddressRepository;
+    private final PartnershipRepository partnershipRepository;
 
     @Override
     public void checkDuplicateUID(String uid){
@@ -68,7 +79,10 @@ public class StoreServiceImpl implements StoreService{
                 () -> new EntityNotFoundException("Category Not Found")
         );
 
-        Store store = Store.toEntity(signUpStoreReq, category);
+        //2. 행정구역 설정
+        EmdAddress emdAddress = emdAddressRepository.findById(signUpStoreReq.getBCode()).orElseThrow(()->new EntityNotFoundException("행정구역 코드가 잘못되었습니다."));
+
+        Store store = Store.toEntity(signUpStoreReq, category, emdAddress);
         storeRepository.save(store);
     }
 
@@ -197,7 +211,25 @@ public class StoreServiceImpl implements StoreService{
 
         //2. 정보 반환
         CategoryDto categoryDto = CategoryDto.toRes(store.getCategory());
-        StoreDto storeDto = StoreDto.toRes(store, categoryDto);
+        EmdAddressRes emdAddressRes = EmdAddressRes.toRes(store.getAddress());
+
+        StoreDto storeDto = StoreDto.toRes(store, categoryDto, emdAddressRes);
         return storeDto;
+    }
+
+    @Override
+    public StoreInfoRes findInfoForBuyer(Integer buyerId, Integer storeId) {
+        //1. 사전 확인
+        //1.1 로그인 유저 확인 및 구매자의 가게 접근 가능 여부 확인 -> 추후 추가
+
+        //1.2 가게 유저 확인
+        Store store = storeRepository.findById(storeId, UserStatus.ACTIVE).orElseThrow(()->new EntityNotFoundException("가게 회원이 조회되지 않습니다."));
+        //2. 정보 반환
+        //2-1. 타임세일 여부
+        //2-2. 제휴 여부
+        List<Partnership> partnershipList = partnershipRepository.findAllByStoreAndProgress(store, LocalDateTime.now());
+        StoreInfoRes storeInfoRes = StoreInfoRes.toRes(store, true, !partnershipList.isEmpty());
+
+        return storeInfoRes;
     }
 }
