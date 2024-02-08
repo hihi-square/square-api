@@ -38,6 +38,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -231,5 +232,22 @@ public class StoreServiceImpl implements StoreService{
         StoreInfoRes storeInfoRes = StoreInfoRes.toRes(store, true, !partnershipList.isEmpty());
 
         return storeInfoRes;
+    }
+
+    @Override
+    public List<StoreInfoRes> findAllStores(Integer stoId, Integer depth) {
+        Store store = storeRepository.findById(stoId, UserStatus.ACTIVE).orElseThrow(
+                () -> new UserNotFoundException("User Not Found"));
+
+        // 추후 해당 가게 기준으로 가까운 가게/조금 먼 가게/먼 가게 추가
+        List<Store> storeList = storeRepository.findAll();
+        List<StoreInfoRes> res = new ArrayList<>();
+        for(Store s : storeList) {
+            if (!s.getUid().equals(store.getUid())){
+                res.add(StoreInfoRes.toRes(s));
+            }
+        }
+
+        return res;
     }
 }

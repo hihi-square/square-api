@@ -29,11 +29,15 @@ public class ChatRoom extends BaseEntity {
     @JoinColumn(name = "last_message_id")
     private ChatMessage lastMessage;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "sto_id1")
     private Store store1;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "sto_id2")
     private Store store2;
+
+    public void updateLastMessage(ChatMessage message) {
+        this.lastMessage = message;
+    }
 }

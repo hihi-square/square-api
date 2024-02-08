@@ -19,5 +19,5 @@ import java.util.Set;
 public class ChatRoomRes {
     private Long id;
     private ChatMessageRes lastMessage;
-    private StoreRes store;
+    private StoreInfoRes store;
 }

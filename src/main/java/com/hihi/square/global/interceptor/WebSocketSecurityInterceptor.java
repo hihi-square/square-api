@@ -1,4 +1,4 @@
-package com.hihi.square.global;
+package com.hihi.square.global.interceptor;
 
 import com.hihi.square.global.jwt.token.TokenProvider;
 import lombok.RequiredArgsConstructor;

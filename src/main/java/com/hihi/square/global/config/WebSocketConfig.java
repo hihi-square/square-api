@@ -1,6 +1,6 @@
 package com.hihi.square.global.config;
 
-import com.hihi.square.global.WebSocketSecurityInterceptor;
+import com.hihi.square.global.interceptor.WebSocketSecurityInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,6 @@ import org.springframework.web.socket.config.annotation.*;
 @Configuration
 @EnableWebSocketMessageBroker // 웹소켓 메세지 핸들링 활성화
 @RequiredArgsConstructor
-//@EnableWebSocket
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer { // websocket + stomp
 
     private final WebSocketSecurityInterceptor webSocketSecurityInterceptor;

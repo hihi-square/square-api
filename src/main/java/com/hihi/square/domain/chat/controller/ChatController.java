@@ -1,6 +1,7 @@
 package com.hihi.square.domain.chat.controller;
 
 import com.hihi.square.common.CommonRes;
+import com.hihi.square.domain.chat.dto.response.ChatRoomIdRes;
 import com.hihi.square.domain.chat.dto.response.ChatRoomRes;
 import com.hihi.square.domain.chat.service.ChatRoomService;
 import com.hihi.square.domain.chat.service.ChatService;
@@ -9,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,7 +31,12 @@ public class ChatController {
         return new ResponseEntity(CommonRes.success(res), HttpStatus.OK);
     }
 
-
+    @PostMapping("/{storeId}")
+    public ResponseEntity getRoom(Authentication authentication, @PathVariable Integer storeId) {
+        Integer myId = Integer.parseInt(authentication.getName());
+        ChatRoomIdRes res = chatRoomService.getRoomIdByStoIds(myId, storeId);
+        return new ResponseEntity(CommonRes.success(res), HttpStatus.OK);
+    }
 
 }
 

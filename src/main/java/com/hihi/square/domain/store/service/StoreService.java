@@ -6,9 +6,11 @@ import com.hihi.square.domain.store.dto.request.SignUpStoreReq;
 import com.hihi.square.domain.store.dto.request.StoreFindReq;
 import com.hihi.square.domain.store.dto.response.LoginRes;
 import com.hihi.square.domain.store.dto.response.StoreInfoRes;
+import com.hihi.square.domain.store.entity.Store;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.List;
 import java.util.Map;
 
 public interface StoreService {
@@ -35,4 +37,6 @@ public interface StoreService {
     StoreDto selectStore(Integer stoId, Integer pathStoreId);
 
     StoreInfoRes findInfoForBuyer(Integer buyerId, Integer storeId);
+
+    List<StoreInfoRes> findAllStores(Integer stoId, Integer depth);
 }
