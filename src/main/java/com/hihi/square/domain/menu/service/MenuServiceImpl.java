@@ -1,7 +1,7 @@
 package com.hihi.square.domain.menu.service;
 
 import com.hihi.square.common.CommonStatus;
-import com.hihi.square.domain.buyer.entity.Buyer;
+import com.hihi.square.domain.menu.dto.MenuAllDto;
 import com.hihi.square.domain.menu.dto.MenuOptionDto;
 import com.hihi.square.domain.menu.dto.MenuDto;
 import com.hihi.square.domain.menu.dto.MenuSequenceReq;
@@ -26,7 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -170,12 +172,12 @@ public class MenuServiceImpl implements MenuService {
             }
         }
 
-        MenuDto menuDto = MenuDto.toRes(menu, mcId, optionDtoList);
+        MenuDto menuDto = MenuDto.toRes(menu, menuCategory, optionDtoList);
         return menuDto;
     }
 
     @Override
-    public List<MenuDto> selectAllMenu(Integer userId) {
+    public MenuAllDto selectAllMenu(Integer userId) {
         //1. 사전 체크
         //1-2. 유저가 buyer인지, store인지 확인
         User user = userRepository.findByUserId(userId, UserStatus.ACTIVE).orElseThrow(
@@ -192,6 +194,15 @@ public class MenuServiceImpl implements MenuService {
 
         List<MenuDto> menuDtoList = new ArrayList<>();
 
+        //메뉴 카테고리 리스트 조회
+        List<MenuCategory> menuCategoryList = menuCategoryRepository.findAllByStoreOrderBySequence(userId, CommonStatus.activeAndPrivate);
+        List<MenuCategoryDto> mcdList = new ArrayList<>();
+
+        for(MenuCategory mc : menuCategoryList){
+            MenuCategoryDto mcDto = MenuCategoryDto.toRes(mc);
+            mcdList.add(mcDto);
+        }
+        
         //메뉴 조회
         for(Menu menu : menuList){
             //2. 메뉴 카테고리 조회
@@ -207,12 +218,14 @@ public class MenuServiceImpl implements MenuService {
                     optionDtoList.add(menuOptionDto);
                 }
             }
-
-            MenuDto menuDto = MenuDto.toRes(menu, mcId, optionDtoList);
+            
+            MenuDto menuDto = MenuDto.toRes(menu, menuCategory, optionDtoList);
             menuDtoList.add(menuDto);
         }
 
-        return menuDtoList;
+        MenuAllDto menuAllDto = MenuAllDto.toRes(mcdList, menuDtoList);
+
+        return menuAllDto;
     }
 
     @Override

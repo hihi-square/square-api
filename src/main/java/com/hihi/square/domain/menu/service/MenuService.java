@@ -1,5 +1,6 @@
 package com.hihi.square.domain.menu.service;
 
+import com.hihi.square.domain.menu.dto.MenuAllDto;
 import com.hihi.square.domain.menu.dto.MenuDto;
 import com.hihi.square.domain.menu.dto.MenuSequenceReq;
 
@@ -16,7 +17,7 @@ public interface MenuService {
     MenuDto selectMenu(Integer stoId, Integer menuId);
     
     //전체 메뉴 보기
-    List<MenuDto> selectAllMenu(Integer stoId);
+    MenuAllDto selectAllMenu(Integer stoId);
 
     void updateSequence(MenuSequenceReq menuSequenceReq);
 }

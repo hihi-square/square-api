@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/store/menu/category")
+@RequestMapping("/menu/category")
 @RequiredArgsConstructor
 public class MenuCategoryController {
     private final MenuCategoryServiceImpl menuCategoryService;

@@ -1,6 +1,7 @@
 package com.hihi.square.domain.menu.controller;
 
 import com.hihi.square.common.CommonRes;
+import com.hihi.square.domain.menu.dto.MenuAllDto;
 import com.hihi.square.domain.menu.dto.MenuDto;
 import com.hihi.square.domain.menu.dto.MenuSequenceReq;
 import com.hihi.square.domain.menu.service.MenuServiceImpl;
@@ -51,7 +52,7 @@ public class MenuController {
     @GetMapping("/all")
     public ResponseEntity<?> selectAllMenu(Authentication authentication) {
         Integer stoId = Integer.parseInt(authentication.getName());
-        List<MenuDto> menuList = menuService.selectAllMenu(stoId);
+        MenuAllDto menuList = menuService.selectAllMenu(stoId);
         return new ResponseEntity<>(CommonRes.success(menuList), HttpStatus.ACCEPTED);
     }
 

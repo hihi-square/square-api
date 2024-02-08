@@ -26,7 +26,7 @@ public class MenuCategoryDto {
                 .id(menuCategory.getId())
                 .name(menuCategory.getName())
                 .sequence(menuCategory.getSequence())
-                .stoId(menuCategory.getStore().getUsrId())
+                .stoId(menuCategory.getStore() == null ? null : menuCategory.getStore().getUsrId())
                 .build();
     }
 }

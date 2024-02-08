@@ -1,6 +1,7 @@
 package com.hihi.square.domain.menu.controller;
 
 import com.hihi.square.common.CommonRes;
+import com.hihi.square.domain.menu.dto.MenuAllDto;
 import com.hihi.square.domain.menu.dto.MenuDto;
 import com.hihi.square.domain.menu.service.MenuService;
 import com.hihi.square.global.error.type.UserMismachException;
@@ -35,7 +36,7 @@ public class BuyerMenuController {
     public ResponseEntity<?> selectAllMenu(Authentication authentication, @PathVariable(name = "store_id") @Validated Integer pathStoId) {
         Integer stoId = Integer.parseInt(authentication.getName());
         if(stoId != pathStoId) throw new UserMismachException("Store And Path MisMatch");
-        List<MenuDto> menuList = menuService.selectAllMenu(stoId);
+        MenuAllDto menuList = menuService.selectAllMenu(stoId);
         return new ResponseEntity<>(CommonRes.success(menuList), HttpStatus.ACCEPTED);
     }
 }

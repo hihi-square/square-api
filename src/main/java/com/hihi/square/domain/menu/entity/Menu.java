@@ -37,7 +37,7 @@ public class Menu extends BaseEntity {
     @JoinColumn(name = "sto_id")
     Store store;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "mec_id", nullable = true)
     MenuCategory menuCategory;
 

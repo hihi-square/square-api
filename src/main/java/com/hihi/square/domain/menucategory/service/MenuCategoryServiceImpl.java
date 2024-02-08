@@ -1,12 +1,16 @@
 package com.hihi.square.domain.menucategory.service;
 
 import com.hihi.square.common.CommonStatus;
+import com.hihi.square.domain.buyer.entity.Buyer;
 import com.hihi.square.domain.menu.repository.MenuRepository;
 import com.hihi.square.domain.menucategory.dto.MenuCategoryDto;
 import com.hihi.square.domain.menucategory.entity.MenuCategory;
 import com.hihi.square.domain.menucategory.repository.MenuCategoryRepository;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
+import com.hihi.square.domain.user.entity.User;
+import com.hihi.square.domain.user.entity.UserStatus;
+import com.hihi.square.domain.user.repository.UserRepository;
 import com.hihi.square.global.error.type.DeletionNotAllowedException;
 import com.hihi.square.global.error.type.EntityNotFoundException;
 import com.hihi.square.global.error.type.UserMismachException;
@@ -15,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.MethodNotAllowedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +31,7 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
     private final MenuCategoryRepository menuCategoryRepository;
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
+    private final UserRepository userRepository;
 
 
     public Store checkUserMatching(Integer stoId, Integer reqStoId){
@@ -36,10 +42,16 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
 
     @Transactional
     @Override
-    public void addCategory(Integer stoId, MenuCategoryDto menuCategoryReq) {
+    public void addCategory(Integer userId, MenuCategoryDto menuCategoryReq) {
         //1. 사전 체크
+        User user = userRepository.findByUserId(userId, UserStatus.ACTIVE).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        if(user instanceof Buyer) throw new UserMismachException("Only Store add");
+
         //1-1. 로그인한 store와 등록 store 일치 여부
-        Store store = checkUserMatching(stoId, menuCategoryReq.getStoId());
+        Store store = checkUserMatching(userId, menuCategoryReq.getStoId());
 
         //2. 카테고리 등록
         //2-1. 마지막 순서 지정
@@ -56,12 +68,18 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
 
     @Transactional
     @Override
-    public void deleteCategory(Integer stoId, Integer categoryId) {
+    public void deleteCategory(Integer userId, Integer categoryId) {
         //1. 사전 체크
+        User user = userRepository.findByUserId(userId, UserStatus.ACTIVE).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        if(user instanceof Buyer) throw new UserMismachException("Only Store add");
+
         //1-1. 카테고리 존재 여부
         //1-2. 로그인한 store와 등록 store 일치 여부
         MenuCategory menuCategory = menuCategoryRepository.findById(categoryId, CommonStatus.activeAndPrivate).orElseThrow(() -> new EntityNotFoundException("MenuCategory Not Found"));
-        Store store = checkUserMatching(stoId, menuCategory.getStore().getUsrId());
+        Store store = checkUserMatching(userId, menuCategory.getStore().getUsrId());
 
         //1-2. 해당 카테고리에 상품이 없는지 확인 ---> 없으면 empty(null x)
         if(!menuRepository.findByCategory(categoryId).isEmpty()) throw new DeletionNotAllowedException("Category Doesn't Empty");
@@ -72,12 +90,17 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
 
     @Transactional
     @Override
-    public void updateCategory(Integer stoId, Integer categoryId, MenuCategoryDto menuCategoryReq) {
+    public void updateCategory(Integer userId, Integer categoryId, MenuCategoryDto menuCategoryReq) {
         //1. 사전 체크
+        User user = userRepository.findByUserId(userId, UserStatus.ACTIVE).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        if(user instanceof Buyer) throw new UserMismachException("Only Store add");
         //1-1. 카테고리 가져옴
         //1-2. 로그인한 store와 등록 store 일치 여부
         MenuCategory menuCategory = menuCategoryRepository.findById(categoryId, CommonStatus.activeAndPrivate).orElseThrow(() -> new EntityNotFoundException("MenuCategory Not Found"));
-        Store store = checkUserMatching(stoId, menuCategory.getStore().getUsrId());
+        Store store = checkUserMatching(userId, menuCategory.getStore().getUsrId());
         int originSeq = menuCategory.getSequence();
 
         //2. 카테고리 변경
@@ -93,7 +116,7 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
         //3. 순서 바뀐 경우 : 나머지 애들 순서 변경
         //3-1. 현재 store에 해당하는 category List 가져옴(ACTIVE, PRIVATE)
         List<MenuCategory> categoryList = menuCategoryRepository.findAllByStoreOrderBySequence(
-                stoId,
+                userId,
                 CommonStatus.activeAndPrivate
         );
 
@@ -132,8 +155,8 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
     }
 
     @Override
-    public List<MenuCategoryDto> selectAllCategory(Integer stoId) {
-        List<MenuCategory> menuCategoryList = menuCategoryRepository.findAllByStoreOrderBySequence(stoId, CommonStatus.activeAndPrivate);
+    public List<MenuCategoryDto> selectAllCategory(Integer userId) {
+        List<MenuCategory> menuCategoryList = menuCategoryRepository.findAllByStoreOrderBySequence(userId, CommonStatus.activeAndPrivate);
         List<MenuCategoryDto> menuCategoryDtoList = new ArrayList<>();
 
         for(MenuCategory mc : menuCategoryList){
