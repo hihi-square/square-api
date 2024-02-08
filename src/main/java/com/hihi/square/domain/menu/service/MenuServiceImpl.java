@@ -1,6 +1,7 @@
 package com.hihi.square.domain.menu.service;
 
 import com.hihi.square.common.CommonStatus;
+import com.hihi.square.domain.buyer.entity.Buyer;
 import com.hihi.square.domain.menu.dto.MenuOptionDto;
 import com.hihi.square.domain.menu.dto.MenuDto;
 import com.hihi.square.domain.menu.dto.MenuSequenceReq;
@@ -13,6 +14,9 @@ import com.hihi.square.domain.menucategory.entity.MenuCategory;
 import com.hihi.square.domain.menucategory.repository.MenuCategoryRepository;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
+import com.hihi.square.domain.user.entity.User;
+import com.hihi.square.domain.user.entity.UserStatus;
+import com.hihi.square.domain.user.repository.UserRepository;
 import com.hihi.square.global.error.type.EntityNotFoundException;
 import com.hihi.square.global.error.type.UserMismachException;
 import com.hihi.square.global.error.type.UserNotFoundException;
@@ -32,6 +36,7 @@ public class MenuServiceImpl implements MenuService {
     private final MenuCategoryRepository menuCategoryRepository;
     private final MenuOptionRepository menuOptionRepository;
     private final StoreRepository storeRepository;
+    private final UserRepository userRepository;
 
     public Store checkUserMatching(Integer stoId, Integer reqStoId){
         Store store = storeRepository.findById(stoId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
@@ -132,13 +137,24 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public MenuDto selectMenu(Integer stoId, Integer menuId) {
+    public MenuDto selectMenu(Integer userId, Integer menuId) {
         //1. 사전 체크
-        //1-1. menu 존재 여부
-        Menu menu = menuRepository.findById(menuId, CommonStatus.activeAndPrivate).orElseThrow(()
-                -> new EntityNotFoundException("Menu Not Found"));
-        //1-2. 로그인한 store와 등록 store 일치 여부
-        Store store = checkUserMatching(stoId, menu.getStore().getUsrId());
+        //1-2. 유저가 buyer인지, store인지 확인
+        User user = userRepository.findByUserId(userId, UserStatus.ACTIVE).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        Menu menu = null;
+        if(user instanceof Store){
+            //1-2. 로그인한 store와 등록 store 일치 여부
+            menu = menuRepository.findById(menuId, CommonStatus.activeAndPrivate).orElseThrow(()
+                    -> new EntityNotFoundException("Menu Not Found"));
+            Store store = checkUserMatching(userId, menu.getStore().getUsrId());
+        }
+        else{   //구매자인 경우
+            menu = menuRepository.findById(menuId, CommonStatus.ACTIVE).orElseThrow(()
+                    -> new EntityNotFoundException("Menu Not Found"));
+        }
 
         //2. 메뉴 카테고리 조회
         MenuCategory menuCategory = menu.getMenuCategory();
@@ -159,15 +175,40 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<MenuDto> selectAllMenu(Integer stoId) {
-        List<Menu> menuList = menuRepository.findAllByStoreOrderBySequence(stoId, CommonStatus.activeAndPrivate);
+    public List<MenuDto> selectAllMenu(Integer userId) {
+        //1. 사전 체크
+        //1-2. 유저가 buyer인지, store인지 확인
+        User user = userRepository.findByUserId(userId, UserStatus.ACTIVE).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        List<Menu> menuList = null;
+        if(user instanceof Store){
+            menuList = menuRepository.findAllByStoreOrderBySequence(userId, CommonStatus.activeAndPrivate);
+        }
+        else{
+            menuList = menuRepository.findAllByStoreOrderBySequence(userId, CommonStatus.ACTIVE);
+        }
+
         List<MenuDto> menuDtoList = new ArrayList<>();
 
+        //메뉴 조회
         for(Menu menu : menuList){
-            //메뉴 카테고리 조회
+            //2. 메뉴 카테고리 조회
             MenuCategory menuCategory = menu.getMenuCategory();
             Integer mcId = menuCategory == null ? 0 : menuCategory.getId(); //null인 경우 0 반환
-            MenuDto menuDto = MenuDto.toRes(menu, mcId, null);
+
+            //3. 메뉴 옵션 조회
+            List<MenuOption> optionList = menuOptionRepository.findAllByMenu(menu.getId());
+            List<MenuOptionDto> optionDtoList = new ArrayList<>();
+            if(optionList != null){
+                for(MenuOption mo : optionList){
+                    MenuOptionDto menuOptionDto = MenuOptionDto.toRes(mo);
+                    optionDtoList.add(menuOptionDto);
+                }
+            }
+
+            MenuDto menuDto = MenuDto.toRes(menu, mcId, optionDtoList);
             menuDtoList.add(menuDto);
         }
 
