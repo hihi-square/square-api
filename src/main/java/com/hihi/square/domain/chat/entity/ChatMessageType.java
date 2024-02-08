@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum ChatMessageType {
+    ENTER("입장"),
     TALK("메세지"),
     FILE("파일"),
     IMAGE("이미지"),

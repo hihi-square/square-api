@@ -1,7 +1,7 @@
 package com.hihi.square.domain.chat.service;
 
-import com.hihi.square.domain.chat.dto.ChatMessageDto;
+import com.hihi.square.domain.chat.dto.request.ChatMessageReq;
 
 public interface ChatService {
-    ChatMessageDto addChat(Long roomId, ChatMessageDto req);
+    ChatMessageReq addChat(Long roomId, ChatMessageReq req);
 }
