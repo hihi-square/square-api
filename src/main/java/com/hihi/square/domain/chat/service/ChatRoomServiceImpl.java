@@ -72,6 +72,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
                     .type(ChatMessageType.ENTER)
                     .chatRoom(chatRoom)
                     .author(store1)
+                    .receiver(store2)
                     .build();
             chatMessageRepository.save(message);
             chatRoom.updateLastMessage(message);

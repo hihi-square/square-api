@@ -39,6 +39,10 @@ public class ChatMessage {
     @JoinColumn(name="sto_id")
     private Store author;
 
+    @ManyToOne
+    @JoinColumn(name="receiver_id")
+    private Store receiver;
+
     private String url;
 
     @CreationTimestamp

@@ -4,14 +4,17 @@ import com.hihi.square.domain.chat.entity.ChatMessage;
 import com.hihi.square.domain.chat.entity.ChatMessageType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jdk.jfr.ContentType;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
 @Data
 @Builder
+@ToString
 public class ChatMessageRes {
     @Enumerated(EnumType.STRING)
     private ChatMessageType type; // TALK, FILE, IMAGE, LINK
@@ -24,6 +27,7 @@ public class ChatMessageRes {
     public static ChatMessageRes toRes(ChatMessage message) {
         return ChatMessageRes.builder()
                 .type(message.getType())
+                .receiverId(message.getReceiver().getUsrId())
                 .senderId(message.getAuthor().getUsrId())
                 .message(message.getMessage())
                 .url(message.getUrl())

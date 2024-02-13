@@ -1,5 +1,6 @@
 package com.hihi.square.domain.chat.entity;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.hihi.square.common.CommonStatus;
 
 import java.util.Arrays;
@@ -12,7 +13,12 @@ public enum ChatMessageType {
     IMAGE("이미지"),
     LINK("링크");
 
-    private final String status;
+    private final String type;
 
-    ChatMessageType(String status) { this.status = status; }
+    ChatMessageType(String type) { this.type = type; }
+
+    @JsonValue
+    public String getType() {
+        return this.toString();
+    }
 }
