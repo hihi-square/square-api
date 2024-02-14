@@ -94,7 +94,7 @@ pipeline {
             steps{
                 dir('/var/jenkins_home/workspace/square_square-api_master'){
                     script {
-                        def isRunning = sh(script: "docker ps -q -f name=${BE_CONTAINER_NAME}", returnStdout: true).trim()
+                        def isRunning = sh(script: "docker ps -a -q -f name=${BE_CONTAINER_NAME}", returnStdout: true).trim()
                         if (isRunning) {
                             // 컨테이너가 실행 중인 경우, 중지 및 삭제fsddsdfedsf
                             sh "docker stop ${BE_CONTAINER_NAME}"
