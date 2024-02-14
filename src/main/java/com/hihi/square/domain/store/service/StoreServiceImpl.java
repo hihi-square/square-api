@@ -230,7 +230,6 @@ public class StoreServiceImpl implements StoreService{
         //2-2. 제휴 여부
         List<Partnership> partnershipList = partnershipRepository.findAllByStoreAndProgress(store, LocalDateTime.now());
         StoreInfoRes storeInfoRes = StoreInfoRes.toRes(store, true, !partnershipList.isEmpty());
-
         return storeInfoRes;
     }
 

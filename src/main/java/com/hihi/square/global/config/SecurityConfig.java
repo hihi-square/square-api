@@ -74,6 +74,7 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/store/join/**", "/store/login", "/store/reissue",  "/oauth2/**").permitAll()
                         .requestMatchers("/store/**").hasAuthority("STORE")
+                        .requestMatchers("/partnerships/buyers/**").hasAuthority("BUYER")
                         .requestMatchers("/partnerships/**").hasAuthority("STORE")
                         .requestMatchers("/buyer/**").hasAuthority("BUYER")
                         .requestMatchers("/chats/**").hasAuthority("STORE")

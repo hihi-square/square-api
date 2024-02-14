@@ -21,4 +21,7 @@ public interface PartnershipRepository extends JpaRepository<Partnership, Intege
 
     @Query("select p from Partnership p join fetch p.issStore join fetch p.useStore join fetch p.menu join fetch p.proStore where (p.issStore = :store or p.useStore = :store) and :now between p.startTime and p.finishTime and p.acceptState = 'NORMAL'")
     List<Partnership> findAllByStoreAndProgress(Store store, LocalDateTime now);
+
+    @Query("select p from Partnership p join fetch p.issStore join fetch p.useStore join fetch p.menu join fetch p.proStore where p.issStore = :store and :now between p.startTime and p.finishTime and p.acceptState = 'NORMAL'")
+    List<Partnership> findAllByIssStoreAndProgress(Store store, LocalDateTime now);
 }

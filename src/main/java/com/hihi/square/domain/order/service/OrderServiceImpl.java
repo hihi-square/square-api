@@ -20,6 +20,7 @@ import com.hihi.square.domain.order.event.OrderEvent;
 import com.hihi.square.domain.order.repository.OrderMenuOptionRepository;
 import com.hihi.square.domain.order.repository.OrderMenuRepository;
 import com.hihi.square.domain.order.repository.OrderRepository;
+import com.hihi.square.domain.partnership.repository.PartnershipRepository;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
 import com.hihi.square.domain.user.entity.User;
@@ -35,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserCouponRepository uCouponRepository;
     private final CouponRepository couponRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final PartnershipRepository partnershipRepository;
 
     @Transactional
     @Override
@@ -241,6 +244,10 @@ public class OrderServiceImpl implements OrderService {
 
         //3. 주문 상태 변경
         orderRepository.updateStatus(orderId, OrderStatus.ACCEPT);
+
+        //3-1. 발급 가능한 쿠폰 존재시 쿠폰 발급
+//        Optional<Partnership> partnership = partnershipRepository.findByMenus(order.getMenus());
+
 
         //4. 주문 상태 변경 시 -> 유저한테 알림
         eventPublisher.publishEvent(new OrderEvent(OrderStatus.ACCEPT, order, "주문이 수락되었습니다."));

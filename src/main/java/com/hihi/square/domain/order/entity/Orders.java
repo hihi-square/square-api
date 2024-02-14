@@ -9,6 +9,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "orders")
 @AllArgsConstructor
@@ -40,6 +43,10 @@ public class Orders extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "uc_id")
     UserCoupon userCoupon;
+
+    @OneToMany
+    @JoinColumn(name="order_ord_id")
+    List<OrderMenu> menus = new ArrayList<>();
 
     public static Orders toEntity(OrderDto orderDto, User user, Store store, UserCoupon userCoupon){
         return Orders.builder()
