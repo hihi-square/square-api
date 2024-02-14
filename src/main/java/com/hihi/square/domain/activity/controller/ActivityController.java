@@ -17,14 +17,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/buyer/activity")
+@RequestMapping("/buyers/activities")
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class ActivityController {
-
 
     private final ActivityService activityService;
 
+    // 활동반경 조회
     @GetMapping
     public ResponseEntity<List<ActivityRes>> getActivityList(Authentication authentication) {
         Integer buyerId = Integer.parseInt(authentication.getName());
@@ -32,6 +33,7 @@ public class ActivityController {
         return new ResponseEntity(CommonRes.success(res), HttpStatus.OK);
     }
 
+    // 활동반경 추가
     @PostMapping
     public ResponseEntity<?> addActivity(Authentication authentication, @RequestBody @NotNull @Valid AddActivityReq req) {
         Integer buyerId = Integer.parseInt(authentication.getName());
@@ -39,6 +41,7 @@ public class ActivityController {
         return new ResponseEntity(CommonRes.success(null), HttpStatus.CREATED);
     }
 
+    // 활동반경 수정/삭제
     @PatchMapping
     public ResponseEntity<?> updateActivity(Authentication authentication, @RequestBody @Valid UpdateActivityReq req) {
         Integer buyerId = Integer.parseInt(authentication.getName());
@@ -46,6 +49,7 @@ public class ActivityController {
         return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);
     }
 
+    // 메인 활동반경 설정
     @PatchMapping("/main")
     public ResponseEntity<?> updateMainActivity(Authentication authentication, @RequestParam @NotNull @Valid Integer id) {
         Integer buyerId = Integer.parseInt(authentication.getName());
