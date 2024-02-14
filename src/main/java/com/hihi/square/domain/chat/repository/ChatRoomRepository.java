@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
@@ -17,4 +18,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     @Query("select room from ChatRoom room join fetch room.lastMessage join fetch room.store1 join fetch room.store2 join fetch room.store1.address join fetch room.store2.address join fetch room.store1.address.siggAddress join fetch room.store2.address.siggAddress where (room.store1 = :store1 and room.store2 = :store2) or (room.store1 = :store2 and room.store2 = :store1)")
     Optional<ChatRoom> findByStores(Store store1, Store store2);
 
+    @Query("select room from ChatRoom room join fetch room.lastMessage join fetch room.store1 join fetch room.store2 join fetch room.store1.address join fetch room.store2.address join fetch room.store1.address.siggAddress join fetch room.store2.address.siggAddress where room.id = :id and (room.store1 = :store or room.store2 = :store)")
+    Optional<ChatRoom> findByIdAndStore(Long id, Store store);
 }

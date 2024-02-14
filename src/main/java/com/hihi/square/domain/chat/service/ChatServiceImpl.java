@@ -18,6 +18,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +44,16 @@ public class ChatServiceImpl implements ChatService{
         chatMessageRepository.save(chatMessage);
 
         ChatMessageRes res = ChatMessageRes.toRes(chatMessage);
+        return res;
+    }
+
+    @Override
+    public List<ChatMessageRes> getAllChats(Integer stoId, Long roomId) {
+        Store store = storeRepository.findById(stoId).orElseThrow(() -> new UserNotFoundException("가게 회원을 찾을 수 없습니다."));
+        ChatRoom chatRoom = chatRoomRepository.findByIdAndStore(roomId, store).orElseThrow(()->new EntityNotFoundException("채팅룸을 찾을 수 없습니다."));
+        List<ChatMessage> chatMessageList = chatMessageRepository.findAllByChatRoom(chatRoom);
+        List<ChatMessageRes> res = new ArrayList<>();
+        for(ChatMessage m : chatMessageList) res.add(ChatMessageRes.toRes(m));
         return res;
     }
 }

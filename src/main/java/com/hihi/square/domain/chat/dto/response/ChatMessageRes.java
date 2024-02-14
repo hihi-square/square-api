@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 public class ChatMessageRes {
     @Enumerated(EnumType.STRING)
     private ChatMessageType type; // TALK, FILE, IMAGE, LINK
+    private Long roomId;
     private Integer senderId;
     private Integer receiverId;
     private String message;
@@ -27,6 +28,7 @@ public class ChatMessageRes {
     public static ChatMessageRes toRes(ChatMessage message) {
         return ChatMessageRes.builder()
                 .type(message.getType())
+                .roomId(message.getChatRoom().getId())
                 .receiverId(message.getReceiver().getUsrId())
                 .senderId(message.getAuthor().getUsrId())
                 .message(message.getMessage())

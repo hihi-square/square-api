@@ -11,6 +11,7 @@ import lombok.Getter;
 import org.springframework.context.annotation.Bean;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -18,6 +19,7 @@ import java.util.Set;
 @Getter
 public class ChatRoomRes {
     private Long id;
-    private ChatMessageRes lastMessage;
+    private List<ChatMessageRes> chatMessageList;
     private StoreInfoRes store;
+    private Integer notReadNum;
 }

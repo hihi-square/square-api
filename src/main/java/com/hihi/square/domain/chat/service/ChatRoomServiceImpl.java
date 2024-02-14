@@ -37,10 +37,14 @@ public class ChatRoomServiceImpl implements ChatRoomService{
         List<ChatRoom> chatRoomList = chatRoomRepository.findByStore(store);
         List<ChatRoomRes> res = new ArrayList<>();
         for(ChatRoom chatRoom: chatRoomList) {
+            List<ChatMessageRes> cmRes = new ArrayList<>();
+            List<ChatMessage> messages = chatMessageRepository.findAllByChatRoom(chatRoom);
+            for(ChatMessage m : messages) cmRes.add(ChatMessageRes.toRes(m));
             res.add(ChatRoomRes.builder()
                     .id(chatRoom.getId())
-                    .lastMessage(ChatMessageRes.toRes(chatRoom.getLastMessage()))
+                    .chatMessageList(cmRes)
                     .store(chatRoom.getStore1().getUsrId() == store.getUsrId() ? StoreInfoRes.toRes(chatRoom.getStore2()):StoreInfoRes.toRes(chatRoom.getStore1()))
+                    .notReadNum(0)
                     .build());
         }
         return res;
@@ -56,7 +60,15 @@ public class ChatRoomServiceImpl implements ChatRoomService{
         ChatRoom chatRoom = getOrCreate(store1, store2);
 
         // 데이터에 넣기
-        return ChatRoomIdRes.builder().id(chatRoom.getId()).build();
+        return ChatRoomIdRes.builder().id(chatRoom.getId()).type(chatRoom.getLastMessage().getType()).build();
+    }
+
+    @Override
+    public ChatRoomRes getRoom(Integer stoId, Long roomId) {
+        Store store = storeRepository.findById(stoId).orElseThrow(() -> new UserNotFoundException("가게 회원을 찾을 수 없습니다."));
+        ChatRoom chatRoom = chatRoomRepository.findByIdAndStore(roomId, store).orElseThrow(() -> new EntityNotFoundException("채팅룸이 없습니다."));
+
+        return null;
     }
 
     @Transactional
