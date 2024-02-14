@@ -2,9 +2,6 @@ pipeline {
     agent any // 사용 가능한 에이전트에서 이 파이프라인 또는 해당 단계를 실행
     
 
-    tools{
-        jdk 'jdk17'
-    }
 
     //환경 변수
     environment{
@@ -24,19 +21,9 @@ pipeline {
         //     }
         // }
 
-        stage('jdk 17') {
-            steps {
-                withEnv(["JAVA_HOME=${tool 'jdk17'}", "PATH=${tool 'jdk17'}/bin:${env.PATH}"]) {
-                    echo "JDK17 ============================="
-                    sh 'java -version'
-                    sh 'javac -version'
-                }
-            }
-        }
 
         stage('BackEnd build'){
             steps{
-                withEnv(["JAVA_HOME=${tool 'jdk17'}", "PATH=${tool 'jdk17'}/bin:${env.PATH}"]) {
                     // 기존 빌드 결과물 삭제
                     sh 'rm -rf build'
 
@@ -60,7 +47,6 @@ pipeline {
                         ls -al
                         '''
                 }
-                }
                 
             }
             post {
@@ -83,7 +69,7 @@ pipeline {
                 // dockerfile을 수행하여 지정한 이름으로 이미지를 만든다.
                 // 도커에 로그인한 후, 생성한 이미지를 push한다.
                 // 푸시한 후 빌드한 이미지는 삭제한다. 메모리 관리를 위해 -&gt; 도커 허브로 push 하는거 잠시 보류
-                dir('/var/jenkins_home/workspace/SQUARECICD_square-api_master') {
+                dir('/var/jenkins_home/workspace/square_square-api_master') {
                     sh '''
                         docker build --no-cache -t ${BE_IMAGE_NAME}:latest .
                         '''
@@ -106,7 +92,7 @@ pipeline {
         
         stage('BE Deploy'){
             steps{
-                dir('/var/jenkins_home/Special'){
+                dir('/var/jenkins_home/workspace/square_square-api_master'){
                     script {
                         def isRunning = sh(script: "docker ps -q -f name=${BE_CONTAINER_NAME}", returnStdout: true).trim()
                         if (isRunning) {
