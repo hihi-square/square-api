@@ -5,7 +5,6 @@ pipeline {
 
     //환경 변수
     environment{
-        JAVA_HOME = "tool jdk17" //java 17gg
         BE_IMAGE_NAME = "square_api" //도커 이미지 이름은 소문자를 권장한다.
         BE_CONTAINER_NAME = "square_api"
         // DOCKER_NETWORK = "special_network"
