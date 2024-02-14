@@ -38,7 +38,7 @@ pipeline {
                 //     '''
                 // }
                 // 프로젝트가 있는 폴더로 이동한다.
-                dir('/var/jenkins_home/workspace/SQUARECICD_square-api_master') {
+                dir('/var/jenkins_home/workspace/square_square-api_master') {
                     //권한 문제가 발생해 777로 변경 후 데몬 없이 빌드를 시작한다.
                     //데몬이 있을 경우 가끔 메모리 터지는 경우가 있어서..
                     sh '''
