@@ -31,11 +31,12 @@ pipeline {
                     '''
             
                 //application.yml을 복사한다.
-                // dir('/var/jenkins_home/special_config/spring'){
-                //     sh '''
-                //         cp application.yml /var/jenkins_home/Special/BackEnd/src/main/resources
-                //     '''
-                // }
+                dir('/var/jenkins_home/special_config/spring'){
+                    sh '''
+                        cp application.yml /var/jenkins_home/workspace/square_square-api_master/src/main/resources
+                        cp application-oauth.yml /var/jenkins_home/workspace/square_square-api_master/src/main/resources
+                    '''
+                }
                 // 프로젝트가 있는 폴더로 이동한다.
                 dir('/var/jenkins_home/workspace/square_square-api_master') {
                     //권한 문제가 발생해 777로 변경 후 데몬 없이 빌드를 시작한다.
