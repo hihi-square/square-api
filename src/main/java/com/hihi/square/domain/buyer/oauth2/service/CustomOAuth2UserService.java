@@ -28,17 +28,17 @@ public class CustomOAuth2UserService  implements OAuth2UserService<OAuth2UserReq
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        log.info("ggg");
 
         // 기본 OAuth2UserService 객체 생성한다
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
-
         // OAuth2UserService를 사용하여 OAuth2User 정보를 가져온다
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        // 클라이언트 등록 ID(kakao)
+        // 클라이언트 등록 ID(kakao,naver)
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         log.info(registrationId+" 로그인 시도");
-        
+
         // OAuth2 로그인 진행 시 키가 되는 필드 값(PK)
         // 예를 들어 구글의 경우에는 sub이다
         // 근데 우리 어플리케이션의 경우 uid가 있기 때문에 이걸로 판별해도 괜찮을 듯
@@ -59,7 +59,7 @@ public class CustomOAuth2UserService  implements OAuth2UserService<OAuth2UserReq
     private Buyer save(OAuthAttributes attributes) {
         Buyer buyer = buyerRepository.findByUidAndMethod(attributes.getUid(), attributes.getMethod())
                 // 우리 프로젝트에서는 유저의 닉네임/사진에 대한 실시간 정보가 필요 없기 때문에 update는 하지 않는다.
-                .orElse(attributes.toEntity());
+                .orElse(attributes.toEntity(attributes.getMethod()));
         return buyerRepository.save(buyer);
     }
 }

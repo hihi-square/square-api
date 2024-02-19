@@ -34,9 +34,13 @@ public class OAuthAttributes {
     }
 
     public static OAuthAttributes of(String registrationId, String nameAttributeKey, Map<String, Object> attributes) {
+        System.out.println(registrationId);
         // 카카오 로그인이라면
-//        if (registrationId.equals("KAKAO"))
-//            return ofKakao(nameAttributeKey, attributes);
+        if (registrationId.equals("KAKAO"))
+            return ofKakao(nameAttributeKey, attributes);
+        // 카카오 로그인이라면
+        else if (registrationId.equals("naver"))
+            return ofNaver(nameAttributeKey, attributes);
         return ofKakao(nameAttributeKey, attributes);
     }
 
@@ -53,15 +57,27 @@ public class OAuthAttributes {
                 .method(LoginMethod.KAKAO)
                 .build();
     }
+    private static OAuthAttributes ofNaver(String nameAttributeKey, Map<String, Object> attributes) {
+        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+        return OAuthAttributes.builder()
+                .attributes(attributes)
+                .nameAttributeKey(nameAttributeKey)
+                .uid("NAVER".concat(String.valueOf(response.get("id"))))
+                .email((String) response.get("email"))
+                .profileImage((String) response.get("profile_image"))
+                .nickname((String) response.get("nickname"))
+                .method(LoginMethod.NAVER)
+                .build();
+    }
 
-    public Buyer toEntity() {
+    public Buyer toEntity(LoginMethod method) {
         return Buyer.builder()
                 .uid(uid)
                 .nickname(nickname)
                 .email(email)
                 .profileImage(profileImage)
                 .status(UserStatus.ACTIVE)
-                .method(LoginMethod.KAKAO)
+                .method(method)
                 .build();
     }
 
