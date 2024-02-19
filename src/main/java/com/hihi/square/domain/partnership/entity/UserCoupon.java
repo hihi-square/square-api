@@ -2,6 +2,7 @@ package com.hihi.square.domain.partnership.entity;
 
 import com.hihi.square.common.BaseEntity;
 import com.hihi.square.domain.buyer.entity.Buyer;
+import com.hihi.square.domain.order.entity.Orders;
 import com.hihi.square.domain.store.entity.Store;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -11,23 +12,25 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "coupon_issued")
+@Table(name = "user_coupon")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @ToString
 @EntityListeners(AuditingEntityListener.class)
-public class CouponIssued extends BaseEntity {
+public class UserCoupon extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "uic_id")
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "spa_id")
     private Partnership partnership; // 쿠폰 발급한 제휴 ID
-    private Integer ordId; // 어떤 주문을 통해 쿠폰이 발급되었는지
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="ord_id")
+    private Orders orders; // 어떤 주문을 통해 쿠폰이 발급되었는지
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="buy_id")
@@ -46,4 +49,17 @@ public class CouponIssued extends BaseEntity {
 
     @Min(0)
     private Integer couponSale; // 쿠폰 금액 y원 할인 쿠폰
+
+    public static UserCoupon toEntity(Partnership partnership, Orders orders, LocalDateTime expiredTime) {
+        return UserCoupon.builder()
+                .partnership(partnership)
+                .orders(orders)
+                .buyer(orders.getBuyer())
+                .isUsed(false)
+                .expiredTime(expiredTime)
+                .store(partnership.getUseStore())
+                .couponAvailable(partnership.getCouponAvailable())
+                .couponSale(partnership.getCouponSale())
+                .build();
+    }
 }

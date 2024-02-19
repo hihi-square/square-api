@@ -37,11 +37,11 @@ public class OrderEventListener implements ApplicationListener<OrderEvent> {
 		}
 		//가게에서 주문 수락 or 취소 시
 		else if (status == OrderStatus.ACCEPT) {
-			User user = order.getUser();
+			User user = order.getBuyer();
 			sseService.send(user.getUsrId(), NotificationType.ACCEPT, "order", event.getContent(),
 				order.getStore().getStoreName());
 		} else if (status == OrderStatus.REJECT) {
-			User user = order.getUser();
+			User user = order.getBuyer();
 			sseService.send(user.getUsrId(), NotificationType.REJECT, "order", event.getContent(),
 				order.getStore().getStoreName());
 		}

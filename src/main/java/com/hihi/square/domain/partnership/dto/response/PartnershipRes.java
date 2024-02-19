@@ -4,6 +4,8 @@ import com.hihi.square.domain.menu.dto.MenuInfoRes;
 import com.hihi.square.domain.partnership.entity.Partnership;
 import com.hihi.square.domain.store.dto.response.StoreInfoRes;
 import com.hihi.square.domain.store.dto.response.StoreRes;
+import com.hihi.square.domain.store.dto.response.StoreShortInfoRes;
+import com.hihi.square.domain.store.entity.Store;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,9 +21,9 @@ import java.time.LocalDateTime;
 public class PartnershipRes {
     private Integer id;
 
-    private StoreInfoRes issStore; // 쿠폰 발급(issue) 가게
+    private StoreShortInfoRes issStore; // 쿠폰 발급(issue) 가게
 
-    private StoreInfoRes useStore; // 쿠폰 사용(use) 가게
+    private StoreShortInfoRes useStore; // 쿠폰 사용(use) 가게
 
     private MenuInfoRes menu; // 어떤 상품을 사면 쿠폰을 발급해주는지
 
@@ -43,11 +45,11 @@ public class PartnershipRes {
 
     private LocalDateTime createdAt; // 쿠폰 생성 시간
 
-    public static PartnershipRes toRes(Partnership partnership, StoreInfoRes issStore, StoreInfoRes useStore, MenuInfoRes menu) {
+    public static PartnershipRes toRes(Partnership partnership, Store issStore, Store useStore, MenuInfoRes menu) {
         return PartnershipRes.builder()
                 .id(partnership.getId())
-                .issStore(issStore)
-                .useStore(useStore)
+                .issStore(StoreShortInfoRes.toRes(issStore))
+                .useStore(StoreShortInfoRes.toRes(useStore))
                 .menu(menu)
                 .acceptState(partnership.getAcceptState().toString())
                 .couponAvailable(partnership.getCouponAvailable())

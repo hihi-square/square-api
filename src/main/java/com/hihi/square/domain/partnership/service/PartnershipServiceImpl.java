@@ -211,14 +211,17 @@ public class PartnershipServiceImpl implements PartnershipService{
         List<Partnership> partnershipList = partnershipRepository.findAllByStoreAndProgress(store, LocalDateTime.now());
         return partnershipListToResList(partnershipList);
     }
-
+    @Override
+    public List<PartnershipRes> getProgressPartnershipsByIssStore(Integer stoId) {
+        Store store = storeRepository.findById(stoId).orElseThrow(()-> new UserNotFoundException("User not found"));
+        List<Partnership> partnershipList = partnershipRepository.findAllByIssStoreAndProgress(store, LocalDateTime.now());
+        return partnershipListToResList(partnershipList);
+    }
     public List<PartnershipRes> partnershipListToResList(List<Partnership> partnershipList) {
         List<PartnershipRes> resList = new ArrayList<>();
         for(Partnership partnership : partnershipList) {
-            StoreInfoRes issStore = StoreInfoRes.toRes(partnership.getIssStore());
-            StoreInfoRes useStore = StoreInfoRes.toRes(partnership.getUseStore());
             MenuInfoRes menu = MenuInfoRes.toRes(partnership.getMenu());
-            resList.add(PartnershipRes.toRes(partnership, issStore, useStore, menu));
+            resList.add(PartnershipRes.toRes(partnership, partnership.getIssStore(), partnership.getUseStore(), menu));
         }
         return resList;
     }

@@ -22,7 +22,7 @@ public class CouponUsed extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uic_id")
-    private CouponIssued couponIssued; // 어떤 쿠폰이 발급되어 사용된건지.
+    private UserCoupon userCoupon; // 어떤 쿠폰이 발급되어 사용된건지.
     private Integer ordId; // 어떤 주문에서 사용되었는지
 
     @OneToOne(fetch = FetchType.LAZY)

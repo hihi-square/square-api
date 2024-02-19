@@ -1,8 +1,8 @@
 package com.hihi.square.domain.order.dto;
 
-import com.hihi.square.domain.coupon2.dto.CouponDto;
-import com.hihi.square.domain.coupon2.dto.UserCouponDto;
-import com.hihi.square.domain.coupon2.entity.Coupon;
+//import com.hihi.square.domain.coupon2.dto.CouponDto;
+//import com.hihi.square.domain.coupon2.dto.UserCouponDto;
+//import com.hihi.square.domain.coupon2.entity.Coupon;
 import com.hihi.square.domain.order.entity.OrderStatus;
 import com.hihi.square.domain.order.entity.Orders;
 import lombok.AllArgsConstructor;
