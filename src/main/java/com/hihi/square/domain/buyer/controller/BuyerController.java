@@ -17,7 +17,7 @@ import java.io.IOException;
 
 @RestController
 @Slf4j
-@RequestMapping("/buyer")
+@RequestMapping("/buyers")
 @RequiredArgsConstructor
 public class BuyerController {
 
@@ -35,7 +35,7 @@ public class BuyerController {
         return new ResponseEntity(CommonRes.success(loginResponseDto), HttpStatus.OK);
     }
 
-    @GetMapping("/store/{storeId}")
+    @GetMapping("/stores/{storeId}")
     public ResponseEntity<LoginRes> getStoresInfo(Authentication authentication, @PathVariable Integer storeId) throws IOException { //Authentication 을 DI (의존성 주입)
         Integer buyerId = Integer.parseInt(authentication.getName());
         StoreInfoRes storeInfoRes = storeService.findInfoForBuyer(buyerId, storeId);
