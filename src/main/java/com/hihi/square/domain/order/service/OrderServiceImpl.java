@@ -1,12 +1,6 @@
 package com.hihi.square.domain.order.service;
 
 import com.hihi.square.common.CommonStatus;
-//import com.hihi.square.domain.coupon2.dto.CouponDto;
-//import com.hihi.square.domain.coupon2.dto.UserCouponDto;
-//import com.hihi.square.domain.coupon2.entity.Coupon;
-//import com.hihi.square.domain.coupon2.entity.UserCoupon;
-//import com.hihi.square.domain.coupon2.repository.CouponRepository;
-//import com.hihi.square.domain.coupon2.repository.UserCouponRepository;
 //import com.hihi.square.domain.coupon2.entity.Coupon;
 //import com.hihi.square.domain.coupon2.entity.UserCoupon;
 //import com.hihi.square.domain.coupon2.repository.CouponRepository;
@@ -28,10 +22,10 @@ import com.hihi.square.domain.order.event.OrderEvent;
 import com.hihi.square.domain.order.repository.OrderMenuOptionRepository;
 import com.hihi.square.domain.order.repository.OrderMenuRepository;
 import com.hihi.square.domain.order.repository.OrderRepository;
-
 import com.hihi.square.domain.partnership.entity.Partnership;
 import com.hihi.square.domain.partnership.repository.PartnershipRepository;
 import com.hihi.square.domain.partnership.repository.UserCouponRepository;
+import com.hihi.square.domain.partnership.service.CouponUsedService;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
 import com.hihi.square.domain.user.entity.User;
@@ -65,6 +59,7 @@ public class OrderServiceImpl implements OrderService {
     private final ApplicationEventPublisher eventPublisher;
     private final PartnershipRepository partnershipRepository;
     private final BuyerRepository buyerRepository;
+    private final CouponUsedService couponUsedService;
 
     @Transactional
     @Override
@@ -78,17 +73,19 @@ public class OrderServiceImpl implements OrderService {
         //2. 유저 쿠폰 존재 여부 확인
         //2-1. 현재 사용 가능한 쿠폰인지 확인
         UserCoupon userCoupon = null;
-//        if(orderDto.getCouponId() != null){
-//            userCoupon = userCouponRepository.findByIdAndBuyerAndExpiredTimeBeforeAndIsUsed(orderDto.getCouponId(), buyer, LocalDateTime.now(), false).orElseThrow(
-//                    () -> new EntityNotFoundException("User Coupon Not Found"));
-//            //2-2. 쿠폰 사용 상태 변경
-//            uCouponRepository.updateStatus(userCoupon.getId(), CommonStatus.USED, LocalDateTime.now());
-//        }
+        if(orderDto.getCouponId() != null){
+            userCoupon = userCouponRepository.findByIdAndBuyerAndExpiredTimeBeforeAndIsUsed(orderDto.getCouponId(), buyer, LocalDateTime.now(), false).orElseThrow(
+                    () -> new EntityNotFoundException("User Coupon Not Found"));
+        }
 
         //3. 주문 등록
         Orders order = Orders.toEntity(orderDto, buyer, store, userCoupon);
         order = orderRepository.save(order);
         orderRepository.updateStatus(order.getId(), OrderStatus.REGISTER);
+
+        //3-1. 쿠폰 사용
+        if (userCoupon != null)
+            couponUsedService.addCouponUsed(userCoupon, buyer, order);
 
         //4. 주문 메뉴 + 주문 메뉴 옵션 등록
         List<OrderMenuDto> orderMenuDtos = orderDto.getMenuList();
@@ -149,23 +146,11 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        //3. 주문 쿠폰 존재 확인
-//        UserCouponDto userCouponDto = null;
-//        if(order.getUserCoupon() != null){
-//            UserCoupon userCoupon = order.getUserCoupon();
-//            Coupon coupon = couponRepository.findById(userCoupon.getCoupon().getId()).orElseThrow(
-//                    () -> new EntityNotFoundException("Coupon Not Found")
-//            );
-//            userCouponDto = UserCouponDto.toRes(userCoupon, CouponDto.toRes(coupon, null));
-//        }
+        //3. 주문 dto 생성
+        OrderDto orderDto = OrderDto.toRes(order, orderMenuDtos);
 
-        //4. 주문 dto 생성
-//        OrderDto orderDto = OrderDto.toRes(order, userCouponDto, orderMenuDtos);
-
-//        return orderDto;
-        return null;
+        return orderDto;
     }
-
 
     @Override
     public List<OrderDto> selectOrdersByUserId(Integer usrId) {
@@ -203,18 +188,8 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-            //3. 주문 쿠폰 존재 확인
-//            UserCouponDto userCouponDto = null;
-//            if(order.getUserCoupon() != null){
-//                UserCoupon userCoupon = order.getUserCoupon();
-//                Coupon coupon = couponRepository.findById(userCoupon.getCoupon().getId()).orElseThrow(
-//                        () -> new EntityNotFoundException("Coupon Not Found")
-//                );
-//                userCouponDto = UserCouponDto.toRes(userCoupon, CouponDto.toRes(coupon, null));
-//            }
-
-//            OrderDto orderDto = OrderDto.toRes(order, userCouponDto, orderMenuDtos);
-//            orderDtos.add(orderDto);
+            OrderDto orderDto = OrderDto.toRes(order, orderMenuDtos);
+            orderDtos.add(orderDto);
         }
 
         return orderDtos;
@@ -257,18 +232,8 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-//            //3. 주문 쿠폰 존재 확인
-//            UserCouponDto userCouponDto = null;
-//            if(order.getUserCoupon() != null){
-//                UserCoupon userCoupon = order.getUserCoupon();
-//                Coupon coupon = couponRepository.findById(userCoupon.getCoupon().getId()).orElseThrow(
-//                        () -> new EntityNotFoundException("Coupon Not Found")
-//                );
-//                userCouponDto = UserCouponDto.toRes(userCoupon, CouponDto.toRes(coupon, null));
-//            }
-//
-//            OrderDto orderDto = OrderDto.toRes(order, userCouponDto, orderMenuDtos);
-//            orderDtos.add(orderDto);
+            OrderDto orderDto = OrderDto.toRes(order, orderMenuDtos);
+            orderDtos.add(orderDto);
         }
 
         return orderDtos;
@@ -317,6 +282,9 @@ public class OrderServiceImpl implements OrderService {
 
         //3. 주문 상태 변경
         orderRepository.updateStatusToReject(orderId, OrderStatus.REJECT, orderDto.getRejectReason());
+
+        // 3-1. 쿠폰 사용여부 변경
+        couponUsedService.cancelCouponUsed(order);
 
         //4. 주문 상태 변경 시 -> 유저한테 알림
         eventPublisher.publishEvent(new OrderEvent(OrderStatus.REJECT, order, "주문이 거절되었습니다."));

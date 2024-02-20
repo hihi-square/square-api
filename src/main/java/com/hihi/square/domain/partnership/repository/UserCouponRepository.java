@@ -2,6 +2,7 @@ package com.hihi.square.domain.partnership.repository;
 
 import com.hihi.square.common.CommonStatus;
 import com.hihi.square.domain.buyer.entity.Buyer;
+import com.hihi.square.domain.order.entity.Orders;
 import com.hihi.square.domain.partnership.entity.UserCoupon;
 import com.hihi.square.domain.store.entity.Store;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -26,4 +27,5 @@ public interface UserCouponRepository extends JpaRepository<UserCoupon, Integer>
     @Query("select uc from UserCoupon uc join fetch uc.buyer join fetch uc.partnership join fetch uc.store join fetch uc.orders where uc.id=:id and uc.buyer = :buyer and :expiredTime < uc.expiredTime and uc.isUsed = :isUsed")
     Optional<UserCoupon> findByIdAndBuyerAndExpiredTimeBeforeAndIsUsed(Integer id, Buyer buyer, LocalDateTime expiredTime, boolean isUsed);
 
+    Optional<UserCoupon> findByOrders(Orders orders);
 }

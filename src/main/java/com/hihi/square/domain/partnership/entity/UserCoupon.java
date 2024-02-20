@@ -3,7 +3,9 @@ package com.hihi.square.domain.partnership.entity;
 import com.hihi.square.common.BaseEntity;
 import com.hihi.square.domain.buyer.entity.Buyer;
 import com.hihi.square.domain.order.entity.Orders;
+import com.hihi.square.domain.partnership.service.UserCouponService;
 import com.hihi.square.domain.store.entity.Store;
+import com.hihi.square.domain.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -61,5 +63,9 @@ public class UserCoupon extends BaseEntity {
                 .couponAvailable(partnership.getCouponAvailable())
                 .couponSale(partnership.getCouponSale())
                 .build();
+    }
+
+    public void updateUseCoupon(boolean isUsed) {
+        this.isUsed = isUsed;
     }
 }
