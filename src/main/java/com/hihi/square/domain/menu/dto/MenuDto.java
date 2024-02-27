@@ -2,7 +2,6 @@ package com.hihi.square.domain.menu.dto;
 
 import com.hihi.square.common.CommonStatus;
 import com.hihi.square.domain.menu.entity.Menu;
-import com.hihi.square.domain.menucategory.dto.MenuCategoryDto;
 import com.hihi.square.domain.menucategory.entity.MenuCategory;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

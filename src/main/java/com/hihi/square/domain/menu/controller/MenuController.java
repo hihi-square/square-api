@@ -1,7 +1,7 @@
 package com.hihi.square.domain.menu.controller;
 
 import com.hihi.square.common.CommonRes;
-import com.hihi.square.domain.menu.dto.MenuAllDto;
+import com.hihi.square.domain.menu.dto.StoreMenuAllDto;
 import com.hihi.square.domain.menu.dto.MenuDto;
 import com.hihi.square.domain.menu.dto.MenuSequenceReq;
 import com.hihi.square.domain.menu.service.MenuServiceImpl;
@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/store/menu")
@@ -52,7 +50,7 @@ public class MenuController {
     @GetMapping("/all")
     public ResponseEntity<?> selectAllMenu(Authentication authentication) {
         Integer stoId = Integer.parseInt(authentication.getName());
-        MenuAllDto menuList = menuService.selectAllMenu(stoId);
+        StoreMenuAllDto menuList = menuService.selectAllMenu(stoId);
         return new ResponseEntity<>(CommonRes.success(menuList), HttpStatus.ACCEPTED);
     }
 
