@@ -76,7 +76,7 @@ public class SecurityConfig {
                         .requestMatchers("/store/**").hasAuthority("STORE")
                         .requestMatchers("/partnerships/buyers/**").hasAuthority("BUYER")
                         .requestMatchers("/partnerships/**").hasAuthority("STORE")
-                        .requestMatchers("/buyer/**").hasAuthority("BUYER")
+//                        .requestMatchers("/buyer/**").hasAuthority("BUYER")
                         .requestMatchers("/chats/**").hasAuthority("STORE")
                         .requestMatchers("/coupons/**").hasAuthority("BUYER")
                         .anyRequest().authenticated()

@@ -305,6 +305,7 @@ public class MenuServiceImpl implements MenuService {
         return timeSaleDto;
     }
 
+    @Transactional
     @Override
     public PartnershipRes selectPartnershipMenuByBuyer(Integer stoId, Integer typeId) {
         //1. 상점 존재 확인
@@ -314,6 +315,8 @@ public class MenuServiceImpl implements MenuService {
         Partnership partnership = partnershipRepository.findById(typeId).orElseThrow(
                 () -> new EntityNotFoundException("Partnership Not Found")
         );
+
+        log.info("partner: {}", partnership);
 
         //3. 제휴 상품 조회
         Menu menu = partnership.getMenu();
@@ -344,7 +347,7 @@ public class MenuServiceImpl implements MenuService {
         List<MenuCategoryDto> mcdList = new ArrayList<>();
 
         //2-1. 타임 세일 존재 확인
-        List<TimeSale> timeSaleList = timeSaleRepository.findAllByStoreAndProgress(stoId, LocalDateTime.now(), TimeSaleStatus.ONGOING);
+        List<TimeSale> timeSaleList = timeSaleRepository.findAllByStoreAndProgress(stoId, LocalDateTime.now(), TimeSaleStatus.prepareAndOngoing);
         List<Partnership> partnershipList = partnershipRepository.findAllByIssStoreAndProgress(store, LocalDateTime.now());
 
         //카테고리별 타임 세일 + 제휴 세일 상품 조회

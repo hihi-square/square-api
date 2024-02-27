@@ -23,8 +23,8 @@ public interface TimeSaleRepository extends JpaRepository<TimeSale, Integer> {
     @Query("select ts from TimeSale ts where ts.store.usrId=:stoId and ts.status=:status")
     List<TimeSale> findByStoreAndStatus(@Param("stoId") Integer stoId, @Param("status") TimeSaleStatus status);
 
-    @Query("select ts from TimeSale ts where ts.store.usrId=:stoId and :now between ts.startedAt and ts.finishedAt and ts.status=:status")
-    List<TimeSale> findAllByStoreAndProgress(@Param("stoId") Integer stoId, @Param("now") LocalDateTime now, @Param("status") TimeSaleStatus status);
+    @Query("select ts from TimeSale ts where ts.store.usrId=:stoId and :now between ts.startedAt and ts.finishedAt and ts.status in (:statuses)")
+    List<TimeSale> findAllByStoreAndProgress(@Param("stoId") Integer stoId, @Param("now") LocalDateTime now, @Param("statuses") List<TimeSaleStatus> statuses);
 
     @Query("select ts from TimeSale ts where ts.id=:id and ts.status=:status")
     Optional<TimeSale> findByIdAndStatus(@Param("id") Integer id, @Param("status") TimeSaleStatus status);
