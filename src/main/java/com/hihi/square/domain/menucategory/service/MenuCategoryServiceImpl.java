@@ -160,7 +160,7 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
         List<MenuCategoryDto> menuCategoryDtoList = new ArrayList<>();
 
         for(MenuCategory mc : menuCategoryList){
-            MenuCategoryDto mcDto = MenuCategoryDto.toRes(mc);
+            MenuCategoryDto mcDto = MenuCategoryDto.toRes(mc, null);
             menuCategoryDtoList.add(mcDto);
         }
 

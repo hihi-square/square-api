@@ -5,17 +5,17 @@ import com.hihi.square.domain.partnership.dto.response.PartnershipRes;
 import com.hihi.square.domain.timesale.dto.TimeSaleDto;
 
 public interface MenuService {
-    void addMenu(Integer stoId, MenuDto menuDto);
+    void addMenu(Integer stoId, StoreMenuDto storeMenuDto);
     
     void deleteMenu(Integer stoId, Integer menuId);
 
-    void updateMenu(Integer stoId, Integer menuId, MenuDto menuDto);
+    void updateMenu(Integer stoId, Integer menuId, StoreMenuDto storeMenuDto);
     
     //상세 메뉴 보기
-    MenuDto selectMenu(Integer stoId, Integer menuId);
+    StoreMenuDto selectMenu(Integer stoId, Integer menuId);
     
     //전체 메뉴 보기
-    StoreMenuAllDto selectAllMenu(Integer stoId);
+    MenuAllDto selectAllMenu(Integer stoId);
 
     void updateSequence(MenuSequenceReq menuSequenceReq);
 
@@ -24,5 +24,5 @@ public interface MenuService {
 
     PartnershipRes selectPartnershipMenuByBuyer(Integer stoId, Integer typeId);
 
-    MenuAllDto selectAllMenuByBuyer(Integer stoId);
+    BuyerMenuAllDto selectAllMenuByBuyer(Integer stoId);
 }

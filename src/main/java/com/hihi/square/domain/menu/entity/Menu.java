@@ -2,7 +2,7 @@ package com.hihi.square.domain.menu.entity;
 
 import com.hihi.square.common.BaseEntity;
 import com.hihi.square.common.CommonStatus;
-import com.hihi.square.domain.menu.dto.MenuDto;
+import com.hihi.square.domain.menu.dto.StoreMenuDto;
 import com.hihi.square.domain.menucategory.entity.MenuCategory;
 import com.hihi.square.domain.store.entity.Store;
 import jakarta.persistence.*;
@@ -41,18 +41,18 @@ public class Menu extends BaseEntity {
     @JoinColumn(name = "mec_id", nullable = true)
     MenuCategory menuCategory;
 
-    public static Menu toEntity(MenuDto menuDto, MenuCategory menuCategory, Store store){
+    public static Menu toEntity(StoreMenuDto storeMenuDto, MenuCategory menuCategory, Store store){
         return Menu.builder()
-                .id(menuDto.getId())
-                .name(menuDto.getName())
-                .price(menuDto.getPrice() == null ? 0 : menuDto.getPrice())
-                .status(menuDto.getStatus() == null ? CommonStatus.ACTIVE : menuDto.getStatus())
-                .description(menuDto.getDescription())
-                .isPopular(menuDto.getIsPopular() != null)
-                .isRepresentative(menuDto.getIsRepresentative() != null)
-                .sequence(menuDto.getSequence())
-                .image(menuDto.getImage())
-                .thumbnail(menuDto.getThumbnail())
+                .id(storeMenuDto.getId())
+                .name(storeMenuDto.getName())
+                .price(storeMenuDto.getPrice() == null ? 0 : storeMenuDto.getPrice())
+                .status(storeMenuDto.getStatus() == null ? CommonStatus.ACTIVE : storeMenuDto.getStatus())
+                .description(storeMenuDto.getDescription())
+                .isPopular(storeMenuDto.getIsPopular() != null)
+                .isRepresentative(storeMenuDto.getIsRepresentative() != null)
+                .sequence(storeMenuDto.getSequence())
+                .image(storeMenuDto.getImage())
+                .thumbnail(storeMenuDto.getThumbnail())
                 .store(store)
                 .menuCategory(menuCategory)
                 .build();

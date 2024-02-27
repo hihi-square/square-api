@@ -11,19 +11,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TimeSaleRepository extends JpaRepository<TimeSale, Integer> {
-    @Query("select s from TimeSale s where s.id=:saleId and s.status in (:statuses)")
+    @Query("select ts from TimeSale ts where ts.id=:saleId and ts.status in (:statuses)")
     Optional<TimeSale> findById(@Param("saleId") Integer saleId, @Param("statuses") List<TimeSaleStatus> statuses);
 
-    @Query("select s from TimeSale s where s.store.usrId=:stoId")
+    @Query("select ts from TimeSale ts where ts.store.usrId=:stoId")
     List<TimeSale> findByStore(@Param("stoId") Integer stoId);
 
-    @Query("select s from TimeSale s where s.store.usrId=:stoId and s.status=:status")
+    @Query("select ts from TimeSale ts where ts.store.usrId=:stoId and ts.status=:status")
     List<TimeSale> findByStoreAndStatus(@Param("stoId") Integer stoId, @Param("status") TimeSaleStatus status);
 
-    @Query("select s from TimeSale s where s.id=:id and s.status=:status")
+    @Query("select ts from TimeSale ts where ts.id=:id and ts.status=:status")
     Optional<TimeSale> findByIdAndStatus(@Param("id") Integer id, @Param("status") TimeSaleStatus status);
 
     @Modifying
-    @Query("update TimeSale s set s.status=:status where s.id=:saleId")
+    @Query("update TimeSale ts set ts.status=:status where ts.id=:saleId")
     void updateSaleStatus(@Param("saleId") Integer saleId, @Param("status") TimeSaleStatus status);
 }

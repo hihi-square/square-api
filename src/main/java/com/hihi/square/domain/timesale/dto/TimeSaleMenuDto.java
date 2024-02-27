@@ -1,7 +1,8 @@
 package com.hihi.square.domain.timesale.dto;
 
-import com.hihi.square.domain.menu.dto.MenuDto;
+import com.hihi.square.domain.menu.dto.StoreMenuDto;
 import com.hihi.square.domain.timesale.entity.TimeSaleMenu;
+import com.hihi.square.domain.timesale.entity.TimeSaleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,15 +14,17 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TimeSaleMenuDto {
     Integer id;
-    MenuDto menu;
-    Integer salePrice;
+    StoreMenuDto menu;
+    TimeSaleType type;
+    Integer discount;
     Integer inventory;
 
-    public static TimeSaleMenuDto toRes(TimeSaleMenu timeSaleMenu, MenuDto menu){
+    public static TimeSaleMenuDto toRes(TimeSaleMenu timeSaleMenu, StoreMenuDto menu){
         return TimeSaleMenuDto.builder()
                 .id(timeSaleMenu.getId())
                 .menu(menu)
-                .salePrice(timeSaleMenu.getSalePrice())
+                .type(timeSaleMenu.getType())
+                .discount(timeSaleMenu.getDiscount())
                 .inventory(timeSaleMenu.getInventory())
                 .build();
     }

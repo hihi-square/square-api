@@ -4,6 +4,7 @@ import com.hihi.square.common.CommonStatus;
 import com.hihi.square.domain.menu.dto.*;
 import com.hihi.square.domain.menu.entity.Menu;
 import com.hihi.square.domain.menu.entity.MenuOption;
+import com.hihi.square.domain.menu.entity.SaleType;
 import com.hihi.square.domain.menu.repository.MenuOptionRepository;
 import com.hihi.square.domain.menu.repository.MenuRepository;
 import com.hihi.square.domain.menucategory.dto.MenuCategoryDto;
@@ -53,14 +54,14 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional
-    public void addMenu(Integer stoId, MenuDto menuDto) {
+    public void addMenu(Integer stoId, StoreMenuDto storeMenuDto) {
         //1. 사전 체크
         //1-1. 로그인한 store와 등록 store 일치 여부
-        Store store = checkUserMatching(stoId, menuDto.getStoId());
+        Store store = checkUserMatching(stoId, storeMenuDto.getStoId());
         
         //2. 메뉴 등록
         //2-1. 메뉴 카테고리 찾기(있으면)
-        Integer mcId = menuDto.getMcId();
+        Integer mcId = storeMenuDto.getMcId();
         MenuCategory menuCategory = null;
         if(mcId != null && mcId != 0){
             menuCategory = menuCategoryRepository.findById(mcId, CommonStatus.activeAndPrivate).orElseThrow(()
@@ -70,14 +71,14 @@ public class MenuServiceImpl implements MenuService {
         //2-2. 마지막 순서 지정
         Integer sequence = menuRepository.findSequence(CommonStatus.activeAndPrivate);
         if(sequence == null) sequence = 1;
-        menuDto.setSequence(sequence); //마지막 순서로 등록
+        storeMenuDto.setSequence(sequence); //마지막 순서로 등록
 
-        Menu menu = Menu.toEntity(menuDto, menuCategory, store);
+        Menu menu = Menu.toEntity(storeMenuDto, menuCategory, store);
         menu = menuRepository.save(menu);
 
         //3. 옵션 등록
-        if(menuDto.getOptions() != null){
-            List<MenuOptionDto> optionReqList = menuDto.getOptions();
+        if(storeMenuDto.getOptions() != null){
+            List<MenuOptionDto> optionReqList = storeMenuDto.getOptions();
             for(MenuOptionDto moDto : optionReqList){
                 MenuOption menuOption = MenuOption.toEntity(moDto, menu);
                 menuOptionRepository.save(menuOption);
@@ -101,7 +102,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional
-    public void updateMenu(Integer stoId, Integer menuId, MenuDto menuDto) {
+    public void updateMenu(Integer stoId, Integer menuId, StoreMenuDto storeMenuDto) {
         //1. 사전 체크
         //1-1. menu 존재 여부
         Menu menu = menuRepository.findById(menuId, CommonStatus.activeAndPrivate).orElseThrow(()
@@ -112,22 +113,22 @@ public class MenuServiceImpl implements MenuService {
         //2. 메뉴 수정
         //2-1. 카테고리 존재 여부
         Menu menuToSave = menu;
-        if(menuDto.getId() != null){
-            Integer mcId = menuDto.getMcId();
+        if(storeMenuDto.getId() != null){
+            Integer mcId = storeMenuDto.getMcId();
             MenuCategory menuCategory = null;
             if(mcId != null && mcId != 0){
                 menuCategory = menuCategoryRepository.findById(mcId, CommonStatus.activeAndPrivate).orElseThrow(()
                         -> new EntityNotFoundException("MenuCategory Not Found"));
             }
             //2-2. id 설정
-            menuDto.setId(menu.getId());    //id 설정
+            storeMenuDto.setId(menu.getId());    //id 설정
 
-            menuToSave = menuRepository.save(Menu.toEntity(menuDto, menuCategory, store));
+            menuToSave = menuRepository.save(Menu.toEntity(storeMenuDto, menuCategory, store));
         }
 
         //3. 옵션 등록
-        if(menuDto.getOptions() != null){
-            List<MenuOptionDto> optionReqList = menuDto.getOptions();
+        if(storeMenuDto.getOptions() != null){
+            List<MenuOptionDto> optionReqList = storeMenuDto.getOptions();
 
             for(MenuOptionDto moDto : optionReqList){
                 //option id가 있는 경우 존재 여부
@@ -144,7 +145,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public MenuDto selectMenu(Integer userId, Integer menuId) {
+    public StoreMenuDto selectMenu(Integer userId, Integer menuId) {
         //1. 사전 체크
         //1-2. 유저가 buyer인지, store인지 확인
         User user = userRepository.findByUserId(userId, UserStatus.ACTIVE).orElseThrow(
@@ -177,12 +178,12 @@ public class MenuServiceImpl implements MenuService {
             }
         }
 
-        MenuDto menuDto = MenuDto.toRes(menu, menuCategory, optionDtoList);
-        return menuDto;
+        StoreMenuDto storeMenuDto = StoreMenuDto.toRes(menu, menuCategory, optionDtoList);
+        return storeMenuDto;
     }
 
     @Override
-    public StoreMenuAllDto selectAllMenu(Integer userId) {
+    public MenuAllDto selectAllMenu(Integer userId) {
         //1. 사전 체크
         //1-2. 유저가 buyer인지, store인지 확인
         User user = userRepository.findByUserId(userId, UserStatus.ACTIVE).orElseThrow(
@@ -197,14 +198,14 @@ public class MenuServiceImpl implements MenuService {
             menuList = menuRepository.findAllByStoreOrderBySequence(userId, CommonStatus.ACTIVE);
         }
 
-        List<MenuDto> menuDtoList = new ArrayList<>();
+        List<StoreMenuDto> storeMenuDtoList = new ArrayList<>();
 
         //메뉴 카테고리 리스트 조회
         List<MenuCategory> menuCategoryList = menuCategoryRepository.findAllByStoreOrderBySequence(userId, CommonStatus.activeAndPrivate);
         List<MenuCategoryDto> mcdList = new ArrayList<>();
 
         for(MenuCategory mc : menuCategoryList){
-            MenuCategoryDto mcDto = MenuCategoryDto.toRes(mc);
+            MenuCategoryDto mcDto = MenuCategoryDto.toRes(mc, null);
             mcdList.add(mcDto);
         }
         
@@ -224,13 +225,13 @@ public class MenuServiceImpl implements MenuService {
                 }
             }
             
-            MenuDto menuDto = MenuDto.toRes(menu, menuCategory, optionDtoList);
-            menuDtoList.add(menuDto);
+            StoreMenuDto storeMenuDto = StoreMenuDto.toRes(menu, menuCategory, optionDtoList);
+            storeMenuDtoList.add(storeMenuDto);
         }
 
-        StoreMenuAllDto storeMenuAllDto = StoreMenuAllDto.toRes(mcdList, menuDtoList);
+        MenuAllDto menuAllDto = MenuAllDto.toRes(mcdList, storeMenuDtoList);
 
-        return storeMenuAllDto;
+        return menuAllDto;
     }
 
     @Override
@@ -238,7 +239,7 @@ public class MenuServiceImpl implements MenuService {
     public void updateSequence(MenuSequenceReq menuSequenceReq) {
         //1. 카테고리 순서 변경
         List<MenuCategoryDto> menuCategoryDtoList = menuSequenceReq.getCategory();
-        List<MenuDto> menuDtoList = menuSequenceReq.getMenu();
+        List<StoreMenuDto> storeMenuDtoList = menuSequenceReq.getMenu();
 
         if(menuCategoryDtoList != null){
             for(MenuCategoryDto mcDto : menuCategoryDtoList){
@@ -251,10 +252,10 @@ public class MenuServiceImpl implements MenuService {
         }
 
         //2. 메뉴 순서 + 카테고리 + 상태 변경 --> 효율화 고민
-        if(menuDtoList != null){
-            for(MenuDto menuDto : menuDtoList){
-                Integer mcId = menuDto.getMcId();
-                Integer menuId = menuDto.getId();
+        if(storeMenuDtoList != null){
+            for(StoreMenuDto storeMenuDto : storeMenuDtoList){
+                Integer mcId = storeMenuDto.getMcId();
+                Integer menuId = storeMenuDto.getId();
                 MenuCategory mc = null;
                 if(mcId != null && mcId != 0){
                     mc = menuCategoryRepository.findById(mcId, CommonStatus.activeAndPrivate).orElseThrow(
@@ -265,7 +266,7 @@ public class MenuServiceImpl implements MenuService {
                 Menu menu = menuRepository.findById(menuId, CommonStatus.activeAndPrivate).orElseThrow(
                         () -> new EntityNotFoundException("Menu Not Found")
                 );
-                menuRepository.updateSequence(menuId, menuDto.getSequence(), mc, menuDto.getStatus());
+                menuRepository.updateSequence(menuId, storeMenuDto.getSequence(), mc, storeMenuDto.getStatus());
             }
         }
     }
@@ -273,6 +274,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public TimeSaleDto selectSaleMenuByBuyer(Integer stoId, Integer typeId) {
         //1. 상점 존재 확인
+        log.info("stoId : {}", stoId);
         Store store = storeRepository.findById(stoId, UserStatus.ACTIVE).orElseThrow(
                 () -> new UserNotFoundException("Store Not Found"));
         //2. 타임 세일 존재 확인
@@ -293,7 +295,7 @@ public class MenuServiceImpl implements MenuService {
             }
         }
 
-        MenuDto menu = MenuDto.toRes(timeSaleMenu.getMenu(), timeSaleMenu.getMenu().getMenuCategory(), moDtos);
+        StoreMenuDto menu = StoreMenuDto.toRes(timeSaleMenu.getMenu(), timeSaleMenu.getMenu().getMenuCategory(), moDtos);
 
         TimeSaleDto timeSaleDto = TimeSaleDto.toRes(timeSale, TimeSaleMenuDto.toRes(timeSaleMenu, menu));
         return timeSaleDto;
@@ -305,39 +307,43 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public MenuAllDto selectAllMenuByBuyer(Integer stoId) {
+    public BuyerMenuAllDto selectAllMenuByBuyer(Integer stoId) {
         //1. 상점 존재 확인
         Store store = storeRepository.findById(stoId, UserStatus.ACTIVE).orElseThrow(
                 () -> new UserNotFoundException("Store Not Found"));
-        //2. 타임 세일 존재 확인
-        List<TimeSale> timeSaleList = timeSaleRepository.findByStoreAndStatus(stoId, TimeSaleStatus.ONGOING);
 
-        //3. 타임 세일 상품 조회
-        List<TimeSaleDto> timeSaleDtos = new ArrayList<>();
-
-        if(timeSaleList != null){
-            for(TimeSale s : timeSaleList){
-                TimeSaleMenu timeSaleMenu = timeSaleMenuRepository.findBySale(s.getId()).orElseThrow(
-                        () -> new EntityNotFoundException("Sale Menu Not Found")
-                );
-
-                Menu menu = timeSaleMenu.getMenu();
-                MenuDto menuDto = MenuDto.toRes(menu, menu.getMenuCategory(), null);
-                TimeSaleMenuDto timeSaleMenuDto = TimeSaleMenuDto.toRes(timeSaleMenu, menuDto);
-                timeSaleDtos.add(TimeSaleDto.toRes(s, timeSaleMenuDto));
-            }
-        }
-
-        //메뉴 카테고리 리스트 조회
+        //2. 메뉴 카테고리 리스트 조회
         List<MenuCategory> menuCategoryList = menuCategoryRepository.findAllByStoreOrderBySequence(stoId, CommonStatus.activeAndPrivate);
         List<MenuCategoryDto> mcdList = new ArrayList<>();
 
+        //카테고리별 타임 세일 + 제휴 세일 상품 조회
         for(MenuCategory mc : menuCategoryList){
-            MenuCategoryDto mcDto = MenuCategoryDto.toRes(mc);
-            mcdList.add(mcDto);
+            //2-1. 타임 세일 존재 확인
+            List<TimeSale> timeSaleList = timeSaleRepository.findByStoreAndStatus(stoId, TimeSaleStatus.ONGOING);
+
+            //2-2. 타임 세일 상품 조회
+            List<BuyerMenuDto> buyerMenuDtos = new ArrayList<>();
+
+            if(timeSaleList != null){
+                for(TimeSale s : timeSaleList){
+                    TimeSaleMenu timeSaleMenu = timeSaleMenuRepository.findBySaleAndCategory(s.getId(), mc.getId()).orElseThrow(
+                            () -> new EntityNotFoundException("Sale Menu Not Found")
+                    );
+
+                    Menu menu = timeSaleMenu.getMenu();
+                    StoreMenuDto storeMenuDto = StoreMenuDto.toRes(menu, menu.getMenuCategory(), null);
+                    TimeSaleMenuDto timeSaleMenuDto = TimeSaleMenuDto.toRes(timeSaleMenu, storeMenuDto);
+                    buyerMenuDtos.add(BuyerMenuDto.toRes(menu, SaleType.TIME, timeSaleMenuDto,false, null));
+                }
+            }
+
+            //2-3. 제휴 상품 조회
+
+            //2-4. dto 추가
+            mcdList.add(MenuCategoryDto.toRes(mc, buyerMenuDtos));
         }
 
-        MenuAllDto menuAllDto = MenuAllDto.toRes(mcdList, timeSaleDtos);
-        return menuAllDto;
+        BuyerMenuAllDto buyerMenuAllDto = BuyerMenuAllDto.toRes(stoId, mcdList);
+        return buyerMenuAllDto;
     }
 }

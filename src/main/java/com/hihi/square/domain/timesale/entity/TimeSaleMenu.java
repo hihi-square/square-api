@@ -20,7 +20,8 @@ public class TimeSaleMenu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-    Integer salePrice;
+    TimeSaleType type;
+    Integer discount;
     Integer inventory;
 
     @OneToOne
@@ -33,7 +34,8 @@ public class TimeSaleMenu {
     public static TimeSaleMenu toEntity(TimeSaleMenuDto timeSaleMenuDto, TimeSale timeSale, Menu menu){
         return TimeSaleMenu.builder()
                 .id(timeSaleMenuDto.getId())
-                .salePrice(timeSaleMenuDto.getSalePrice())
+                .type(timeSaleMenuDto.getType())
+                .discount(timeSaleMenuDto.getDiscount())
                 .inventory(timeSaleMenuDto.getInventory())
                 .timeSale(timeSale)
                 .menu(menu)

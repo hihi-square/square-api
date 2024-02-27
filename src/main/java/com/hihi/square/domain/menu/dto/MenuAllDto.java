@@ -1,7 +1,6 @@
 package com.hihi.square.domain.menu.dto;
 
 import com.hihi.square.domain.menucategory.dto.MenuCategoryDto;
-import com.hihi.square.domain.timesale.dto.TimeSaleDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,12 +14,12 @@ import java.util.List;
 @Builder
 public class MenuAllDto {
     List<MenuCategoryDto> mcList;
-    List<TimeSaleDto> timeSale;
+    List<StoreMenuDto> menuList;
 
-    public static MenuAllDto toRes(List<MenuCategoryDto> mcList, List<TimeSaleDto> timeSale){
+    public static MenuAllDto toRes(List<MenuCategoryDto> mcList, List<StoreMenuDto> menuList){
         return MenuAllDto.builder()
                 .mcList(mcList)
-                .timeSale(timeSale)
+                .menuList(menuList)
                 .build();
     }
 }

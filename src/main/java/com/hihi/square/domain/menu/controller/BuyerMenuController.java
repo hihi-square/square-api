@@ -1,7 +1,7 @@
 package com.hihi.square.domain.menu.controller;
 
 import com.hihi.square.common.CommonRes;
-import com.hihi.square.domain.menu.dto.MenuAllDto;
+import com.hihi.square.domain.menu.dto.BuyerMenuAllDto;
 import com.hihi.square.domain.menu.entity.SaleType;
 import com.hihi.square.domain.menu.service.MenuService;
 import com.hihi.square.domain.timesale.dto.TimeSaleDto;
@@ -26,13 +26,16 @@ public class BuyerMenuController {
         if(type == SaleType.TIME){
             TimeSaleDto timeSaleDto = menuService.selectSaleMenuByBuyer(stoId, id);
             return new ResponseEntity<>(CommonRes.success(timeSaleDto), HttpStatus.ACCEPTED);
+        }else if(type == SaleType.PARTNERSHIP){
+            menuService.selectPartnershipMenuByBuyer(stoId, id);    //수정 필요
+            return new ResponseEntity<>(CommonRes.success(null), HttpStatus.ACCEPTED);
         }
         else return new ResponseEntity<>(CommonRes.success(null), HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/{store_id}/menu")
     public ResponseEntity<?> selectAllMenu(@PathVariable(name = "store_id") @Validated Integer stoId) {
-        MenuAllDto saleMenus = menuService.selectAllMenuByBuyer(stoId);
+        BuyerMenuAllDto saleMenus = menuService.selectAllMenuByBuyer(stoId);
         return new ResponseEntity<>(CommonRes.success(saleMenus), HttpStatus.ACCEPTED);
     }
 }

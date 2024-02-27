@@ -1,6 +1,6 @@
 package com.hihi.square.domain.timesale.service;
 
-import com.hihi.square.domain.menu.dto.MenuDto;
+import com.hihi.square.domain.menu.dto.StoreMenuDto;
 import com.hihi.square.domain.menu.dto.MenuOptionDto;
 import com.hihi.square.domain.menu.entity.Menu;
 import com.hihi.square.domain.menu.entity.MenuOption;
@@ -47,10 +47,10 @@ public class TimeSaleServiceImpl implements TimeSaleService {
         if(timeSaleDto.getSaleMenu() == null) throw new InvalidValueException("Sale Menu Not Input");
         TimeSaleMenuDto timeSaleMenuDto = timeSaleDto.getSaleMenu();
         if(timeSaleMenuDto.getMenu() == null) throw new InvalidValueException("Menu Not Input");
-        MenuDto menuDto = timeSaleMenuDto.getMenu();
-        if(menuDto.getId() == null) throw new InvalidValueException("Menu Not Found");
+        StoreMenuDto storeMenuDto = timeSaleMenuDto.getMenu();
+        if(storeMenuDto.getId() == null) throw new InvalidValueException("Menu Not Found");
 
-        Menu menu = menuRepository.findById(menuDto.getId()).orElseThrow(
+        Menu menu = menuRepository.findById(storeMenuDto.getId()).orElseThrow(
                 () -> new EntityNotFoundException("Menu Not Found")
         );
         //3. 타임 세일 등록(타임 세일 등록 + 타임 세일 메뉴 등록)
@@ -125,7 +125,7 @@ public class TimeSaleServiceImpl implements TimeSaleService {
             }
         }
 
-        MenuDto menu = MenuDto.toRes(timeSaleMenu.getMenu(), timeSaleMenu.getMenu().getMenuCategory(), moDtos);
+        StoreMenuDto menu = StoreMenuDto.toRes(timeSaleMenu.getMenu(), timeSaleMenu.getMenu().getMenuCategory(), moDtos);
 
         TimeSaleDto timeSaleDto = TimeSaleDto.toRes(timeSale, TimeSaleMenuDto.toRes(timeSaleMenu, menu));
         return timeSaleDto;
@@ -148,8 +148,8 @@ public class TimeSaleServiceImpl implements TimeSaleService {
                         () -> new EntityNotFoundException("Sale Menu Not Found")
                 );
 
-                MenuDto menuDto = MenuDto.toRes(timeSaleMenu.getMenu(), null, null);
-                TimeSaleMenuDto timeSaleMenuDto = TimeSaleMenuDto.toRes(timeSaleMenu, menuDto);
+                StoreMenuDto storeMenuDto = StoreMenuDto.toRes(timeSaleMenu.getMenu(), null, null);
+                TimeSaleMenuDto timeSaleMenuDto = TimeSaleMenuDto.toRes(timeSaleMenu, storeMenuDto);
                 timeSaleDtos.add(TimeSaleDto.toRes(s, timeSaleMenuDto));
             }
         }
@@ -175,8 +175,8 @@ public class TimeSaleServiceImpl implements TimeSaleService {
                 );
 
                 Menu menu = timeSaleMenu.getMenu();
-                MenuDto menuDto = MenuDto.toRes(menu, menu.getMenuCategory(), null);
-                TimeSaleMenuDto timeSaleMenuDto = TimeSaleMenuDto.toRes(timeSaleMenu, menuDto);
+                StoreMenuDto storeMenuDto = StoreMenuDto.toRes(menu, menu.getMenuCategory(), null);
+                TimeSaleMenuDto timeSaleMenuDto = TimeSaleMenuDto.toRes(timeSaleMenu, storeMenuDto);
                 timeSaleDtos.add(TimeSaleDto.toRes(s, timeSaleMenuDto));
             }
         }

@@ -1,6 +1,7 @@
 package com.hihi.square.domain.store.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,7 +40,7 @@ public class SignUpStoreReq {
 
 	private String storeContact2;
 
-	@NotEmpty(message = "주소는 필수 입력값입니다.")
+	@NotNull(message = "주소는 필수 입력값입니다.")
 	private Long bCode;
 
 	@NotEmpty(message = "상세 주소는 필수 입력값입니다.")
