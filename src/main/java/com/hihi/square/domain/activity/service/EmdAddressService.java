@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface EmdAddressService {
     List<EmdAddress> getAllByActivity(Activity activity);
-    List<EmdAddress> data();
 }

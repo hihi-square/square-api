@@ -11,7 +11,9 @@ import com.hihi.square.domain.buyer.repository.BuyerRepository;
 import com.hihi.square.domain.category.dto.CategoryDto;
 import com.hihi.square.domain.category.entity.Category;
 import com.hihi.square.domain.category.repository.CategoryRepository;
-import com.hihi.square.domain.menu.dto.MenuDto;
+//import com.hihi.square.domain.menu.dto.MenuDto;
+import com.hihi.square.domain.menu.dto.MenuAllDto;
+import com.hihi.square.domain.menu.dto.StoreMenuDto;
 import com.hihi.square.domain.menu.service.MenuService;
 import com.hihi.square.domain.partnership.entity.Partnership;
 import com.hihi.square.domain.partnership.repository.PartnershipRepository;
@@ -239,8 +241,8 @@ public class StoreServiceImpl implements StoreService{
         //2. 정보 반환
         //2-1. 타임세일 여부
         //2-2. 제휴 여부
-        List<Partnership> partnershipList = partnershipRepository.findAllByStoreAndProgress(store, LocalDateTime.now());
-        StoreInfoRes storeInfoRes = StoreInfoRes.toRes(store, true, !partnershipList.isEmpty());
+        boolean isPn = partnershipRepository.existsByStoreAndProgress(store, LocalDateTime.now());
+        StoreInfoRes storeInfoRes = StoreInfoRes.toRes(store, true, isPn);
         return storeInfoRes;
     }
 
@@ -266,7 +268,7 @@ public class StoreServiceImpl implements StoreService{
     public List<StoreSearchInfoDto> searchStores(Integer buyerId, String orderBy, boolean timesale, boolean partnership, boolean dibs, double longitude, double latitude) {
         Buyer buyer = buyerRepository.findById(buyerId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
         Activity activity = activityRepository.findByBuyerAndIsMainTrue(buyer).orElseThrow(() -> new EntityNotFoundException("활동구역은 필수입니다."));
-        List<EmdAddress> getEmdAddressList = emdAddressService.getAllByActivity(activity);
+        List<EmdAddress> emdAddressList = emdAddressService.getAllByActivity(activity);
         // 쿼리 새로 날리기
 //        List<Store> storeList = storeRepository.searchStoreList(getEmdAddressList, buyer, orderBy, timesale, partnership, dibs, longitude, latitude);
 //        List<StoreSearchInfoDto> resList = new ArrayList<>();
@@ -282,9 +284,9 @@ public class StoreServiceImpl implements StoreService{
 //        }
 //        return resList;
         // 한번에 가져오기
-        List<StoreSearchInfoDto> storeList = storeRepository.searchStoreDtoList(getEmdAddressList, buyer, orderBy, timesale, partnership, dibs, longitude, latitude);
+        List<StoreSearchInfoDto> storeList = storeRepository.searchStoreDtoList(emdAddressList, buyer, orderBy, timesale, partnership, dibs, longitude, latitude);
         for(StoreSearchInfoDto store : storeList) {
-            List<MenuDto> menus = menuService.selectAllMenu(store.getUsrId()).getMenuList();
+            List<StoreMenuDto> menus= menuService.selectAllMenu(store.getUsrId()).getMenuList();
             StringBuilder sb = new StringBuilder();
             for(int i=0;i<menus.size();i++) {
                 if (!menus.get(i).getIsPopular()) continue;

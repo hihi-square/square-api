@@ -61,8 +61,4 @@ public class ActivityController {
         return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);
     }
 
-    @PostMapping("/data")
-    public void data() {
-        emdAddressService.data();
-    }
 }

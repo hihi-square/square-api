@@ -70,7 +70,6 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository{
 
 
     private BooleanExpression emdAddressIn(List<EmdAddress> emdAddressList) {
-
         return store.address.in(emdAddressList);
     }
 
