@@ -12,14 +12,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MenuAllDto {
+public class BuyerMenuAllDto {
+    Integer storeId;
     List<MenuCategoryDto> mcList;
-    List<StoreMenuDto> menuList;
 
-    public static MenuAllDto toRes(List<MenuCategoryDto> mcList, List<StoreMenuDto> menuList){
-        return MenuAllDto.builder()
+    public static BuyerMenuAllDto toRes(Integer storeId, List<MenuCategoryDto> mcList){
+        return BuyerMenuAllDto.builder()
+                .storeId(storeId)
                 .mcList(mcList)
-                .menuList(menuList)
                 .build();
     }
 }

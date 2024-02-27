@@ -2,7 +2,6 @@ package com.hihi.square.domain.menu.dto;
 
 import com.hihi.square.common.CommonStatus;
 import com.hihi.square.domain.menu.entity.Menu;
-import com.hihi.square.domain.menucategory.dto.MenuCategoryDto;
 import com.hihi.square.domain.menucategory.entity.MenuCategory;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MenuDto {
+public class StoreMenuDto {
     Integer id;
     @NotNull(message = "메뉴 이름은 필수 입력값입니다.")
     String name;
@@ -35,8 +34,8 @@ public class MenuDto {
     String mcName;
     List<MenuOptionDto> options;
 
-    public static MenuDto toRes(Menu menu, MenuCategory mc, List<MenuOptionDto> optionList){
-        return MenuDto.builder()
+    public static StoreMenuDto toRes(Menu menu, MenuCategory mc, List<MenuOptionDto> optionList){
+        return StoreMenuDto.builder()
                 .id(menu.getId())
                 .name(menu.getName())
                 .price(menu.getPrice())
@@ -46,6 +45,7 @@ public class MenuDto {
                 .isRepresentative(menu.getIsRepresentative())
                 .image(menu.getImage())
                 .thumbnail(menu.getThumbnail())
+                .sequence(menu.getSequence())
                 .mcId(mc == null ? null : mc.getId())
                 .mcName(mc == null ? null : mc.getName())
                 .options(optionList)
