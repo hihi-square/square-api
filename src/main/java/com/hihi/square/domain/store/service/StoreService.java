@@ -6,7 +6,7 @@ import com.hihi.square.domain.store.dto.request.SignUpStoreReq;
 import com.hihi.square.domain.store.dto.request.StoreFindReq;
 import com.hihi.square.domain.store.dto.response.LoginRes;
 import com.hihi.square.domain.store.dto.response.StoreInfoRes;
-import com.hihi.square.domain.store.entity.Store;
+import com.hihi.square.domain.store.dto.response.StoreSearchInfoDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -39,4 +39,6 @@ public interface StoreService {
     StoreInfoRes findInfoForBuyer(Integer buyerId, Integer storeId);
 
     List<StoreInfoRes> findAllStores(Integer stoId, Integer depth);
+
+    List<StoreSearchInfoDto> searchStores(Integer buyerId, String orderBy, boolean timesale, boolean partnership, boolean dibs, double longitude, double latitude);
 }

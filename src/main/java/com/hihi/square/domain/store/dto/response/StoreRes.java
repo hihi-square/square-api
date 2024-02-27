@@ -7,12 +7,10 @@ import com.hihi.square.domain.user.dto.UserRes;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper=false)
 @Data
 @SuperBuilder
 @NoArgsConstructor

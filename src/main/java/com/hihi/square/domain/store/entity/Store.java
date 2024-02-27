@@ -2,16 +2,19 @@ package com.hihi.square.domain.store.entity;
 
 import com.hihi.square.domain.activity.entity.EmdAddress;
 import com.hihi.square.domain.category.entity.Category;
+import com.hihi.square.domain.order.entity.OrderMenu;
+import com.hihi.square.domain.order.entity.Orders;
+import com.hihi.square.domain.partnership.entity.Partnership;
 import com.hihi.square.domain.store.dto.StoreDto;
 import com.hihi.square.domain.store.dto.request.SignUpStoreReq;
 import com.hihi.square.domain.user.entity.User;
 import com.hihi.square.domain.user.entity.UserStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "store")
@@ -53,6 +56,19 @@ public class Store extends User {
     Category category;
     Double latitude;
     Double longitude;
+
+    @OneToMany(mappedBy = "issStore", fetch = FetchType.LAZY)
+    private final List<Partnership> issPartnershipList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "useStore", fetch = FetchType.LAZY)
+    private final List<Partnership> usePartnershipList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
+    private final List<Orders> ordersList = new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name="order_ord_id")
+    private final List<OrderMenu> menus = new ArrayList<>();
 
     public static Store toEntity(SignUpStoreReq signUpStoreReq, Category category, EmdAddress emdAddress){
         return Store.builder()

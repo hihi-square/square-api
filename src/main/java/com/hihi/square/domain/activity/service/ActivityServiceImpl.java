@@ -115,7 +115,7 @@ public class ActivityServiceImpl implements ActivityService{
         if (!activity.getBuyer().equals(buyer)) throw new UserMismachException("User Mismatch");
 
         // 기존 main activity false 처리
-        Activity pastMainActivity = activityRepository.findByBuyerAndIsMainTrue(buyer);
+        Activity pastMainActivity = activityRepository.findByBuyerAndIsMainTrue(buyer).orElseThrow(() -> new EntityNotFoundException("활동구역은 필수입니다."));
         pastMainActivity.updateIsMain(false);
 
         // 새로운 main activity 설정
