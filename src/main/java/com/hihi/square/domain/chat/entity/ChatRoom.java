@@ -5,7 +5,9 @@ import com.hihi.square.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.HashSet;
@@ -16,6 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
 @EntityListeners(AuditingEntityListener.class)
 public class ChatRoom extends BaseEntity {
 
@@ -27,8 +30,17 @@ public class ChatRoom extends BaseEntity {
     @JoinColumn(name = "last_message_id")
     private ChatMessage lastMessage;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="ChatMember", joinColumns = @JoinColumn(name="chat_room_id"))
-    private Set<Store> chatRoomMembers = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "sto_id1")
+    private Store store1;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "sto_id2")
+    private Store store2;
+
+    private Integer notReadNum;
+
+    public void updateLastMessage(ChatMessage message) {
+        this.lastMessage = message;
+    }
 }

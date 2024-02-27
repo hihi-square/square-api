@@ -8,14 +8,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Integer> {
 
-    @Query("select s from Store s where s.usrId=:userId and s.status=:status")
+    @Query("select s from Store s join fetch s.address join fetch s.address.siggAddress where s.usrId=:userId and s.status=:status")
     Optional<Store> findById(@Param("userId") Integer userId, @Param("status") UserStatus status);
 
-    @Query("select s from Store s where s.uid=:uid and s.status=:status")
+    @Query("select s from Store s join fetch s.address join fetch s.address.siggAddress where s.uid=:uid and s.status=:status")
     Optional<Store> findByUID(@Param("uid") String uid, @Param("status") UserStatus status);
 
     @Transactional
@@ -26,4 +27,7 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
     @Modifying
     @Query("update Store s set s.status=:status where s.usrId=:id")
     void deleteById(@Param("id") Integer id, @Param("status") UserStatus status);
+
+    @Query("select s from Store s join fetch s.address join fetch s.address.siggAddress")
+    List<Store> findAll();
 }

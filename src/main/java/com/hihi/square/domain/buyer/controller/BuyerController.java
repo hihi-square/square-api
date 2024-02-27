@@ -3,6 +3,8 @@ package com.hihi.square.domain.buyer.controller;
 import com.hihi.square.common.CommonRes;
 import com.hihi.square.domain.buyer.dto.response.LoginRes;
 import com.hihi.square.domain.buyer.service.BuyerService;
+import com.hihi.square.domain.store.dto.response.StoreInfoRes;
+import com.hihi.square.domain.store.service.StoreService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +17,12 @@ import java.io.IOException;
 
 @RestController
 @Slf4j
-@RequestMapping("/buyer")
+@RequestMapping("/buyers")
 @RequiredArgsConstructor
 public class BuyerController {
 
     private final BuyerService buyerService;
+    private final StoreService storeService;
 
     // 소셜 로그인이 끝나면 오는 컨트롤러
     // SuccessHandler를 활용하여 프론트 페이지로 redirect 시킴
@@ -30,5 +33,12 @@ public class BuyerController {
         LoginRes loginResponseDto = buyerService.login(authentication, response);
         log.info("구매자 로그인 access token 생성 완료");
         return new ResponseEntity(CommonRes.success(loginResponseDto), HttpStatus.OK);
+    }
+
+    @GetMapping("/stores/{storeId}")
+    public ResponseEntity<LoginRes> getStoresInfo(Authentication authentication, @PathVariable Integer storeId) throws IOException { //Authentication 을 DI (의존성 주입)
+        Integer buyerId = Integer.parseInt(authentication.getName());
+        StoreInfoRes storeInfoRes = storeService.findInfoForBuyer(buyerId, storeId);
+        return new ResponseEntity(CommonRes.success(storeInfoRes), HttpStatus.OK);
     }
 }

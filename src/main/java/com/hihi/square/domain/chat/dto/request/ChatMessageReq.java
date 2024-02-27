@@ -1,27 +1,23 @@
-package com.hihi.square.domain.chat.dto;
+package com.hihi.square.domain.chat.dto.request;
 
 import com.hihi.square.domain.chat.entity.ChatMessageType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class ChatMessageDto {
+@Getter
+@Setter
+@ToString
+public class ChatMessageReq {
     @Enumerated(EnumType.STRING)
     private ChatMessageType type; // TALK, FILE, IMAGE, LINK
-    private Integer senderId;
-    private Integer receiverId;
     private String message;
+    private Long roomId;
     private MultipartFile file;
-    private String url;
-    private LocalDateTime time;
 }

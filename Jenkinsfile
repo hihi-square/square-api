@@ -2,13 +2,9 @@ pipeline {
     agent any // 사용 가능한 에이전트에서 이 파이프라인 또는 해당 단계를 실행
     
 
-    tools{
-        jdk 'jdk17'
-    }
 
     //환경 변수
     environment{
-        JAVA_HOME = "tool jdk17" //java 17gg
         BE_IMAGE_NAME = "square_api" //도커 이미지 이름은 소문자를 권장한다.
         BE_CONTAINER_NAME = "square_api"
         // DOCKER_NETWORK = "special_network"
@@ -24,19 +20,9 @@ pipeline {
         //     }
         // }
 
-        stage('jdk 17') {
-            steps {
-                withEnv(["JAVA_HOME=${tool 'jdk17'}", "PATH=${tool 'jdk17'}/bin:${env.PATH}"]) {
-                    echo "JDK17 ============================="
-                    sh 'java -version'
-                    sh 'javac -version'
-                }
-            }
-        }
 
         stage('BackEnd build'){
             steps{
-                withEnv(["JAVA_HOME=${tool 'jdk17'}", "PATH=${tool 'jdk17'}/bin:${env.PATH}"]) {
                     // 기존 빌드 결과물 삭제
                     sh 'rm -rf build'
 
@@ -45,13 +31,14 @@ pipeline {
                     '''
             
                 //application.yml을 복사한다.
-                // dir('/var/jenkins_home/special_config/spring'){
-                //     sh '''
-                //         cp application.yml /var/jenkins_home/Special/BackEnd/src/main/resources
-                //     '''
-                // }
+                dir('/var/jenkins_home'){
+                    sh '''
+                        cp application.yml /var/jenkins_home/workspace/square_square-api_master/src/main/resources
+                        cp application-oauth.yml /var/jenkins_home/workspace/square_square-api_master/src/main/resources
+                    '''
+                }
                 // 프로젝트가 있는 폴더로 이동한다.
-                dir('/var/jenkins_home/workspace/SQUARECICD_square-api_master') {
+                dir('/var/jenkins_home/workspace/square_square-api_master') {
                     //권한 문제가 발생해 777로 변경 후 데몬 없이 빌드를 시작한다.
                     //데몬이 있을 경우 가끔 메모리 터지는 경우가 있어서..
                     sh '''
@@ -59,7 +46,6 @@ pipeline {
                         ./gradlew clean bootJar --no-daemon
                         ls -al
                         '''
-                }
                 }
                 
             }
@@ -83,7 +69,7 @@ pipeline {
                 // dockerfile을 수행하여 지정한 이름으로 이미지를 만든다.
                 // 도커에 로그인한 후, 생성한 이미지를 push한다.
                 // 푸시한 후 빌드한 이미지는 삭제한다. 메모리 관리를 위해 -&gt; 도커 허브로 push 하는거 잠시 보류
-                dir('/var/jenkins_home/workspace/SQUARECICD_square-api_master') {
+                dir('/var/jenkins_home/workspace/square_square-api_master') {
                     sh '''
                         docker build --no-cache -t ${BE_IMAGE_NAME}:latest .
                         '''
@@ -106,9 +92,9 @@ pipeline {
         
         stage('BE Deploy'){
             steps{
-                dir('/var/jenkins_home/Special'){
+                dir('/var/jenkins_home/workspace/square_square-api_master'){
                     script {
-                        def isRunning = sh(script: "docker ps -q -f name=${BE_CONTAINER_NAME}", returnStdout: true).trim()
+                        def isRunning = sh(script: "docker ps -a -q -f name=${BE_CONTAINER_NAME}", returnStdout: true).trim()
                         if (isRunning) {
                             // 컨테이너가 실행 중인 경우, 중지 및 삭제fsddsdfedsf
                             sh "docker stop ${BE_CONTAINER_NAME}"

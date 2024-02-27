@@ -1,8 +1,5 @@
 package com.hihi.square.domain.order.dto;
 
-import com.hihi.square.domain.coupon2.dto.CouponDto;
-import com.hihi.square.domain.coupon2.dto.UserCouponDto;
-import com.hihi.square.domain.coupon2.entity.Coupon;
 import com.hihi.square.domain.order.entity.OrderStatus;
 import com.hihi.square.domain.order.entity.Orders;
 import lombok.AllArgsConstructor;
@@ -25,10 +22,10 @@ public class OrderDto {
     Integer totalCnt;
     String rejectReason;
     Integer stoId;
-    UserCouponDto coupon;
+    Integer couponId;
     List<OrderMenuDto> menuList;
 
-    public static OrderDto toRes(Orders order, UserCouponDto coupon, List<OrderMenuDto> menuList){
+    public static OrderDto toRes(Orders order, List<OrderMenuDto> menuList){
         return OrderDto.builder()
                 .id(order.getId())
                 .totalPrice(order.getTotalPrice())
@@ -39,7 +36,7 @@ public class OrderDto {
                 .rejectReason(order.getRejectReason())
                 .menuList(menuList)
                 .stoId(order.getStore().getUsrId())
-                .coupon(coupon)
+                .couponId(order.getUserCoupon().getId())
                 .build();
     }
 }
