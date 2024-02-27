@@ -4,6 +4,7 @@ import com.hihi.square.common.CommonRes;
 import com.hihi.square.domain.menu.dto.BuyerMenuAllDto;
 import com.hihi.square.domain.menu.entity.SaleType;
 import com.hihi.square.domain.menu.service.MenuService;
+import com.hihi.square.domain.partnership.dto.response.PartnershipRes;
 import com.hihi.square.domain.timesale.dto.TimeSaleDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,8 +28,8 @@ public class BuyerMenuController {
             TimeSaleDto timeSaleDto = menuService.selectSaleMenuByBuyer(stoId, id);
             return new ResponseEntity<>(CommonRes.success(timeSaleDto), HttpStatus.ACCEPTED);
         }else if(type == SaleType.PARTNERSHIP){
-            menuService.selectPartnershipMenuByBuyer(stoId, id);    //수정 필요
-            return new ResponseEntity<>(CommonRes.success(null), HttpStatus.ACCEPTED);
+            PartnershipRes partnershipRes = menuService.selectPartnershipMenuByBuyer(stoId, id);    //수정 필요
+            return new ResponseEntity<>(CommonRes.success(partnershipRes), HttpStatus.ACCEPTED);
         }
         else return new ResponseEntity<>(CommonRes.success(null), HttpStatus.ACCEPTED);
     }

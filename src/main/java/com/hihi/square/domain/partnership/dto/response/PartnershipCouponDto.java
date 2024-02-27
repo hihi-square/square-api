@@ -1,5 +1,6 @@
 package com.hihi.square.domain.partnership.dto.response;
 
+import com.hihi.square.domain.partnership.entity.Partnership;
 import com.hihi.square.domain.store.dto.response.StoreShortInfoRes;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -21,4 +22,15 @@ public class PartnershipCouponDto {
     @Min(0)
     Integer couponSale; // 쿠폰 금액 y원 할인 쿠폰
     StoreShortInfoRes useStore; // 쿠폰 사용(use) 가게
+
+    public static PartnershipCouponDto toRes(Partnership partnership){
+        return PartnershipCouponDto.builder()
+                .id(partnership.getId())
+                .startTime(partnership.getStartTime())
+                .finishTime(partnership.getFinishTime())
+                .couponAvailable(partnership.getCouponAvailable())
+                .couponSale(partnership.getCouponSale())
+                .useStore(StoreShortInfoRes.toRes(partnership.getUseStore()))
+                .build();
+    }
 }

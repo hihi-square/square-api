@@ -49,10 +49,10 @@ public class TimeSaleServiceImpl implements TimeSaleService {
         if(timeSaleMenuDto.getMenu() == null) throw new InvalidValueException("Menu Not Input");
         StoreMenuDto storeMenuDto = timeSaleMenuDto.getMenu();
         if(storeMenuDto.getId() == null) throw new InvalidValueException("Menu Not Found");
-
-        Menu menu = menuRepository.findById(storeMenuDto.getId()).orElseThrow(
-                () -> new EntityNotFoundException("Menu Not Found")
+        Menu menu = menuRepository.findByIdAndStore(storeMenuDto.getId(), stoId).orElseThrow(
+                () -> new EntityNotFoundException("SaleMenu Mismatch Store")
         );
+
         //3. 타임 세일 등록(타임 세일 등록 + 타임 세일 메뉴 등록)
         TimeSale timeSale = TimeSale.toEntity(timeSaleDto, store);
         timeSaleRepository.save(timeSale);

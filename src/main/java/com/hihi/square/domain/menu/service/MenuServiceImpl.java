@@ -10,7 +10,10 @@ import com.hihi.square.domain.menu.repository.MenuRepository;
 import com.hihi.square.domain.menucategory.dto.MenuCategoryDto;
 import com.hihi.square.domain.menucategory.entity.MenuCategory;
 import com.hihi.square.domain.menucategory.repository.MenuCategoryRepository;
+import com.hihi.square.domain.partnership.dto.response.PartnershipCouponDto;
 import com.hihi.square.domain.partnership.dto.response.PartnershipRes;
+import com.hihi.square.domain.partnership.entity.Partnership;
+import com.hihi.square.domain.partnership.repository.PartnershipRepository;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
 import com.hihi.square.domain.timesale.dto.TimeSaleDto;
@@ -31,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +49,7 @@ public class MenuServiceImpl implements MenuService {
     private final TimeSaleMenuRepository timeSaleMenuRepository;
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
+    private final PartnershipRepository partnershipRepository;
 
     public Store checkUserMatching(Integer stoId, Integer reqStoId){
         Store store = storeRepository.findById(stoId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
@@ -274,7 +279,6 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public TimeSaleDto selectSaleMenuByBuyer(Integer stoId, Integer typeId) {
         //1. 상점 존재 확인
-        log.info("stoId : {}", stoId);
         Store store = storeRepository.findById(stoId, UserStatus.ACTIVE).orElseThrow(
                 () -> new UserNotFoundException("Store Not Found"));
         //2. 타임 세일 존재 확인
@@ -303,7 +307,30 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public PartnershipRes selectPartnershipMenuByBuyer(Integer stoId, Integer typeId) {
-        return null;
+        //1. 상점 존재 확인
+        Store store = storeRepository.findById(stoId, UserStatus.ACTIVE).orElseThrow(
+                () -> new UserNotFoundException("Store Not Found"));
+        //2. 제휴 존재 확인
+        Partnership partnership = partnershipRepository.findById(typeId).orElseThrow(
+                () -> new EntityNotFoundException("Partnership Not Found")
+        );
+
+        //3. 제휴 상품 조회
+        Menu menu = partnership.getMenu();
+        List<MenuOption> menuOptions = menuOptionRepository.findAllByMenu(menu.getId());
+        List<MenuOptionDto> moDtos = new ArrayList<>();
+
+        if(menuOptions != null){
+            for(MenuOption mo : menuOptions){
+                moDtos.add(MenuOptionDto.toRes(mo));
+            }
+        }
+
+        StoreMenuDto menuDto = StoreMenuDto.toRes(menu, menu.getMenuCategory(), moDtos);
+        PartnershipRes partnershipRes = PartnershipRes.toRes(partnership, partnership.getIssStore(), partnership.getUseStore(),
+                MenuInfoRes.toRes(menu));
+
+        return partnershipRes;
     }
 
     @Override
@@ -316,10 +343,12 @@ public class MenuServiceImpl implements MenuService {
         List<MenuCategory> menuCategoryList = menuCategoryRepository.findAllByStoreOrderBySequence(stoId, CommonStatus.activeAndPrivate);
         List<MenuCategoryDto> mcdList = new ArrayList<>();
 
+        //2-1. 타임 세일 존재 확인
+        List<TimeSale> timeSaleList = timeSaleRepository.findAllByStoreAndProgress(stoId, LocalDateTime.now(), TimeSaleStatus.ONGOING);
+        List<Partnership> partnershipList = partnershipRepository.findAllByIssStoreAndProgress(store, LocalDateTime.now());
+
         //카테고리별 타임 세일 + 제휴 세일 상품 조회
         for(MenuCategory mc : menuCategoryList){
-            //2-1. 타임 세일 존재 확인
-            List<TimeSale> timeSaleList = timeSaleRepository.findByStoreAndStatus(stoId, TimeSaleStatus.ONGOING);
 
             //2-2. 타임 세일 상품 조회
             List<BuyerMenuDto> buyerMenuDtos = new ArrayList<>();
@@ -338,6 +367,13 @@ public class MenuServiceImpl implements MenuService {
             }
 
             //2-3. 제휴 상품 조회
+            if(partnershipList != null){
+                for(Partnership p : partnershipList){
+                    Menu menu = p.getMenu();
+                    PartnershipCouponDto partnershipCouponDto = PartnershipCouponDto.toRes(p);
+                    buyerMenuDtos.add(BuyerMenuDto.toRes(menu, SaleType.PARTNERSHIP, null,true, partnershipCouponDto));
+                }
+            }
 
             //2-4. dto 추가
             mcdList.add(MenuCategoryDto.toRes(mc, buyerMenuDtos));
