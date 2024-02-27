@@ -20,6 +20,7 @@ public class TimeSaleMenu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
+    @Enumerated(EnumType.STRING)
     TimeSaleType type;
     Integer discount;
     Integer inventory;
