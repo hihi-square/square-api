@@ -8,11 +8,13 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Getter
+@Slf4j
 public class OAuthAttributes {
     private Map<String, Object> attributes;
     private String nameAttributeKey;
@@ -35,12 +37,31 @@ public class OAuthAttributes {
 
     public static OAuthAttributes of(String registrationId, String nameAttributeKey, Map<String, Object> attributes) {
         // 카카오 로그인이라면
-//        if (registrationId.equals("KAKAO"))
-//            return ofKakao(nameAttributeKey, attributes);
+        if (registrationId.equals("KAKAO"))
+            return ofKakao(nameAttributeKey, attributes);
+        // 카카오 로그인이라면
+        else if (registrationId.equals("naver"))
+            return ofNaver(nameAttributeKey, attributes);
+        else if (registrationId.equals("google"))
+            return ofGoogle(nameAttributeKey, attributes);
         return ofKakao(nameAttributeKey, attributes);
     }
 
+    private static OAuthAttributes ofGoogle(String nameAttributeKey, Map<String, Object> attributes) {
+        log.info("google 로그인 시도");
+        return OAuthAttributes.builder()
+                .attributes(attributes)
+                .nameAttributeKey(nameAttributeKey)
+                .uid("GOOGLE".concat(String.valueOf(attributes.get("sub"))))
+                .email((String) attributes.get("email"))
+                .profileImage((String) attributes.get("picture"))
+                .nickname((String) attributes.get("name"))
+                .method(LoginMethod.GOOGLE)
+                .build();
+    }
+
     private static OAuthAttributes ofKakao(String nameAttributeKey, Map<String, Object> attributes) {
+        log.info("kakao 로그인 시도");
         Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
         Map<String, Object> kakao_account = (Map<String, Object>) attributes.get("kakao_account");
         return OAuthAttributes.builder()
@@ -53,15 +74,28 @@ public class OAuthAttributes {
                 .method(LoginMethod.KAKAO)
                 .build();
     }
+    private static OAuthAttributes ofNaver(String nameAttributeKey, Map<String, Object> attributes) {
+        log.info("naver 로그인 시도");
+        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+        return OAuthAttributes.builder()
+                .attributes(attributes)
+                .nameAttributeKey(nameAttributeKey)
+                .uid("NAVER".concat(String.valueOf(response.get("id"))))
+                .email((String) response.get("email"))
+                .profileImage((String) response.get("profile_image"))
+                .nickname((String) response.get("nickname"))
+                .method(LoginMethod.NAVER)
+                .build();
+    }
 
-    public Buyer toEntity() {
+    public Buyer toEntity(LoginMethod method) {
         return Buyer.builder()
                 .uid(uid)
                 .nickname(nickname)
                 .email(email)
                 .profileImage(profileImage)
                 .status(UserStatus.ACTIVE)
-                .method(LoginMethod.KAKAO)
+                .method(method)
                 .build();
     }
 

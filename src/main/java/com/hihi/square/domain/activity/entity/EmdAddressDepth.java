@@ -4,14 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name="activity_depth")
+@Table(name="emd_address_depth")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @ToString
-public class ActivityDepth {
-    @Id
+public class EmdAddressDepth {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @JoinColumn(name = "emd_id1")
@@ -21,4 +21,6 @@ public class ActivityDepth {
     @JoinColumn(name = "emd_id2")
     @ManyToOne(fetch = FetchType.LAZY)
     private EmdAddress emdAddress2;
+
+    private int depth;
 }

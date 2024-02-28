@@ -4,7 +4,9 @@ import com.hihi.square.common.CommonRes;
 import com.hihi.square.domain.activity.dto.request.AddActivityReq;
 import com.hihi.square.domain.activity.dto.request.UpdateActivityReq;
 import com.hihi.square.domain.activity.dto.response.ActivityRes;
+import com.hihi.square.domain.activity.repository.EmdAddressDepthRepository;
 import com.hihi.square.domain.activity.service.ActivityService;
+import com.hihi.square.domain.activity.service.EmdAddressService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +27,7 @@ import java.util.List;
 public class ActivityController {
 
     private final ActivityService activityService;
+    private final EmdAddressService emdAddressService;
 
     // 활동반경 조회
     @GetMapping
@@ -56,4 +60,5 @@ public class ActivityController {
         activityService.updateMainActivity(buyerId, id);
         return new ResponseEntity(CommonRes.success(null), HttpStatus.OK);
     }
+
 }

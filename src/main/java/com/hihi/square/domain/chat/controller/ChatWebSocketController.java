@@ -35,4 +35,5 @@ public class ChatWebSocketController {
         simpMessagingTemplate.convertAndSend("/sub/chat/" + roomId, res, headers);
     }
 
+
 }

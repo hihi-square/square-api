@@ -2,6 +2,7 @@ package com.hihi.square.domain.partnership.repository;
 
 import com.hihi.square.domain.menu.entity.Menu;
 import com.hihi.square.domain.partnership.entity.Partnership;
+import com.hihi.square.domain.partnership.entity.PartnershipAcceptState;
 import com.hihi.square.domain.store.entity.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +31,7 @@ public interface PartnershipRepository extends JpaRepository<Partnership, Intege
 
     @Query("select p from Partnership p join fetch p.issStore join fetch p.useStore join fetch p.menu join fetch p.proStore where p.menu = :menu and :now between p.startTime and p.finishTime and p.acceptState = 'NORMAL'")
     Optional<Partnership> findByMenuAndProgress(Menu menu, LocalDateTime now);
+
+    @Query("select exists (select 1 from Partnership p where p.issStore = :store and :now between p.startTime and p.finishTime and p.acceptState = 'NORMAL')")
+    boolean existsByStoreAndProgress(Store store, LocalDateTime now);
 }

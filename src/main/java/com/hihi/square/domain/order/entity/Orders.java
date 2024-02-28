@@ -47,7 +47,7 @@ public class Orders extends BaseEntity {
 
     @OneToMany
     @JoinColumn(name="order_ord_id")
-    List<OrderMenu> menus = new ArrayList<>();
+    private final List<OrderMenu> menus = new ArrayList<>();
 
     public static Orders toEntity(OrderDto orderDto, Buyer buyer, Store store, UserCoupon userCoupon){
         return Orders.builder()

@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-public interface StoreRepository extends JpaRepository<Store, Integer> {
+public interface StoreRepository extends JpaRepository<Store, Integer>, StoreCustomRepository {
 
     @Query("select s from Store s join fetch s.address join fetch s.address.siggAddress where s.usrId=:userId and s.status=:status")
     Optional<Store> findById(@Param("userId") Integer userId, @Param("status") UserStatus status);

@@ -4,16 +4,19 @@ import com.hihi.square.common.CommonRes;
 import com.hihi.square.domain.buyer.dto.response.LoginRes;
 import com.hihi.square.domain.buyer.service.BuyerService;
 import com.hihi.square.domain.store.dto.response.StoreInfoRes;
+import com.hihi.square.domain.store.dto.response.StoreSearchInfoDto;
 import com.hihi.square.domain.store.service.StoreService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -40,5 +43,12 @@ public class BuyerController {
         Integer buyerId = Integer.parseInt(authentication.getName());
         StoreInfoRes storeInfoRes = storeService.findInfoForBuyer(buyerId, storeId);
         return new ResponseEntity(CommonRes.success(storeInfoRes), HttpStatus.OK);
+    }
+
+    @GetMapping("/stores/search")
+    public ResponseEntity searchStores(Authentication authentication, @RequestParam("orderBy") String orderBy, @RequestParam("timesale") boolean timesale, @RequestParam("partnership") boolean partnership, @RequestParam("dibs") boolean dibs, @RequestParam("long") @DefaultValue("0.0") Double longitude, @RequestParam("lat") @DefaultValue("0.0") Double latitude) {
+        Integer buyerId = Integer.parseInt(authentication.getName());
+        List<StoreSearchInfoDto> res = storeService.searchStores(buyerId, orderBy, timesale, partnership, dibs, longitude, latitude);
+        return new ResponseEntity(CommonRes.success(res), HttpStatus.OK);
     }
 }
