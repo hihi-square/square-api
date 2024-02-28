@@ -28,14 +28,12 @@ public class CustomOAuth2UserService  implements OAuth2UserService<OAuth2UserReq
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        log.info("ggg");
-
         // 기본 OAuth2UserService 객체 생성한다
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         // OAuth2UserService를 사용하여 OAuth2User 정보를 가져온다
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        // 클라이언트 등록 ID(kakao,naver)
+        // 클라이언트 등록 ID(kakao, naver, google)
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         log.info(registrationId+" 로그인 시도");
 
@@ -45,7 +43,6 @@ public class CustomOAuth2UserService  implements OAuth2UserService<OAuth2UserReq
         String userNameAttributeName = "uid";
         // OAuth2UserService를 사용하여 가져온  OAuth2User정보를 OAuth2Attribute 객체를 만든다
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
-
         // 저장
         Buyer buyer = save(attributes);
 
