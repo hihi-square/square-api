@@ -7,9 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ActivityRepository extends JpaRepository<Activity, Integer> {
     @Query("select a from Activity a JOIN FETCH a.emdAddress JOIN FETCH a.emdAddress.siggAddress WHERE a.buyer = :buyer")
     List<Activity> findAllByBuyer(Buyer buyer);
-    Activity findByBuyerAndIsMainTrue(Buyer buyer);
+    Optional<Activity> findByBuyerAndIsMainTrue(Buyer buyer);
 }

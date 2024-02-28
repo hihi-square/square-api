@@ -65,4 +65,10 @@ public class PartnershipController {
         return new ResponseEntity(CommonRes.success(list), HttpStatus.OK);
     }
 
+    // 특정 가게가 현재 발급중인 쿠폰 리스트 가져오기
+    @GetMapping("/buyers/{stoId}")
+    public ResponseEntity<List<PartnershipRes>> getProcessPartnerships(@PathVariable Integer stoId) {
+        List<PartnershipRes> list = partnershipService.getProgressPartnershipsByIssStore(stoId);
+        return new ResponseEntity(CommonRes.success(list), HttpStatus.OK);
+    }
 }

@@ -14,9 +14,9 @@ import java.util.List;
 @Builder
 public class MenuAllDto {
     List<MenuCategoryDto> mcList;
-    List<MenuDto> menuList;
+    List<StoreMenuDto> menuList;
 
-    public static MenuAllDto toRes(List<MenuCategoryDto> mcList, List<MenuDto> menuList){
+    public static MenuAllDto toRes(List<MenuCategoryDto> mcList, List<StoreMenuDto> menuList){
         return MenuAllDto.builder()
                 .mcList(mcList)
                 .menuList(menuList)

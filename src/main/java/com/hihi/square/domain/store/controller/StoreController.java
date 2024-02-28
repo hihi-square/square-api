@@ -7,6 +7,7 @@ import com.hihi.square.domain.store.dto.request.SignUpStoreReq;
 import com.hihi.square.domain.store.dto.request.StoreFindReq;
 import com.hihi.square.domain.store.dto.request.StorePasswordReq;
 import com.hihi.square.domain.store.dto.response.LoginRes;
+import com.hihi.square.domain.store.dto.response.StoreInfoRes;
 import com.hihi.square.domain.store.service.StoreService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,12 +19,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @Slf4j
 @RequestMapping("/store")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class StoreController {
     private final StoreService storeService;
 
@@ -89,4 +92,12 @@ public class StoreController {
         StoreDto store = storeService.selectStore(stoId, pathStoreId);
         return new ResponseEntity<>(CommonRes.success(store), HttpStatus.ACCEPTED);
     }
+
+    @GetMapping("/depth/{depth}")
+    public ResponseEntity<?> selectStoresForChat(Authentication authentication, @PathVariable(name = "depth") @Validated Integer depth) {
+        Integer stoId = Integer.parseInt(authentication.getName());
+        List<StoreInfoRes> res = storeService.findAllStores(stoId, depth);
+        return new ResponseEntity<>(CommonRes.success(res), HttpStatus.OK);
+    }
+
 }

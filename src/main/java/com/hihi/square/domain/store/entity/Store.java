@@ -1,16 +1,20 @@
 package com.hihi.square.domain.store.entity;
 
+import com.hihi.square.domain.activity.entity.EmdAddress;
 import com.hihi.square.domain.category.entity.Category;
+import com.hihi.square.domain.order.entity.OrderMenu;
+import com.hihi.square.domain.order.entity.Orders;
+import com.hihi.square.domain.partnership.entity.Partnership;
 import com.hihi.square.domain.store.dto.StoreDto;
 import com.hihi.square.domain.store.dto.request.SignUpStoreReq;
 import com.hihi.square.domain.user.entity.User;
 import com.hihi.square.domain.user.entity.UserStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "store")
@@ -35,7 +39,11 @@ public class Store extends User {
     Integer dibs_count;
     Integer review_count;
     Double rating;
-    String address;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "emd_id")
+    EmdAddress address;
+
     @Column(name = "detail_address")
     String detailAddress;
     @Column(name = "min_pickup_time")
@@ -46,8 +54,23 @@ public class Store extends User {
     @OneToOne
     @JoinColumn(name = "category")
     Category category;
+    Double latitude;
+    Double longitude;
 
-    public static Store toEntity(SignUpStoreReq signUpStoreReq, Category category){
+    @OneToMany(mappedBy = "issStore", fetch = FetchType.LAZY)
+    private final List<Partnership> issPartnershipList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "useStore", fetch = FetchType.LAZY)
+    private final List<Partnership> usePartnershipList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
+    private final List<Orders> ordersList = new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name="order_ord_id")
+    private final List<OrderMenu> menus = new ArrayList<>();
+
+    public static Store toEntity(SignUpStoreReq signUpStoreReq, Category category, EmdAddress emdAddress){
         return Store.builder()
                 .uid(signUpStoreReq.getUid())
                 .password(signUpStoreReq.getPassword())
@@ -60,7 +83,7 @@ public class Store extends User {
                 .content(signUpStoreReq.getContent())
                 .storeContact(signUpStoreReq.getStoreContact())
                 .storeContact2(signUpStoreReq.getStoreContact2())
-                .address(signUpStoreReq.getAddress())
+                .address(emdAddress)
                 .detailAddress(signUpStoreReq.getDetailAddress())
                 .dibs_count(0)
                 .review_count(0)
@@ -68,6 +91,8 @@ public class Store extends User {
                 .minPickUpTime(0)
                 .maxPickUpTime(0)
                 .category(category)
+                .latitude(signUpStoreReq.getLatitude())
+                .longitude(signUpStoreReq.getLongitude())
                 .build();
     }
 
@@ -81,7 +106,6 @@ public class Store extends User {
                 .content(storeDto.getContent())
                 .storeContact(storeDto.getStoreContact())
                 .storeContact2(storeDto.getStoreContact2())
-                .address(storeDto.getAddress())
                 .detailAddress(storeDto.getDetailAddress())
                 .minPickUpTime(0)
                 .maxPickUpTime(0)

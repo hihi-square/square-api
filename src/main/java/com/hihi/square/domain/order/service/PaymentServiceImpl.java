@@ -47,7 +47,7 @@ public class PaymentServiceImpl implements PaymentService{
         Orders order = orderRepository.findById(paymentDto.getOrderId(), OrderStatus.REGISTER).orElseThrow(
                 () -> new EntityNotFoundException("Order Not Found"));
         //2. 주문자와 로그인한 유저 정보 일치 여부
-        if(order.getUser().getUsrId() != usrId) throw new UserMismachException("User, Order User MisMatch");
+        if(order.getBuyer().getUsrId() != usrId) throw new UserMismachException("User, Order User MisMatch");
 
         //4. 결제 정보 저장 + 주문 상태 변경
         LocalDateTime localDateTime = LocalDateTime.now();

@@ -1,13 +1,29 @@
 package com.hihi.square.domain.store.service;
 
+import com.hihi.square.domain.activity.dto.response.EmdAddressRes;
+import com.hihi.square.domain.activity.entity.Activity;
+import com.hihi.square.domain.activity.entity.EmdAddress;
+import com.hihi.square.domain.activity.repository.ActivityRepository;
+import com.hihi.square.domain.activity.repository.EmdAddressRepository;
+import com.hihi.square.domain.activity.service.EmdAddressService;
+import com.hihi.square.domain.buyer.entity.Buyer;
+import com.hihi.square.domain.buyer.repository.BuyerRepository;
 import com.hihi.square.domain.category.dto.CategoryDto;
 import com.hihi.square.domain.category.entity.Category;
 import com.hihi.square.domain.category.repository.CategoryRepository;
+//import com.hihi.square.domain.menu.dto.MenuDto;
+import com.hihi.square.domain.menu.dto.MenuAllDto;
+import com.hihi.square.domain.menu.dto.StoreMenuDto;
+import com.hihi.square.domain.menu.service.MenuService;
+import com.hihi.square.domain.partnership.entity.Partnership;
+import com.hihi.square.domain.partnership.repository.PartnershipRepository;
 import com.hihi.square.domain.store.dto.StoreDto;
 import com.hihi.square.domain.store.dto.request.LoginReq;
 import com.hihi.square.domain.store.dto.request.SignUpStoreReq;
 import com.hihi.square.domain.store.dto.request.StoreFindReq;
 import com.hihi.square.domain.store.dto.response.LoginRes;
+import com.hihi.square.domain.store.dto.response.StoreInfoRes;
+import com.hihi.square.domain.store.dto.response.StoreSearchInfoDto;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
 import com.hihi.square.domain.user.entity.User;
@@ -30,7 +46,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -39,10 +58,16 @@ import java.util.Map;
 public class StoreServiceImpl implements StoreService{
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
+    private final BuyerRepository buyerRepository;
+    private final ActivityRepository activityRepository;
     private final CategoryRepository categoryRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RedisService redisService;
+    private final EmdAddressRepository emdAddressRepository;
+    private final EmdAddressService emdAddressService;
+    private final PartnershipRepository partnershipRepository;
+    private final MenuService menuService;
 
     @Override
     public void checkDuplicateUID(String uid){
@@ -68,7 +93,10 @@ public class StoreServiceImpl implements StoreService{
                 () -> new EntityNotFoundException("Category Not Found")
         );
 
-        Store store = Store.toEntity(signUpStoreReq, category);
+        //2. 행정구역 설정
+        EmdAddress emdAddress = emdAddressRepository.findById(signUpStoreReq.getBCode()).orElseThrow(()->new EntityNotFoundException("행정구역 코드가 잘못되었습니다."));
+
+        Store store = Store.toEntity(signUpStoreReq, category, emdAddress);
         storeRepository.save(store);
     }
 
@@ -197,7 +225,76 @@ public class StoreServiceImpl implements StoreService{
 
         //2. 정보 반환
         CategoryDto categoryDto = CategoryDto.toRes(store.getCategory());
-        StoreDto storeDto = StoreDto.toRes(store, categoryDto);
+        EmdAddressRes emdAddressRes = EmdAddressRes.toRes(store.getAddress());
+
+        StoreDto storeDto = StoreDto.toRes(store, categoryDto, emdAddressRes);
         return storeDto;
+    }
+
+    @Override
+    public StoreInfoRes findInfoForBuyer(Integer buyerId, Integer storeId) {
+        //1. 사전 확인
+        //1.1 로그인 유저 확인 및 구매자의 가게 접근 가능 여부 확인 -> 추후 추가
+
+        //1.2 가게 유저 확인
+        Store store = storeRepository.findById(storeId, UserStatus.ACTIVE).orElseThrow(()->new EntityNotFoundException("가게 회원이 조회되지 않습니다."));
+        //2. 정보 반환
+        //2-1. 타임세일 여부
+        //2-2. 제휴 여부
+        boolean isPn = partnershipRepository.existsByStoreAndProgress(store, LocalDateTime.now());
+        StoreInfoRes storeInfoRes = StoreInfoRes.toRes(store, true, isPn);
+        return storeInfoRes;
+    }
+
+    @Override
+    public List<StoreInfoRes> findAllStores(Integer stoId, Integer depth) {
+        Store store = storeRepository.findById(stoId, UserStatus.ACTIVE).orElseThrow(
+                () -> new UserNotFoundException("User Not Found"));
+
+        // 추후 해당 가게 기준으로 가까운 가게/조금 먼 가게/먼 가게 추가
+        List<Store> storeList = storeRepository.findAll();
+        List<StoreInfoRes> res = new ArrayList<>();
+        for(Store s : storeList) {
+            if (!s.getUid().equals(store.getUid())){
+                res.add(StoreInfoRes.toRes(s));
+            }
+        }
+
+        return res;
+    }
+
+    // 가게 리스트 검색 시 반환되는 데이터
+    @Override
+    public List<StoreSearchInfoDto> searchStores(Integer buyerId, String orderBy, boolean timesale, boolean partnership, boolean dibs, double longitude, double latitude) {
+        Buyer buyer = buyerRepository.findById(buyerId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+        Activity activity = activityRepository.findByBuyerAndIsMainTrue(buyer).orElseThrow(() -> new EntityNotFoundException("활동구역은 필수입니다."));
+        List<EmdAddress> emdAddressList = emdAddressService.getAllByActivity(activity);
+        // 쿼리 새로 날리기
+//        List<Store> storeList = storeRepository.searchStoreList(getEmdAddressList, buyer, orderBy, timesale, partnership, dibs, longitude, latitude);
+//        List<StoreSearchInfoDto> resList = new ArrayList<>();
+//        for(Store store : storeList) {
+//            List<MenuDto> menus = menuService.selectAllMenu(store.getUsrId()).getMenuList();
+//            StringBuilder sb = new StringBuilder();
+//            for(int i=0;i<menus.size();i++) {
+//                if (!menus.get(i).getIsPopular()) continue;
+//                if(sb.isEmpty()) sb.append(", ");
+//                sb.append(menus.get(i).getName());
+//            }
+//            resList.add(StoreSearchInfoDto.toRes(store, ))
+//        }
+//        return resList;
+        // 한번에 가져오기
+        List<StoreSearchInfoDto> storeList = storeRepository.searchStoreDtoList(emdAddressList, buyer, orderBy, timesale, partnership, dibs, longitude, latitude);
+        for(StoreSearchInfoDto store : storeList) {
+            List<StoreMenuDto> menus= menuService.selectAllMenu(store.getUsrId()).getMenuList();
+            StringBuilder sb = new StringBuilder();
+            for(int i=0;i<menus.size();i++) {
+                if (!menus.get(i).getIsPopular()) continue;
+                if(sb.isEmpty()) sb.append(", ");
+                sb.append(menus.get(i).getName());
+            }
+            store.updateMenuString(sb.toString());
+        }
+        return storeList;
     }
 }

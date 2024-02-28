@@ -1,6 +1,5 @@
 package com.hihi.square.domain.order.dto;
 
-import com.hihi.square.domain.menu.dto.MenuDto;
 import com.hihi.square.domain.menu.entity.Menu;
 import com.hihi.square.domain.order.entity.OrderMenu;
 import lombok.*;

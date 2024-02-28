@@ -11,6 +11,7 @@ import com.hihi.square.domain.buyer.entity.Buyer;
 import com.hihi.square.domain.buyer.repository.BuyerRepository;
 import com.hihi.square.global.error.ErrorCode;
 import com.hihi.square.global.error.type.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class ActivityServiceImpl implements ActivityService{
 
     @Override
     public List<ActivityRes> getAcitivityList(Integer buyerId) {
-        Buyer buyer = buyerRepository.findById(buyerId).orElseThrow(()->new UserNotFoundException("User Not Found"));
+        Buyer buyer = buyerRepository.findById(buyerId).orElseThrow(()-> new UserNotFoundException("User Not Found"));
         List<Activity> activityList = activityRepository.findAllByBuyer(buyer);
         List<ActivityRes> activityResList = new ArrayList<>();
         for(Activity activity:activityList) {
@@ -45,10 +46,12 @@ public class ActivityServiceImpl implements ActivityService{
         Buyer buyer = buyerRepository.findById(buyerId).orElseThrow(()->new UserNotFoundException("User Not Found"));
         EmdAddress emdAddress = emdAddressRepository.findById(req.getEmdId()).orElseThrow(()-> new EntityNotFoundException("EmdAddress Not Found"));
         // 활동지역은 최대 4개까지만 가능
-        if (getAcitivityList(buyerId).size() == 4) throw new BusinessException("", ErrorCode.ADD_NOT_ALLOWED);
-
-        // 새로 추가하는 활동지역이 기본적으로 메인이 됨
         List<Activity> activityList = activityRepository.findAllByBuyer(buyer);
+        if (activityList.size() == 4) throw new AddNotAllowedException("최대 4개까지 생성 가능합니다.");
+        for(Activity a : activityList) {
+            if (a.getEmdAddress().getId().equals(req.getEmdId())) throw new AddNotAllowedException("이미 등록된 주소입니다.");
+        }
+        // 새로 추가하는 활동지역이 기본적으로 메인이 됨
         for(Activity a : activityList) {
             if (a.isMain()) a.updateIsMain(false);
         }
@@ -112,7 +115,7 @@ public class ActivityServiceImpl implements ActivityService{
         if (!activity.getBuyer().equals(buyer)) throw new UserMismachException("User Mismatch");
 
         // 기존 main activity false 처리
-        Activity pastMainActivity = activityRepository.findByBuyerAndIsMainTrue(buyer);
+        Activity pastMainActivity = activityRepository.findByBuyerAndIsMainTrue(buyer).orElseThrow(() -> new EntityNotFoundException("활동구역은 필수입니다."));
         pastMainActivity.updateIsMain(false);
 
         // 새로운 main activity 설정

@@ -13,6 +13,7 @@ import com.hihi.square.global.util.redis.RedisService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -62,18 +63,23 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http
                 // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable())
-
+                .cors(Customizer.withDefaults())
+//                .cors().and()
                 //로그인, 회원가입 API
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/store/join/**", "/store/login", "/store/reissue",  "/**/oauth2/**").permitAll()
-                        .requestMatchers("/ws-stomp/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/store/join/**", "/store/login", "/store/reissue",  "/oauth2/**").permitAll()
                         .requestMatchers("/store/**").hasAuthority("STORE")
+                        .requestMatchers("/partnerships/buyers/**").hasAuthority("BUYER")
                         .requestMatchers("/partnerships/**").hasAuthority("STORE")
                         .requestMatchers("/buyer/**").hasAuthority("BUYER")
+                        .requestMatchers("/chats/**").hasAuthority("STORE")
+                        .requestMatchers("/coupons/**").hasAuthority("BUYER")
+                        .requestMatchers("/dibs/**").hasAuthority("BUYER")
                         .anyRequest().authenticated()
                 )
 

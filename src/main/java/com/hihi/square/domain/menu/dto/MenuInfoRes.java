@@ -4,6 +4,7 @@ import com.hihi.square.common.CommonStatus;
 import com.hihi.square.domain.menu.entity.Menu;
 import com.hihi.square.domain.menucategory.entity.MenuCategory;
 import com.hihi.square.domain.store.dto.response.StoreInfoRes;
+import com.hihi.square.domain.store.dto.response.StoreShortInfoRes;
 import com.hihi.square.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,7 @@ public class MenuInfoRes {
     CommonStatus status;
     String image;
     String thumbnail;
-    StoreInfoRes store;
+    StoreShortInfoRes store;
 
     public static MenuInfoRes toRes(Menu menu) {
         return MenuInfoRes.builder()
@@ -32,7 +33,7 @@ public class MenuInfoRes {
                 .status(menu.getStatus())
                 .image(menu.getImage())
                 .thumbnail(menu.getThumbnail())
-                .store(StoreInfoRes.toRes(menu.getStore()))
+                .store(StoreShortInfoRes.toRes(menu.getStore()))
                 .build();
     }
 

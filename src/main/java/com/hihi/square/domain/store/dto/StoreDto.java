@@ -1,5 +1,6 @@
 package com.hihi.square.domain.store.dto;
 
+import com.hihi.square.domain.activity.dto.response.EmdAddressRes;
 import com.hihi.square.domain.category.dto.CategoryDto;
 import com.hihi.square.domain.store.entity.Bank;
 import com.hihi.square.domain.store.entity.Store;
@@ -23,14 +24,14 @@ public class StoreDto {
 	String content;
 	Bank bank;
 	String account;
-	String address;
+	EmdAddressRes address;
 	String detailAddress;
 	Integer minPickUpTime;
 	Integer maxPickUpTime;
 	String image;
 	CategoryDto category;
 
-	public static StoreDto toRes(Store store, CategoryDto categoryDto){
+	public static StoreDto toRes(Store store, CategoryDto categoryDto, EmdAddressRes emdAddressRes){
 		return StoreDto.builder()
 				.name(store.getName())
 				.phone(store.getPhone())
@@ -41,7 +42,7 @@ public class StoreDto {
 				.content(store.getContent())
 				.bank(store.getBank())
 				.account(store.getAccount())
-				.address(store.getAddress())
+				.address(emdAddressRes)
 				.detailAddress(store.getDetailAddress())
 				.minPickUpTime(store.getMinPickUpTime())
 				.maxPickUpTime(store.getMaxPickUpTime())

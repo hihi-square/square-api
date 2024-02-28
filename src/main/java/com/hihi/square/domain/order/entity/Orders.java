@@ -1,13 +1,17 @@
 package com.hihi.square.domain.order.entity;
 
 import com.hihi.square.common.BaseEntity;
-import com.hihi.square.domain.coupon2.entity.UserCoupon;
+import com.hihi.square.domain.buyer.entity.Buyer;
 import com.hihi.square.domain.order.dto.OrderDto;
+import com.hihi.square.domain.partnership.entity.UserCoupon;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -33,7 +37,7 @@ public class Orders extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "usr_id")
-    User user;
+    Buyer buyer;
     @ManyToOne
     @JoinColumn(name = "sto_id")
     Store store;
@@ -41,7 +45,11 @@ public class Orders extends BaseEntity {
     @JoinColumn(name = "uc_id")
     UserCoupon userCoupon;
 
-    public static Orders toEntity(OrderDto orderDto, User user, Store store, UserCoupon userCoupon){
+    @OneToMany
+    @JoinColumn(name="order_ord_id")
+    private final List<OrderMenu> menus = new ArrayList<>();
+
+    public static Orders toEntity(OrderDto orderDto, Buyer buyer, Store store, UserCoupon userCoupon){
         return Orders.builder()
                 .id(orderDto.getId())
                 .totalPrice(orderDto.getTotalPrice())
@@ -49,7 +57,7 @@ public class Orders extends BaseEntity {
                 .requestInfo(orderDto.getRequest())
                 .totalCnt(orderDto.getTotalCnt())
                 .rejectReason(orderDto.getRejectReason())
-                .user(user)
+                .buyer(buyer)
                 .store(store)
                 .userCoupon(userCoupon)
                 .build();

@@ -1,7 +1,9 @@
 package com.hihi.square.domain.partnership.entity;
 
 import com.hihi.square.common.BaseEntity;
+import com.hihi.square.common.CommonStatus;
 import com.hihi.square.domain.buyer.entity.Buyer;
+import com.hihi.square.domain.order.entity.Orders;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -22,10 +24,19 @@ public class CouponUsed extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uic_id")
-    private CouponIssued couponIssued; // 어떤 쿠폰이 발급되어 사용된건지.
-    private Integer ordId; // 어떤 주문에서 사용되었는지
+    private UserCoupon userCoupon; // 어떤 쿠폰이 발급되어 사용된건지.
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ord_id")
+    private Orders orders; // 어떤 주문에서 사용되었는지
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buy_id")
     private Buyer buyer; // 어떤 유저가 사용하였는지
+
+    private CommonStatus status;
+
+    public void cancelUse() {
+        this.status = CommonStatus.DELETE;
+    }
 }

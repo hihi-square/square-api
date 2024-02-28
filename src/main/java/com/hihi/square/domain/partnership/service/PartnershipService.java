@@ -29,4 +29,6 @@ public interface PartnershipService {
     // a 가게에 대해서 진행중인 제휴 목록
     List<PartnershipRes> getProgressPartnerships(Integer stoId);
 
+    // a 가게에 대해서 진행중인 제휴 목록
+    List<PartnershipRes> getProgressPartnershipsByIssStore(Integer stoId);
 }
