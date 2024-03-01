@@ -17,6 +17,7 @@ import java.util.List;
 @RequestMapping("/store/time-sales")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin("*")
 public class TimeSaleController {
     private final TimeSaleService timeSaleService;
 

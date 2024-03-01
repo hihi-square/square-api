@@ -21,6 +21,7 @@ import java.util.List;
 @RequestMapping("/partnerships")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin("*")
 public class PartnershipController {
 
     private final PartnershipService partnershipService;

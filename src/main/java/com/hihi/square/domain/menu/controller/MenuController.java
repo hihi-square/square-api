@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/store/menu")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class MenuController {
     private final MenuServiceImpl menuService;
 

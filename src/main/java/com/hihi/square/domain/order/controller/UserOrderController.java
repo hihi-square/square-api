@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user/order")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class UserOrderController {
     private final OrderService orderService;
     private final PaymentService paymentService;

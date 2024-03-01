@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/menu/category")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class MenuCategoryController {
     private final MenuCategoryServiceImpl menuCategoryService;
 

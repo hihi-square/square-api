@@ -22,6 +22,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/buyers")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class BuyerController {
 
     private final BuyerService buyerService;
