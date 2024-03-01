@@ -46,9 +46,9 @@ public class BuyerController {
     }
 
     @GetMapping("/stores/search")
-    public ResponseEntity searchStores(Authentication authentication, @RequestParam("orderBy") String orderBy, @RequestParam("timesale") boolean timesale, @RequestParam("partnership") boolean partnership, @RequestParam("dibs") boolean dibs, @RequestParam("long") @DefaultValue("0.0") Double longitude, @RequestParam("lat") @DefaultValue("0.0") Double latitude) {
+    public ResponseEntity searchStores(Authentication authentication, @RequestParam("category") Integer category, @RequestParam("orderBy") String orderBy, @RequestParam("timesale") boolean timesale, @RequestParam("partnership") boolean partnership, @RequestParam("dibs") boolean dibs, @RequestParam("long") @DefaultValue("0.0") Double longitude, @RequestParam("lat") @DefaultValue("0.0") Double latitude) {
         Integer buyerId = Integer.parseInt(authentication.getName());
-        List<StoreSearchInfoDto> res = storeService.searchStores(buyerId, orderBy, timesale, partnership, dibs, longitude, latitude);
+        List<StoreSearchInfoDto> res = storeService.searchStores(buyerId, category, orderBy, timesale, partnership, dibs, longitude, latitude);
         return new ResponseEntity(CommonRes.success(res), HttpStatus.OK);
     }
 }

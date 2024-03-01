@@ -34,8 +34,9 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
     private final UserRepository userRepository;
 
 
-    public Store checkUserMatching(Integer stoId, Integer reqStoId){
+    public Store checkUserMatching(int stoId, int reqStoId){
         Store store = storeRepository.findById(stoId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+        System.out.println(stoId+" "+reqStoId);
         if(stoId != reqStoId) throw new UserMismachException("User Mismatch");
         return store;
     }

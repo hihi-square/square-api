@@ -59,7 +59,7 @@ public class ActivityServiceImpl implements ActivityService{
                 .emdAddress(emdAddress)
                 .latitude(req.getLatitude())
                 .longitude(req.getLongitude())
-                .depth(0)
+                .depth(1)
                 .isMain(true)
                 .buyer(buyer).build();
         activityRepository.save(activity);

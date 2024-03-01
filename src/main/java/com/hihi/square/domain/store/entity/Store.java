@@ -51,7 +51,7 @@ public class Store extends User {
     @Column(name = "max_pickup_time")
     Integer maxPickUpTime;
     String image;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category")
     Category category;
     Double latitude;

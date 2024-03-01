@@ -40,5 +40,5 @@ public interface StoreService {
 
     List<StoreInfoRes> findAllStores(Integer stoId, Integer depth);
 
-    List<StoreSearchInfoDto> searchStores(Integer buyerId, String orderBy, boolean timesale, boolean partnership, boolean dibs, double longitude, double latitude);
+    List<StoreSearchInfoDto> searchStores(Integer buyerId, Integer category, String orderBy, boolean timesale, boolean partnership, boolean dibs, double longitude, double latitude);
 }

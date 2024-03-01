@@ -38,7 +38,7 @@ public class DibsServiceImpl implements DibsService{
         List<Dibs> list = dibsRepository.findByBuyer(buyer);
         List<DibsInfoRes> res = new ArrayList<>();
         for(Dibs d : list) {
-            boolean isPn = partnershipRepository.existsByStoreAndProgress(d.getStore(), LocalDateTime.now());
+            boolean isPn = partnershipRepository.existsByStoreAndProgress(d.getStore());
             res.add(DibsInfoRes.builder()
                     .id(d.getId())
                     .store(StoreInfoRes.toRes(d.getStore(), isPn, isPn))

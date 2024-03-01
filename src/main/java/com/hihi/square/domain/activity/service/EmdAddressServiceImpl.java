@@ -8,10 +8,7 @@ import com.hihi.square.domain.activity.repository.EmdAddressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +19,13 @@ public class EmdAddressServiceImpl implements EmdAddressService {
 
     @Override
     public List<EmdAddress> getAllByActivity(Activity activity) {
+        if (activity.getDepth() == 0) {
+            List<EmdAddress> list = new ArrayList<>();
+            list.add(activity.getEmdAddress());
+            return list;
+        }
         List<EmdAddress> list = emdAddressRepository.findByEmdAddressAndDepth(activity.getEmdAddress(), activity.getDepth());
+        list.add(activity.getEmdAddress());
         return list;
     }
 

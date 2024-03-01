@@ -3,6 +3,8 @@ package com.hihi.square.domain.menu.repository;
 import com.hihi.square.common.CommonStatus;
 import com.hihi.square.domain.menu.entity.Menu;
 import com.hihi.square.domain.menucategory.entity.MenuCategory;
+import com.hihi.square.domain.store.entity.Store;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -40,4 +42,8 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
     @Modifying
     @Query("update Menu m set m.sequence=:sequence, m.menuCategory=:mc, m.status=:status, m.modifiedAt = current_timestamp where m.id=:menuId")
     void updateSequence(@Param("menuId") Integer menuId, @Param("sequence") Integer sequence, @Param("mc") MenuCategory mc, @Param("status") CommonStatus status);
+
+    @Query("select m from Menu m where m.store = :store and m.isRepresentative = true and m.status = 'ACTIVE'")
+    List<Menu> findByStoreAndIsRepresentativeIsTrueAndStatusIsActiveLimit3(Store store, Pageable pageable);
+
 }

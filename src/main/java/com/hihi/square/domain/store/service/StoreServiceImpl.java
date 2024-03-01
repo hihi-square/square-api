@@ -12,8 +12,11 @@ import com.hihi.square.domain.category.dto.CategoryDto;
 import com.hihi.square.domain.category.entity.Category;
 import com.hihi.square.domain.category.repository.CategoryRepository;
 //import com.hihi.square.domain.menu.dto.MenuDto;
+import com.hihi.square.domain.dibs.repository.DibsRepository;
 import com.hihi.square.domain.menu.dto.MenuAllDto;
 import com.hihi.square.domain.menu.dto.StoreMenuDto;
+import com.hihi.square.domain.menu.entity.Menu;
+import com.hihi.square.domain.menu.repository.MenuRepository;
 import com.hihi.square.domain.menu.service.MenuService;
 import com.hihi.square.domain.partnership.entity.Partnership;
 import com.hihi.square.domain.partnership.repository.PartnershipRepository;
@@ -26,6 +29,7 @@ import com.hihi.square.domain.store.dto.response.StoreInfoRes;
 import com.hihi.square.domain.store.dto.response.StoreSearchInfoDto;
 import com.hihi.square.domain.store.entity.Store;
 import com.hihi.square.domain.store.repository.StoreRepository;
+import com.hihi.square.domain.timesale.repository.TimeSaleRepository;
 import com.hihi.square.domain.user.entity.User;
 import com.hihi.square.domain.user.entity.UserStatus;
 import com.hihi.square.domain.user.repository.UserRepository;
@@ -40,6 +44,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +74,9 @@ public class StoreServiceImpl implements StoreService{
     private final EmdAddressService emdAddressService;
     private final PartnershipRepository partnershipRepository;
     private final MenuService menuService;
+    private final MenuRepository menuRepository;
+    private final TimeSaleRepository timeSaleRepository;
+    private final DibsRepository dibsRepository;
 
     @Override
     public void checkDuplicateUID(String uid){
@@ -241,7 +250,7 @@ public class StoreServiceImpl implements StoreService{
         //2. 정보 반환
         //2-1. 타임세일 여부
         //2-2. 제휴 여부
-        boolean isPn = partnershipRepository.existsByStoreAndProgress(store, LocalDateTime.now());
+        boolean isPn = partnershipRepository.existsByStoreAndProgress(store);
         StoreInfoRes storeInfoRes = StoreInfoRes.toRes(store, true, isPn);
         return storeInfoRes;
     }
@@ -265,32 +274,18 @@ public class StoreServiceImpl implements StoreService{
 
     // 가게 리스트 검색 시 반환되는 데이터
     @Override
-    public List<StoreSearchInfoDto> searchStores(Integer buyerId, String orderBy, boolean timesale, boolean partnership, boolean dibs, double longitude, double latitude) {
+    public List<StoreSearchInfoDto> searchStores(Integer buyerId, Integer category, String orderBy, boolean timesale, boolean partnership, boolean dibs, double longitude, double latitude) {
         Buyer buyer = buyerRepository.findById(buyerId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
         Activity activity = activityRepository.findByBuyerAndIsMainTrue(buyer).orElseThrow(() -> new EntityNotFoundException("활동구역은 필수입니다."));
         List<EmdAddress> emdAddressList = emdAddressService.getAllByActivity(activity);
-        // 쿼리 새로 날리기
-//        List<Store> storeList = storeRepository.searchStoreList(getEmdAddressList, buyer, orderBy, timesale, partnership, dibs, longitude, latitude);
-//        List<StoreSearchInfoDto> resList = new ArrayList<>();
-//        for(Store store : storeList) {
-//            List<MenuDto> menus = menuService.selectAllMenu(store.getUsrId()).getMenuList();
-//            StringBuilder sb = new StringBuilder();
-//            for(int i=0;i<menus.size();i++) {
-//                if (!menus.get(i).getIsPopular()) continue;
-//                if(sb.isEmpty()) sb.append(", ");
-//                sb.append(menus.get(i).getName());
-//            }
-//            resList.add(StoreSearchInfoDto.toRes(store, ))
-//        }
-//        return resList;
         // 한번에 가져오기
-        List<StoreSearchInfoDto> storeList = storeRepository.searchStoreDtoList(emdAddressList, buyer, orderBy, timesale, partnership, dibs, longitude, latitude);
+        List<StoreSearchInfoDto> storeList = storeRepository.searchStoreDtoList(emdAddressList, buyer, category, orderBy, timesale, partnership, dibs, longitude, latitude);
         for(StoreSearchInfoDto store : storeList) {
             List<StoreMenuDto> menus= menuService.selectAllMenu(store.getUsrId()).getMenuList();
             StringBuilder sb = new StringBuilder();
             for(int i=0;i<menus.size();i++) {
                 if (!menus.get(i).getIsPopular()) continue;
-                if(sb.isEmpty()) sb.append(", ");
+                if(!sb.isEmpty()) sb.append(", ");
                 sb.append(menus.get(i).getName());
             }
             store.updateMenuString(sb.toString());

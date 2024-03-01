@@ -30,7 +30,7 @@ public class Activity extends BaseEntity {
     private Double latitude;
     private Double longitude;
 
-    @Min(0) @Max(2)
+    @Min(0) @Max(3)
     private Integer depth; // 해당 지역 기준으로 확장되는 칸 수
 
     @ManyToOne(fetch = FetchType.LAZY)

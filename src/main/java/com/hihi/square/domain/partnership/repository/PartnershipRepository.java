@@ -32,6 +32,6 @@ public interface PartnershipRepository extends JpaRepository<Partnership, Intege
     @Query("select p from Partnership p join fetch p.issStore join fetch p.useStore join fetch p.menu join fetch p.proStore where p.menu = :menu and :now between p.startTime and p.finishTime and p.acceptState = 'NORMAL'")
     Optional<Partnership> findByMenuAndProgress(Menu menu, LocalDateTime now);
 
-    @Query("select exists (select 1 from Partnership p where p.issStore = :store and :now between p.startTime and p.finishTime and p.acceptState = 'NORMAL')")
-    boolean existsByStoreAndProgress(Store store, LocalDateTime now);
+    @Query("select exists (select 1 from Partnership p where p.issStore = :store and current_timestamp between p.startTime and p.finishTime and p.acceptState = 'NORMAL')")
+    boolean existsByStoreAndProgress(Store store);
 }

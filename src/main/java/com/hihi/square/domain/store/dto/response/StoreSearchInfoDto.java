@@ -1,34 +1,48 @@
 package com.hihi.square.domain.store.dto.response;
 
 import com.hihi.square.domain.store.entity.Store;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class StoreSearchInfoDto {
     private Integer usrId;
     private String name;
     private String menuString;
-    private boolean isTs;
-    private boolean isPn;
-    private boolean isDibs;
+    private Integer category;
+    private Boolean isTs;
+    private Boolean isPn;
+    private Boolean isDibs;
     private String profileImage;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
+
+    public StoreSearchInfoDto(Integer usrId, String name, Integer category, Boolean isTs, Boolean isPn, Boolean isDibs, String profileImage, Double latitude, Double longitude) {
+        this.usrId = usrId;
+        this.name = name;
+        this.menuString = menuString;
+        this.category = category;
+        this.isTs = isTs;
+        this.isPn = isPn;
+        this.isDibs = isDibs;
+        this.profileImage = profileImage;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
 
     public static StoreSearchInfoDto toRes(Store store, boolean isTs, boolean isPn, boolean isDibs, String menuString) {
         return StoreSearchInfoDto.builder()
                 .usrId(store.getUsrId())
                 .name(store.getStoreName())
                 .menuString(menuString)
+                .category(store.getCategory().getId())
                 .isTs(isTs)
                 .isPn(isPn)
-                .isDibs(false)
+                .isDibs(isDibs)
                 .profileImage(store.getProfileImage())
                 .latitude(store.getLatitude())
                 .longitude(store.getLongitude())

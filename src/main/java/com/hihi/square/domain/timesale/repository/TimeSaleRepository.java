@@ -32,4 +32,7 @@ public interface TimeSaleRepository extends JpaRepository<TimeSale, Integer> {
     @Modifying
     @Query("update TimeSale ts set ts.status=:status where ts.id=:saleId")
     void updateSaleStatus(@Param("saleId") Integer saleId, @Param("status") TimeSaleStatus status);
+
+    @Query("select exists (select 1 from TimeSale t where t.store = :store and current_timestamp between t.startedAt and t.finishedAt and t.status = 'ACTIVE' and t.realFinishedAt = null)")
+    boolean existsByStoreAndProgress(Store store);
 }
